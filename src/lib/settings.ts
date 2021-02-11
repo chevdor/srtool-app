@@ -9,10 +9,12 @@ export type Package = KnownRuntime;
 export class Settings {
     private _package: Package;
     private _workDir: string;
+    private _watchDogDuration: number;
 
     constructor(p: Package) {
         this._package = p;
-        this._workDir = os.tmpdir()
+        this._workDir = os.tmpdir();
+        this._watchDogDuration = 60000;
     }
 
     public get package() : Package {
@@ -25,5 +27,9 @@ export class Settings {
 
     public get workDir() : string {
         return this._workDir;
+    }
+
+    public get watchDogDuration() : number {
+        return this._watchDogDuration;
     }
 }

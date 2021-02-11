@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-ts",
-  "version": "1.0.0",
+  "name": "srtool-app",
+  "version": "0.1.0",
   "description": "srtool App",
-  "main": "./dist/main.js",
+  "main": "./build/main.js",
   "scripts": {
     "dev:electron": "NODE_ENV=development webpack --config webpack.electron.config.js --mode development && electron .",
     "dev:react": "NODE_ENV=development webpack-dev-server --config webpack.react.config.js --mode development",
@@ -11,19 +11,20 @@
     "build": "npm run build:electron && npm run build:react",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "test": "mocha -r ts-node/register test/**/*.spec.ts"
+    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "clean": "rm -rf build dist *.log"
   },
   "keywords": [],
-  "author": "elisealcala",
-  "license": "ISC",
+  "author": "chevdor",
+  "license": "MIT",
   "build": {
     "files": [
-      "dist/",
+      "build/",
       "node_modules/",
       "package.json"
     ],
-    "productName": "example",
-    "appId": "com.example.app",
+    "productName": "SRTOOL-App",
+    "appId": "com.chevdor.srtool-app",
     "directories": {
       "output": "dist"
     }
@@ -67,7 +68,8 @@
     "@types/react-dom": "^16.9.6",
     "electron-is": "^3.0.0",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "react-jss": "^10.5.1"
   }
 >>>>>>> Initial commit
 }
