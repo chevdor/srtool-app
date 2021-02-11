@@ -1,0 +1,55 @@
+= srtool app
+
+== todo and plans, wishes and idea:
+
+- some users may have all the tools such as git & co. Those need to be able to pick the folder of their choice and we need to work there.
+- other users may not have git nor the will to install it. In this case, we can download the zip of a given tagged version
+- we need to be able to fetch the list of available tags for the user to pick
+- advanced users will simply checkout whatever commit ref
+- when picking a tag, the user should see the DATE of it
+- docker is mandatory so we need to check
+- copy / export report
+- check with release notes and show a big green box
+- show progress during compile
+- works on MacOS, Windows, Linux (check on Arm...)
+- link to tweet result
+- check for available update
+- run checks at start
+- allow background mode (slower but less taxing)
+- show historical runs, recall them
+- archive/export produced runtimes somewhere
+- companion bin wrapper in Rust ?
+- record of previous runs duration
+- dark/light mode
+- load show runtime version release notes
+
+== Start checks
+
+- git installed
+- docker installed
+- disk available
+- number of OS CPUs (eventually warning)
+- number of docker CPUs (eventually warning)
+
+== local storage
+
+- app settings
+- cache/store results for each recall with previous run duration and result
+
+== app settings:
+
+- folder to use (when using a repo)
+- temp folder
+- wipe all data after process complete (only if NOT using a repo)
+- allow skipping the checks
+- delete image after use
+- wipe target before build (cargo clean)
+- wipe srtool target after build
+- let user pick a `--cpus` value for docker (=> bakcground mode )
+- support `--cpu-shares 1024` to play on the prio with other docker
+
+== Usage
+
+- select tag / version
+- select chain
+- Run and wait...
