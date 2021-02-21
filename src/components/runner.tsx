@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useReducer } from "react";
 import is from "electron-is";
 import { Button } from "@material-ui/core";
-import { Runner } from "../lib/runner";
-import OutputDataContext, { OutputDataContextDefault } from "./outputData";
+import Runner from "../lib/runner";
+import { OutputDataContextDefault, OutputContext } from "../contexts/outputContext";
+import SettingsContext from "../contexts/settingsContext";
+const useSettings = () => useContext(SettingsContext)
 
 // function appendOutput(msg) {
 //   getCommandOutput().value += msg + "\n";
@@ -24,43 +26,40 @@ function reducer(state: any, message: any) {
 }
 
 function BtnRun() {
+  const settings = useSettings()
   const runner = new Runner();
-  runner.onData = (data) => {
-    update(data.toString());
-  };
-
   const [messages] = useReducer(reducer, []);
 
-  function update(msg: string) {
-    messages.push(msg);
-
-    console.log("messages", messages);
-    // console.log("latest", latest);
-  }
-
-  async function sayHello() {
+  async function run(adder: (_: string) => void) {
     console.log("Running docker");
+
+    runner.onData = (data) => {
+      adder(data.toString());
+    };
 
     await runner
       .run()
       .then((result) => {
-        console.info("Result", result);
+        console.info("Final Result", result);
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => console.error)      
   }
 
   return (
-    // <Button color="primary" onClick={sayHello}>
-    <Button
-      color="primary"
-      onClick={async () => {
-        await sayHello();
-      }}
-    >
-      Run !
-    </Button>
+    // <Button color="primary" onClick={run}>
+    <OutputContext.Consumer>
+      {(output) => (
+        <Button
+          color="primary"
+          onClick={ async () => {
+            await run(output.addMessage);
+          }}
+          // onClick={() => { output.addMessage('test') } }
+        >
+          Run !
+        </Button>
+      )}
+    </OutputContext.Consumer>
   );
 }
 

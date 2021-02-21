@@ -1,13 +1,23 @@
 import React from "react";
 import ReactDom from "react-dom";
-import BtnRun from "./components/runner";
-import Output from "./components/output";
 import { deepOrange, orange } from "@material-ui/core/colors";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import Output from "./components/output";
+import Runner from "./components/runner";
 import Header from "./components/header";
-import Checks from "./components/checks";
+import Init from "./components/init";
 import { Intro } from "./components/intro";
-import OutputDataContext, { OutputDataContextDefault } from "./components/outputData";
+import {
+  // OutputDataContextDefault,
+  OutputContext,
+  // OutputContextProvider,
+  // OutputContextConsumer,
+} from "./contexts/outputContext";
+import { themes } from "./contexts/themeContext";
+import SrtoolResultComp from "./components/result";
+import Latest from "./components/latest";
+import Verif from "./components/verif";
+import VersionChecker from "./components/versionChecker";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -24,20 +34,57 @@ const darkTheme = createMuiTheme({
   },
 });
 
-const outputData = OutputDataContextDefault;
+type AppState = { foreground: string; background: string };
 
-const App = () => {
-  return (
-    <ThemeProvider theme={darkTheme}>
-      <OutputDataContext.Provider value={outputData}>
-        <Header />
-        <Intro />
-        <Checks />
-        <BtnRun />
-        <Output />
-      </OutputDataContext.Provider>
-    </ThemeProvider>
-  );
-};
+class App extends React.Component<any, any> {
+  toggleTheme: () => void;
+  addMessage: (m: string) => void;
+
+  constructor(props: any) {
+    super(props);
+
+    this.toggleTheme = () => {
+      this.setState((state: any) => ({
+        theme: state.theme === themes.dark ? themes.light : themes.dark,
+      }));
+    };
+
+    this.addMessage = (m: string) => {
+      this.setState((state: any) => ({
+        output: {
+          messages: state.output.messages.concat(m),
+          latest: m,
+        },
+      }));
+    };
+
+    this.state = {
+      output: {
+        messages: [],
+        latest: null,
+        addMessage: this.addMessage,
+      },
+    };
+  }
+
+  render() {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <OutputContext.Provider value={this.state.output}>
+          <Header />
+          <VersionChecker />
+          {/* <ResponsiveDrawer/> */}
+          {/* <Intro /> */}
+          <Init />
+          <Runner />
+          <Output />
+          <Latest />
+          <SrtoolResultComp />
+          <Verif />
+        </OutputContext.Provider>
+      </ThemeProvider>
+    );
+  }
+}
 
 ReactDom.render(<App />, mainElement);

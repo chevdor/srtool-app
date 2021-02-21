@@ -1,16 +1,19 @@
 import { Result } from './result';
 import { Settings } from './settings';
 import ChildProcess from 'child_process'
+import React from 'react';
+import * as Path from 'path'
 
 /**
  * The Runner is the class that is doing the work of calling
  * srtool.
  */
-export class Runner {
+export default class Runner extends React.Component<any, any> {
     private _settings: Settings;
     private _onDataCb: (data: string) => void;
 
-    constructor() {
+    constructor(props?: any) {
+        super(props)
         this._settings = new Settings('kusama-runtime');
         this._onDataCb = (_data: string) => { };
     }
@@ -34,16 +37,11 @@ export class Runner {
     public async fetchVersion(repo: string, tag: string): Promise<void> {
         console.log(`Fecthing tag ${tag} from ${repo}`);
         const url = `${repo}/zip/${tag}`;
-
-
     }
 
     public async unzip(zipfile: string): Promise<void> {
         console.log(`Unzipping ${zipfile}}`);
-        
-
     }
-
 
     // @ts-ignore
     public async run(): Promise<Result> {
@@ -61,17 +59,27 @@ export class Runner {
 
             let timeoutHandle = setTimeout(timeoutCallback, timeoutDuration);
 
-            // test call
-            const cmd = 'docker run --rm --name srtool busybox sh -c "sleep 1; date; sleep 1; date; sleep 2; date;"';
+            // test call, fake output
+            // const cmd = 'docker run --rm --name srtool busybox sh -c "sleep 1; date; sleep 1; date; sleep 2; date; sleep 1; echo { \"x\": 42, \"test\": 23 }"';
+
+            // replay of a real output, no docker, much faster...
+
+            const replay = '/tmp/srtool-polkadot-0.8.28-nocolor.log';
+            console.log(`Using replay from ${replay}`);
+            const cmd = `awk '{print $0; system("sleep .01");}' ${replay}`
 
             // real call to srtool (long...) 
             // const cmd = 'docker run --rm --name srtool srtool sh -c "sleep 1; date; sleep 1; date; sleep 2; date;"';
 
             const s = spawn('bash', ['-c', cmd]);
 
-            s.stdout.on("data", (data: any) => {
+            s.stdout.on("data", (data: Buffer) => {
                 if (this._onDataCb) {
-                    this._onDataCb(data);
+                    data.toString().split('\r\n')
+                        .filter(line => line.length)
+                        .forEach((line: string) => {
+                            this._onDataCb(line);
+                        })
                 }
                 clearTimeout(timeoutHandle);
                 timeoutHandle = setTimeout(timeoutCallback, timeoutDuration);
