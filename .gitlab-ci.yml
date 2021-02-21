@@ -1,0 +1,65 @@
+stages:
+  - pack
+  # - deploy
+
+pack:mac:
+  stage: pack
+  only:
+    - tags
+  image: electronuserland/electron-builder:wine
+  before_script:
+    - yarn clean
+    - yarn install
+    - yarn build
+  script:
+    - yarn dist:mac
+  artifacts:
+    paths:
+      - packages
+    expire_in: 1h
+
+pack:linux:
+  stage: pack
+  only:
+    - tags
+  image: electronuserland/electron-builder:wine
+  before_script:
+    - yarn clean
+    - yarn install
+    - yarn build
+  script:
+    - yarn dist:linux
+  artifacts:
+    paths:
+      - packages
+    expire_in: 1h
+
+pack:win:
+  stage: pack
+  only:
+    - tags
+  image: electronuserland/electron-builder:wine
+  before_script:
+    - yarn clean
+    - yarn install
+    - yarn build
+  script:
+    - yarn dist:win
+  artifacts:
+    paths:
+      - packages
+    expire_in: 1h
+
+# pages:
+#   stage: deploy
+#   only:
+#     - tags
+#   dependencies: 
+#     - pack
+#   script:
+#     - mkdir .public
+#     - cp -r * .public
+#     - mv .public public
+#   artifacts:
+#     paths:
+#       - public

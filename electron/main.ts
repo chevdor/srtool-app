@@ -10,8 +10,8 @@ function createWindow() {
   // process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 600,
+    width: process.env.NODE_ENV === "development" ? 1800 : 900,
+    height: process.env.NODE_ENV === "development" ? 1200 : 600,
     backgroundColor: '#2222',
     minimizable: false,
     maximizable: false,
