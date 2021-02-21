@@ -12,7 +12,7 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
-    "clean": "rm -rf build dist *.log"
+    "clean": "rm -rf build/{js,main.*,index.html} dist *.log"
   },
   "keywords": [],
   "author": "chevdor",

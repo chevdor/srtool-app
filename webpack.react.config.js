@@ -1,13 +1,13 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     mainFields: ["main", "module", "browser"],
   },
-  entry: ['babel-regenerator-runtime', "./src/app.tsx"],
+  entry: ["babel-regenerator-runtime", "./src/app.tsx"],
   target: "electron-renderer",
   devtool: "source-map",
   module: {
@@ -21,7 +21,7 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
   },
@@ -37,5 +37,8 @@ module.exports = {
     path: path.resolve(__dirname, "build"),
     filename: "js/[name].js",
   },
-  plugins: [new HtmlWebpackPlugin(), new MiniCssExtractPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({ title: "srtool" }),
+    new MiniCssExtractPlugin(),
+  ],
 };

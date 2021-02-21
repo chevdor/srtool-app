@@ -13,6 +13,9 @@ function createWindow() {
     width: 900,
     height: 600,
     backgroundColor: '#2222',
+    minimizable: false,
+    maximizable: false,
+    resizable: process.env.NODE_ENV === "development",
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
@@ -24,7 +27,6 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   } else {
     const url = `file://${__dirname}/index.html`;
-    // console.log('url', url)
     mainWindow.loadURL(url);
   }
 
