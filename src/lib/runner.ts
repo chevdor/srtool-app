@@ -64,6 +64,7 @@ export default class Runner extends React.Component<any, any> {
 
             // replay of a real output, no docker, much faster...
 
+            // TODO: make a test/dev container doing that
             const replay = '/tmp/srtool-polkadot-0.8.28-nocolor.log';
             console.log(`Using replay from ${replay}`);
             const cmd = `awk '{print $0; system("sleep .01");}' ${replay}`
@@ -86,11 +87,15 @@ export default class Runner extends React.Component<any, any> {
             });
 
             s.stderr.on("data", (err: Error) => {
+                console.error('Error', err.toString());
+
                 clearTimeout(timeoutHandle);
                 errors.push(err);
             });
 
             s.on("exit", (code: any) => {
+                console.log('on exit', code);
+
                 clearTimeout(timeoutHandle);
                 if (!code) {
                     console.info(`Exit code: ${code}`);

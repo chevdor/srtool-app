@@ -1,18 +1,24 @@
 import { Box, Typography } from "@material-ui/core";
 import React from "react";
+import Repo from "./repo";
 import Status from "./status";
 
 const Header = () => {
   return (
-    <Box>
-      <div>
+    <Box display="flex" style={{margin: "0px", padding: "10px", backgroundColor: "#ff980020"}}>
+      <Box flexGrow={1}>
         <Typography variant="h1" color="primary" component="h2" gutterBottom>
           srtool
         </Typography>
-      </div>
-      <div>
-        <Status></Status>
-      </div>
+      </Box>
+
+      <Box>
+        <Status />
+      </Box>
+
+      <Box>
+        <Repo />
+      </Box>
     </Box>
   );
 };

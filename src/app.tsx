@@ -2,22 +2,15 @@ import React from "react";
 import ReactDom from "react-dom";
 import { deepOrange, orange } from "@material-ui/core/colors";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import Output from "./components/output";
-import Runner from "./components/runner";
 import Header from "./components/header";
 import Init from "./components/init";
-import { Intro } from "./components/intro";
-import {
-  // OutputDataContextDefault,
-  OutputContext,
-  // OutputContextProvider,
-  // OutputContextConsumer,
-} from "./contexts/outputContext";
+import { OutputContext } from "./contexts/outputContext";
 import { themes } from "./contexts/themeContext";
-import SrtoolResultComp from "./components/result";
-import Latest from "./components/latest";
-import Verif from "./components/verif";
 import VersionChecker from "./components/versionChecker";
+import MainComp from "./components/mainComp";
+import StatusContext from "./contexts/statusContext";
+import { Beta } from "./components/beta";
+import { SRToolResult } from "./lib/message";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -34,11 +27,10 @@ const darkTheme = createMuiTheme({
   },
 });
 
-type AppState = { foreground: string; background: string };
-
 class App extends React.Component<any, any> {
   toggleTheme: () => void;
   addMessage: (m: string) => void;
+  setField: (keyval: Record<string, any>) => void;
 
   constructor(props: any) {
     super(props);
@@ -50,11 +42,39 @@ class App extends React.Component<any, any> {
     };
 
     this.addMessage = (m: string) => {
+      let latest: string | undefined;
+      let result: SRToolResult | undefined;
+      let getMessages = (messages: any, m: string) => {
+        if (m.indexOf("{") < 0) {
+          return messages.concat(m);
+        } else {
+          return messages;
+        }
+      };
+
+      if (m.indexOf("{") >= 0) {
+        result = JSON.parse(m);
+      } else {
+        latest = m;
+      }
+
       this.setState((state: any) => ({
         output: {
-          messages: state.output.messages.concat(m),
-          latest: m,
+          messages: getMessages(state.output.messages, m),
+          latest,
+          result,
         },
+      }));
+    };
+
+    this.setField = (keyval: Record<string, any>) => {
+      const { status } = this.state;
+      // console.log(`Current context ${JSON.stringify(this.state)} `);
+      // console.log(`Setting ${JSON.stringify(keyval)} `);
+      // console.log(`Current status ${JSON.stringify(status)} `);
+
+      this.setState(() => ({
+        status: { ...status, ...keyval },
       }));
     };
 
@@ -64,24 +84,30 @@ class App extends React.Component<any, any> {
         latest: null,
         addMessage: this.addMessage,
       },
+      status: {
+        docker_version: null,
+        docker_running: false,
+        srtool_version: null,
+        srtool_latest: null,
+        ready: false,
+        setField: this.setField,
+      },
     };
   }
 
   render() {
     return (
       <ThemeProvider theme={darkTheme}>
-        <OutputContext.Provider value={this.state.output}>
+        <StatusContext.Provider value={this.state.status}>
           <Header />
-          <VersionChecker />
-          {/* <ResponsiveDrawer/> */}
-          {/* <Intro /> */}
-          <Init />
-          <Runner />
-          <Output />
-          <Latest />
-          <SrtoolResultComp />
-          <Verif />
-        </OutputContext.Provider>
+          <Beta stage="alpha" />
+          <OutputContext.Provider value={this.state.output}>
+            {/* <VersionChecker /> */}
+            <Init visible={!this.state.status.ready} />
+
+            <MainComp visible={this.state.status.ready} />
+          </OutputContext.Provider>
+        </StatusContext.Provider>
       </ThemeProvider>
     );
   }

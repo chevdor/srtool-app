@@ -1,58 +1,239 @@
-import React, { useContext, useEffect } from "react";
-import is from "electron-is";
-import StatusContext from "../contexts/statusContext";
-import { Box, CircularProgress } from "@material-ui/core";
+import React from "react";
+// import is from "electron-is";
+import StatusContext, {
+  defaultStatusContext,
+  Status,
+} from "../contexts/statusContext";
+import {
+  Box,
+  CircularProgress,
+  createStyles,
+  Theme,
+  Typography,
+  WithStyles,
+} from "@material-ui/core";
+import { getDockerVersion, getDockerRunning } from "../lib/docker";
+import os from "os";
+import { withStyles } from "@material-ui/core/styles";
+import { getImage, getSrtoolRustcLatestVersion } from "../lib/srtool";
+import InitCheck, { CheckStatus } from "../lib/initChecks";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
-const useStatus = () => useContext(StatusContext)
+export interface Props extends WithStyles<typeof styles> {
+  visible: boolean;
+}
+
+export interface Step {
+  step: number;
+  description: string;
+  progress: number;
+  determinate: boolean;
+}
+
+export interface State {
+  step: number;
+  description: string;
+  progress: number;
+  determinate: boolean;
+  results: CheckResult[];
+}
 
 // TODO: check the docker version => is docker installed
 // TODO: run something like docker ps => is docker currently running
 
+const steps = {
+  _1_start: {
+    step: 0,
+    description: "Start",
+    progress: 5,
+    determinate: true,
+  },
+  _2_docker_installed: {
+    step: 1,
+    description: "Checking if docker is installed",
+    progress: 10,
+    determinate: true,
+  },
+  _3_docker_running: {
+    step: 2,
+    description: "Checking if docker is running",
+    progress: 15,
+    determinate: true,
+  },
+  _4_get_latest_image_version: {
+    step: 3,
+    description: "Checking what is the latest image version",
+    progress: 20,
+    determinate: true,
+  },
+  _5_get_latest_image: {
+    step: 4,
+    description:
+      "Fetching the latest srtool image. It can take a few minutes, be patient...",
+    progress: 25,
+    determinate: false,
+  },
+  _6_getting_srtool_version: {
+    step: 5,
+    description: "Querying srtool version",
+    progress: 90,
+    determinate: true,
+  },
+  _7_end: {
+    step: 6,
+    description: "Finished",
+    progress: 100,
+    determinate: true,
+  },
+};
+
 /**
  * This component shows the progress of the init.
  * It performs the following checks:
- * - is docker install
+ * - is docker installed
  * - is docker running
  * - fetch the srtool image and get its version
  * This component updates the StatusContext and will be hidden once
  * all the checks pass, to leave the place to the real app.
  */
-class Init extends React.Component<any, any> {
+class Init extends React.Component<Props, State> {
   // const status = useStatus()
-  
-  componentDidMount() {
-    this.run()
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      step: 0,
+      description: "",
+      progress: 0,
+      determinate: true,
+      results: [],
+    };
   }
 
-  run() {
-    let spawn = require("child_process").spawn;
-    console.log("Starting checks");
-    
-    let bat = spawn("bash", ["-c", "docker --version"]);
+  async componentDidMount() {
+    const { context } = this;
+    console.log("context compodidmoun", context);
 
-    bat.stdout.on("data", (data: any) => {
-      console.log(data.toString());
-    });
+    // if (process.env.NODE_ENV === "development") {
+    //   console.log('Running in dev mode, skipping init checks');
+    //   context.setField({ ready: true })
+    // } else
+    await this.run(context as Status);
+  }
 
-    bat.stderr.on("data", (err: any) => {
-      console.log(err.toString());
-    });
+  /**
+   * Move to the next step
+   */
+  private nextStep(step: Step) {
+    // const { step: current } = this.state.;
+    this.setState(step);
+  }
 
-    bat.on("exit", (code: any) => {
-      console.log(code);
-    });
+  async run(context: Status) {
+    console.log("Starting init checks");
+    console.log("context", context);
+
+    this.nextStep(steps._1_start);
+    context.setField({ ready: false });
+
+    // TODO: we may later want to add this check to the list
+    const tmpdir = os.tmpdir(); // TODO: use setting folder instead
+    const _diskResult = await InitCheck.diskSpace(tmpdir);
+
+    this.nextStep(steps._2_docker_installed);
+    const dockerInstalledCheck = await InitCheck.dockerVersion();
+    context.setField({ docker_version: dockerInstalledCheck.value || null });
+
+    this.nextStep(steps._3_docker_running);
+    const dockerRunningCheck = await InitCheck.dockerRunning();
+    console.log("dockerRunningCheck", dockerRunningCheck);
+
+    context.setField({ docker_running: dockerRunningCheck.value });
+
+    const docker_ok: boolean =
+      dockerInstalledCheck.value !== null && dockerRunningCheck.value;
+
+    this.nextStep(steps._4_get_latest_image_version);
+    const latestImageCheck = await InitCheck.srtoolImage();
+    context.setField({ srtool_version: latestImageCheck.value || null });
+
+    if (docker_ok) {
+      // TODO: here we could check if we already have it and skip ?
+      this.nextStep(steps._5_get_latest_image);
+      await getImage(latestImageCheck.value);
+    }
+
+    this.nextStep(steps._6_getting_srtool_version);
+    context.setField({ ready: docker_ok });
+
+    this.nextStep(steps._7_end);
   }
 
   render() {
-    
-    return (
-      <Box color="text.primary">
-        <div >INIT</div>
-        <CircularProgress />
+    const { visible, classes } = this.props;
+    const { docker_version, docker_running, ready } = this.context;
+    const stepsCount = Object.keys(steps).length;
 
-      </Box>
+    return (
+      visible && (
+        <Box
+          color="text.primary"
+          className={classes.root}
+          display="flex"
+          justifyContent="center"
+          id="init-component"
+        >
+          <Box
+            id="init-content"
+            style={{ width: "50%", textAlign: "center" }}
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+          >
+            <CircularProgress
+              style={{ margin: "40px", alignSelf: "center" }}
+              // variant={ready ? "determinate" : "indeterminate"}
+              // value={ready ? 100 : undefined}
+              variant={this.state.determinate ? "determinate" : "indeterminate"}
+              value={this.state.progress}
+            />
+            <Typography paragraph>
+              {`${this.state.step + 1}/${stepsCount}: ${
+                this.state.description
+              }`}
+            </Typography>
+
+            <div hidden={docker_version === null}>
+              Checking docker version... found v{docker_version} -{" "}
+              {docker_version ? "OK" : "ERROR"}
+            </div>
+            <div>docker running... {docker_running ? "Yes" : "No"}</div>
+
+            <Alert
+              severity={ready ? "success" : "error"}
+              color={ready ? "success" : "error"}
+              style={{ margin: "20px" }}
+            >
+              <AlertTitle>{ready ? "Ready" : "Not ready"}</AlertTitle>
+              Some of the checks failed so srtool cannot run any further.
+              <br />
+              Please check the messages above and restart srtool.
+            </Alert>
+          </Box>
+        </Box>
+      )
     );
   }
 }
+
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      // color: "red",
+      margin: "0px 50px 0px 50px ",
+      padding: "20px",
+      border: "1px solid red",
+    },
+  });
+
 Init.contextType = StatusContext;
-export default Init;
+export default withStyles(styles)(Init);

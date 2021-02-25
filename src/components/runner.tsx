@@ -2,9 +2,13 @@ import React, { createContext, useContext, useReducer } from "react";
 import is from "electron-is";
 import { Button } from "@material-ui/core";
 import Runner from "../lib/runner";
-import { OutputDataContextDefault, OutputContext } from "../contexts/outputContext";
+import {
+  OutputDataContextDefault,
+  OutputContext,
+} from "../contexts/outputContext";
 import SettingsContext from "../contexts/settingsContext";
-const useSettings = () => useContext(SettingsContext)
+import { Message } from "../lib/message";
+const useSettings = () => useContext(SettingsContext);
 
 // function appendOutput(msg) {
 //   getCommandOutput().value += msg + "\n";
@@ -25,16 +29,16 @@ function reducer(state: any, message: any) {
   return [...state, message];
 }
 
+/**
+ * This runner is actually doing the job when the user clicks the button
+ */
 function BtnRun() {
-  const settings = useSettings()
-  const runner = new Runner();
-  const [messages] = useReducer(reducer, []);
-
-  async function run(adder: (_: string) => void) {
+  const run = async (addMessage: (_: Message) => void) => {
     console.log("Running docker");
+    const runner = new Runner();
 
-    runner.onData = (data) => {
-      adder(data.toString());
+    runner.onData = (data: string) => {
+      addMessage(data.toString()); // TODO: Message Builder here
     };
 
     await runner
@@ -42,19 +46,17 @@ function BtnRun() {
       .then((result) => {
         console.info("Final Result", result);
       })
-      .catch((err) => console.error)      
-  }
+      .catch((err) => console.error);
+  };
 
   return (
-    // <Button color="primary" onClick={run}>
     <OutputContext.Consumer>
       {(output) => (
         <Button
           color="primary"
-          onClick={ async () => {
+          onClick={async () => {
             await run(output.addMessage);
           }}
-          // onClick={() => { output.addMessage('test') } }
         >
           Run !
         </Button>

@@ -19,18 +19,25 @@ export type SRToolOutput = {
     wasm: string
 };
 
-export type SRToolResult = {
+/**
+ * Those are infos coming from srtool before we need to start any (long)
+ * compilation task.
+ */
+export type SRToolInfo = {
     generator: string,
     git: {
         commit: string,
         tag?: string,
         branch?: string,
     },
+    rustc: string;
+    package: string,
+}
+
+export type SRToolResult = SRToolInfo & {
     time: Date, // date of the generation of the result
     duration?: number; // in ms
-    rustc: string;
     size: number; // in bytes
-    package: string,
     proposalHash: ProposalHash;
     sha256: Hash;
     wasm: {

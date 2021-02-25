@@ -1,4 +1,4 @@
-import { Box, TextField } from "@material-ui/core";
+import { Box, TextField, Typography } from "@material-ui/core";
 import React from "react";
 import { createUseStyles } from "react-jss";
 import {
@@ -14,26 +14,40 @@ import { SRToolOutput, SRToolResult } from "../lib/message";
 class Verif extends React.Component<any, any> {
   render() {
     // let props = this.props;
-    let context = this.context;
+    // let context = this.context;
     this.state = {
-        target: ""
+      target: "",
     };
-    
+
     return (
       <OutputContext.Consumer>
         {(context) => (
           <form noValidate autoComplete="off">
-            <div>
+            <Box color="text.primary" style={{ padding: "20px" }}>
+              <label htmlFor="computed-proposal-hash">Proposal Hash from your run</label>
               <TextField
-                error= {false}
-                id="target-proposal-hash"
-                label="Target Proposal Hash"
-                // defaultValue="Hello World"
-                helperText= { false ? "Incorrect entry.": null}
+                error={false}
+                id="computed-proposal-hash"
+                label="Computed Proposal Hash"
+                helperText={false ? "Incorrect entry." : null}
+                variant="filled"
+                disabled
+                value={JSON.stringify(context?.result)}
+                fullWidth
+              />
+
+              <br/><br/>
+              <label htmlFor="reference-proposal-hash">Reference to compare it to</label>
+              <TextField
+                error={false}
+                id="reference-proposal-hash"
+                label="Reference Proposal Hash"
+                helperText={false ? "Incorrect entry." : null}
                 variant="filled"
                 fullWidth
               />
-            </div>
+              <span>OK ? {context?.result?.toString() || ""}</span>
+            </Box>
           </form>
         )}
       </OutputContext.Consumer>

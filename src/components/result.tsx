@@ -24,7 +24,7 @@ class SrtoolResultComp extends React.Component<any, any> {
       <OutputContext.Consumer>
         {(_) =>
           res ? (
-            <Box color="text.primary" >
+            <Box color="text.primary">
               <div>gen: {res.gen}</div>
               <div>commit: {res.commit}</div>
               <div>proposal hash: {res.prop}</div>
@@ -32,7 +32,7 @@ class SrtoolResultComp extends React.Component<any, any> {
               <div>rustc: {res.rustc}</div>
               <div>size: {res.size}</div>
             </Box>
-          ) : ( null )
+          ) : null
         }
       </OutputContext.Consumer>
     );

@@ -1,35 +1,27 @@
-import { Box } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import React, { useContext } from "react";
 import StatusContext from "../contexts/statusContext";
-const useStatus = () => useContext(StatusContext);
-
-// const Status = () => {
-//   // status = useStatus();
-
-//   return (
-
-//     <Box style={{color: "yellow"}}>
-//       <div>Docker version: {this.context.status.docker.version}</div>
-//       <div>Docker running: {status.docker.running.toString()}</div>
-//       <div>srtool version: {status.srtool.version}</div>
-//     </Box>
-//   );
-// };
-
-// export default Status;
 
 class Status extends React.Component {
   render() {
-    let props = this.props;
+    // let props = this.props;
     let context = this.context;
     // console.log("context", context);
 
     return (
-      <Box style={{ color: "yellow" }}>
-        <div>Docker version: {context.docker.version}</div>
-        <div>Docker running: {context.docker.running.toString()}</div>
-        <div>srtool version: {context.srtool.version}</div>
-      </Box>
+      <StatusContext.Consumer>
+        {(context: any) => {
+          return (
+            <Box style={{ color: "yellow", marginRight: 20 }}>
+              <Typography>Docker version: {context.docker_version}</Typography>
+              <Typography>Docker running: {context.docker_running?.toString()}</Typography>
+              <Typography>srtool version: {context.srtool_version}</Typography>
+              <Typography>rustc version: {context.srtool_version}</Typography>
+              <Typography>ready: {context.ready?.toString()}</Typography>
+            </Box>
+          );
+        }}
+      </StatusContext.Consumer>
     );
   }
 }
