@@ -1,6 +1,9 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import * as url from "url";
+import { AppStorage } from "../src/types";
+import Store from 'electron-store';
+
 require("babel-polyfill");
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -10,8 +13,8 @@ function createWindow() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
   mainWindow = new BrowserWindow({
-    width: process.env.NODE_ENV === "development" ? 1800 : 900,
-    height: process.env.NODE_ENV === "development" ? 1200 : 600,
+    width: process.env.NODE_ENV === "development" ? 1800 : 1100,
+    height: process.env.NODE_ENV === "development" ? 1200 : 750,
     backgroundColor: '#2222',
     minimizable: false,
     maximizable: false,
@@ -37,3 +40,4 @@ function createWindow() {
 
 app.on("ready", createWindow);
 app.allowRendererProcessReuse = true;
+Store.initRenderer();

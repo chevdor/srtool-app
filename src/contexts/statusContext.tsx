@@ -1,6 +1,5 @@
 import React from "react";
-
-export type Version = string | null;
+import { Version } from "../types";
 
 export type Status = {
   /** The docker client version detected, if any */

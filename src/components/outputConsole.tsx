@@ -4,6 +4,7 @@ import { OutputContext } from "../contexts/outputContext";
 import ReactTerminal from "react-terminal-component";
 import { EmulatorState, OutputFactory, Outputs } from "javascript-terminal";
 import { Box } from "@material-ui/core";
+import { Message } from "../lib/message";
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -24,6 +25,7 @@ class OutputConsole extends React.Component<any, any> {
     super(props);
   }
 
+  // TODO: The following is far from efficient over time as we recreate the whole output
   render() {
     // let props = this.props;
     // let context = this.context;
@@ -35,10 +37,10 @@ class OutputConsole extends React.Component<any, any> {
             // console.log('TRACE console', context.latest);
             const newOutputs = Outputs.addRecord(
               this.defaultOutputs,
-              OutputFactory.makeTextOutput(context.messages.join("\n"))
+              OutputFactory.makeTextOutput( context.joinedMessages || '' )
+              // OutputFactory.makeTextOutput( context.messages.join('\n') )
             );
             const emulatorState = this.defaultState.setOutputs(newOutputs);
-
             return (
               <ReactTerminal
                 acceptInput={false}

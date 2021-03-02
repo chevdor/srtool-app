@@ -1,5 +1,10 @@
 import React from "react";
 
+export type Theme = {
+  foreground: string;
+  background: string;
+}
+
 export const themes = {
   light: {
     foreground: "#000000",

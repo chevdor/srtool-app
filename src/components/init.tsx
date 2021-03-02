@@ -11,8 +11,9 @@ import {
 } from "@material-ui/core";
 import os from "os";
 import { withStyles } from "@material-ui/core/styles";
-import { getImage, getSrtoolRustcLatestVersion } from "../lib/srtool";
-import InitCheck, { CheckResult, CheckStatus } from "../lib/initChecks";
+import { getImage } from "../lib/srtool";
+import InitCheck, { CheckResult } from "../lib/initChecks";
+import Store from 'electron-store';
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;
@@ -106,7 +107,6 @@ class Init extends React.Component<Props, State> {
 
   async componentDidMount() {
     const { context } = this;
-    console.log("context compodidmoun", context);
 
     // if (process.env.NODE_ENV === "development") {
     //   console.log('Running in dev mode, skipping init checks');
@@ -154,7 +154,7 @@ class Init extends React.Component<Props, State> {
     const latestImageCheck = await InitCheck.srtoolLatestImage();
     context.setField({ srtool_latest_image: latestImageCheck.value });
 
-    if (docker_ok) {
+    if (docker_ok && process.env.NODE_ENV !== "development") {
       // TODO: here we could check if we already have it and skip ?
       this.nextStep(steps._5_get_latest_image);
       await getImage(latestImageCheck.value);

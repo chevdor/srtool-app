@@ -1,7 +1,5 @@
 import React from "react";
+import { defaultSettings } from "../lib/settings";
 
-const SettingsContext = React.createContext({
-  projectPath: "/tmp/sample",
-});
-
+const SettingsContext = React.createContext(defaultSettings);
 export default SettingsContext;

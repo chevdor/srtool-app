@@ -1,11 +1,14 @@
-import { Box, Typography } from "@material-ui/core";
 import React from "react";
+import { Box, Typography } from "@material-ui/core";
+import {
+  OutputContext,
+  OutputDataContextContent,
+} from "../contexts/outputContext";
 import BtnRun from "./runner";
-import Latest from "./latest";
 import OutputConsole from "./outputConsole";
 import SrtoolResultComp from "./result";
+import Latest from "./latest";
 import Verif from "./verif";
-import { OutputContext } from "../contexts/outputContext";
 
 export type MainCompProps = { visible: boolean };
 /**
@@ -14,8 +17,9 @@ export type MainCompProps = { visible: boolean };
 class MainComp extends React.Component<MainCompProps, any> {
   render() {
     const { visible } = this.props;
-    let context = this.context;
-    const latest = context.latest;
+
+    let context: OutputDataContextContent = this.context;
+    const { result } = context;
 
     return !visible ? null : (
       <OutputContext.Consumer>
@@ -24,7 +28,7 @@ class MainComp extends React.Component<MainCompProps, any> {
             <BtnRun />
             <OutputConsole />
             {/* <Latest /> */}
-            <SrtoolResultComp /> 
+            <SrtoolResultComp result={result} />
             {/* <Verif /> */}
           </div>
         )}

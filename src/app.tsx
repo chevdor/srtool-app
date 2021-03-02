@@ -2,15 +2,20 @@ import React from "react";
 import ReactDom from "react-dom";
 import { deepOrange, orange } from "@material-ui/core/colors";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import Header from "./components/header";
+import {
+  OutputContext,
+  OutputDataContextContent,
+} from "./contexts/outputContext";
+import { Theme, themes } from "./contexts/themeContext";
+import { Beta } from "./components/beta";
+import { isResult, Message, SRToolResult } from "./lib/message";
 import Init from "./components/init";
-import { OutputContext } from "./contexts/outputContext";
-import { themes } from "./contexts/themeContext";
-import VersionChecker from "./components/versionChecker";
+import Header from "./components/header";
 import MainComp from "./components/mainComp";
 import StatusContext from "./contexts/statusContext";
-import { Beta } from "./components/beta";
-import { SRToolResult } from "./lib/message";
+import { AppStorage } from "./types";
+import Store from "electron-store";
+import { defaultSettings } from "./lib/settings";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -27,40 +32,49 @@ const darkTheme = createMuiTheme({
   },
 });
 
+export type State = {
+  theme: Theme;
+  output: OutputDataContextContent;
+};
+
 class App extends React.Component<any, any> {
   toggleTheme: () => void;
-  addMessage: (m: string) => void;
+  addMessage: (m: Message) => void;
   setField: (keyval: Record<string, any>) => void;
 
-  constructor(props: any) {
+  constructor(props: never) {
     super(props);
 
     this.toggleTheme = () => {
-      this.setState((state: any) => ({
+      this.setState((state: State) => ({
         theme: state.theme === themes.dark ? themes.light : themes.dark,
       }));
     };
 
-    this.addMessage = (m: string) => {
-      let latest: string | undefined;
+    this.addMessage = (m: Message) => {
+      let latest: Message | undefined;
       let result: SRToolResult | undefined;
-      let getMessages = (messages: any, m: string) => {
-        if (m.indexOf("{") < 0) {
+
+      let getMessages = (messages: Message[], m: Message) => {
+        if (!isResult(m.content)) {
           return messages.concat(m);
         } else {
           return messages;
         }
       };
 
-      if (m.indexOf("{") >= 0) {
-        result = JSON.parse(m);
+      if (isResult(m.content)) {
+        result = m.content;
       } else {
         latest = m;
       }
 
-      this.setState((state: any) => ({
+      this.setState((state: State) => ({
         output: {
           messages: getMessages(state.output.messages, m),
+          joinedMessages:
+            state.output.joinedMessages +
+            (isResult(m.content) ? null : `\n${m.content}`),
           latest,
           result,
         },
@@ -69,10 +83,6 @@ class App extends React.Component<any, any> {
 
     this.setField = (keyval: Record<string, any>) => {
       const { status } = this.state;
-      // console.log(`Current context ${JSON.stringify(this.state)} `);
-      // console.log(`Setting ${JSON.stringify(keyval)} `);
-      // console.log(`Current status ${JSON.stringify(status)} `);
-
       this.setState(() => ({
         status: { ...status, ...keyval },
       }));
@@ -93,6 +103,15 @@ class App extends React.Component<any, any> {
         setField: this.setField,
       },
     };
+
+    const store = new Store<AppStorage>();
+
+    // If the store is empty, init it
+    // if (!store.size) {
+      store.set("history", []);
+      store.set("settings", defaultSettings);
+    // }
+    console.log("appstorage", store);
   }
 
   render() {
@@ -103,8 +122,8 @@ class App extends React.Component<any, any> {
           <Beta stage="alpha" />
           <OutputContext.Provider value={this.state.output}>
             {/* <VersionChecker /> */}
-            <Init visible={!this.state.status.ready} />
 
+            <Init visible={!this.state.status.ready} />
             <MainComp visible={this.state.status.ready} />
           </OutputContext.Provider>
         </StatusContext.Provider>

@@ -46,14 +46,21 @@ export type SRToolResult = SRToolInfo & {
         // preview: string;
     }
 };
-
 export type OutputMessage = string;
-export type ResultMessage = SRToolResult;
+
 export type Message = {
     received: Date,
-    content: OutputMessage | ResultMessage
+    // type: 'output' | 'result',
+    content: OutputMessage | SRToolResult
 };
 
+/**
+ * Return whether m is a SRToolResult or not.
+ * @param m 
+ */
+export function isResult(m: OutputMessage | SRToolResult): m is SRToolResult {
+    return (<SRToolResult>m).generator !== undefined;
+}
 
 /**
  * Running srtool build --json currently returns
@@ -100,12 +107,12 @@ export class SRToolResultBuilder {
 export class MessageBuilder {
     public static build(s: string): Message {
         try {
-            const content = JSON.parse(s)
+            const output: SRToolOutput = JSON.parse(s);
+            const content = SRToolResultBuilder.build(output);
             return {
                 received: new Date(),
                 content,
             }
-
         } catch (e) {
             return {
                 received: new Date(),
