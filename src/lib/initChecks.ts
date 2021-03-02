@@ -1,6 +1,6 @@
 import checkDiskSpace from "check-disk-space";
 import { getDockerRunning, getDockerVersion } from "./docker";
-import { getSrtoolRustcLatestVersion } from "./srtool";
+import { getSrtoolCurrentVersions, getSrtoolLatestVersion, getSrtoolRustcLatestVersion } from "./srtool";
 
 export enum CheckStatus {
     OK,
@@ -23,7 +23,7 @@ type AsyncCheckResult = Promise<CheckResult>;
 export default class InitCheck {
 
     /**
-     * Check whether or not the remaining disk space may become an issue
+     * Check whether or not the remaining disk space may become an issue.
      * @param dir 
      */
     public static async diskSpace(dir: string): AsyncCheckResult {
@@ -82,8 +82,9 @@ export default class InitCheck {
 
     /**
     * Check the latest srtool version from the repo.
+    * This will typically return something like `nightly-2021-02-25`.
     */
-    public static async srtoolImage(): AsyncCheckResult {
+    public static async srtoolLatestImage(): AsyncCheckResult {
         return new Promise(async (resolve, reject) => {
             const latestImage = await getSrtoolRustcLatestVersion();
 
@@ -91,6 +92,39 @@ export default class InitCheck {
                 resolve({ status: CheckStatus.OK, value: latestImage, message: `Latest srtool image: ${latestImage}` })
             } else {
                 resolve({ status: CheckStatus.ERROR, message: `Something went wrong while getting the latest image` })
+            }
+        })
+    }
+
+
+/**
+    * Check the latest srtool version from the repo.
+    * This will typically return something like `nightly-2021-02-25`.
+    */
+   public static async srtoolLatestversion(): AsyncCheckResult {
+    return new Promise(async (resolve, reject) => {
+        const latestVersion = await getSrtoolLatestVersion();
+
+        if (latestVersion) {
+            resolve({ status: CheckStatus.OK, value: latestVersion, message: `Latest srtool version: ${latestVersion}` })
+        } else {
+            resolve({ status: CheckStatus.ERROR, message: `Something went wrong while getting the latest version` })
+        }
+    })
+}
+
+    /**
+     * Check the srtool versions by querying `srtool version`.
+     * This returns both the image version (=rustc) as well as the srtool version (=script) itself.
+     */
+    public static async srtoolVersions(): AsyncCheckResult {
+        return new Promise(async (resolve, reject) => {
+            const versions = await getSrtoolCurrentVersions('nightly-2021-02-25'); // TODO: fixme, it should not be hardcoded
+
+            if (versions) {
+                resolve({ status: CheckStatus.OK, value: versions, message: `srtool version: ${JSON.stringify(versions)}` })
+            } else {
+                resolve({ status: CheckStatus.ERROR, message: `Something went wrong while getting the srtool version` })
             }
         })
     }

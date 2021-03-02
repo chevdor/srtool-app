@@ -15,8 +15,10 @@ class Status extends React.Component {
             <Box style={{ color: "yellow", marginRight: 20 }}>
               <Typography>Docker version: {context.docker_version}</Typography>
               <Typography>Docker running: {context.docker_running?.toString()}</Typography>
+              <Typography>srtool latest version: {context.srtool_latest_version}</Typography>
+              <Typography>srtool latest image: {context.srtool_latest_image}</Typography>
               <Typography>srtool version: {context.srtool_version}</Typography>
-              <Typography>rustc version: {context.srtool_version}</Typography>
+              <Typography>srtool image: {context.srtool_image}</Typography>
               <Typography>ready: {context.ready?.toString()}</Typography>
             </Box>
           );

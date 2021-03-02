@@ -153,8 +153,11 @@ class Init extends React.Component<Props, State> {
       dockerInstalledCheck.value !== null && dockerRunningCheck.value;
 
     this.nextStep(steps._4_get_latest_image_version);
-    const latestImageCheck = await InitCheck.srtoolImage();
-    context.setField({ srtool_version: latestImageCheck.value || null });
+    const latestVersionCheck = await InitCheck.srtoolLatestversion();
+    context.setField({ srtool_latest_version: latestVersionCheck.value });
+
+    const latestImageCheck = await InitCheck.srtoolLatestImage();
+    context.setField({ srtool_latest_image: latestImageCheck.value });
 
     if (docker_ok) {
       // TODO: here we could check if we already have it and skip ?
@@ -163,6 +166,10 @@ class Init extends React.Component<Props, State> {
     }
 
     this.nextStep(steps._6_getting_srtool_version);
+    const srtoolversionCheck = await InitCheck.srtoolVersions();
+    context.setField({ srtool_version: srtoolversionCheck.value.version });
+    context.setField({ srtool_image: srtoolversionCheck.value.rustc });
+
     context.setField({ ready: docker_ok });
 
     this.nextStep(steps._7_end);

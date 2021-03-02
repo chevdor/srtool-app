@@ -88,17 +88,20 @@ export async function getImage(tag: string): Promise<void> {
 
 /**
  * Get the current version of srtool while calling:
- * `srtool version`
+ * `srtool version` on the current image.
  */
 export async function getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersions> {
     let info: SrtoolVersions;
 
     return new Promise((resolve, reject) => {
-        let cmd = spawn("bash", ["-c", "docker version -f json"]); // TODO: fix that
+        const image = `chevdor/srtool:${tag}`
+        let cmd = spawn("bash", ["-c", `docker run ${image} version`]);
 
         cmd.stdout.on("data", (data: Buffer) => {
             // TODO: remove the following hack once https://github.com/docker/cli/issues/2981 is fixed
             info = JSON.parse(data.toString().split("\n")[0]);
+            console.log('info', info);
+            
             // info = JSON.parse(data.toString());
         });
 

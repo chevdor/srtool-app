@@ -13,12 +13,15 @@ export type Status = {
    * This should be confused with the docker image version. See `rustc`. */
   srtool_version: Version;
 
+  /** Latest version of srtool (script) according to the repo */
+  srtool_latest_version: Version;
+  
   /** The srtool docker images are named after the rustc version used in the image. It is critical that all users use the same
    * rustc version. So if we find a newer version, we need to strongly invite the user to upgrade. */
-  srtool_rustc: Version;
+  srtool_image: Version;
 
   /** The latest version of the image/rustc that is available. */
-  srtool_latest: Version;
+  srtool_latest_image: Version;
 
   /** If we detected no critical blocker, the app will be able to run and `ready` switches to true. */
   ready: boolean;
@@ -30,8 +33,9 @@ export const defaultStatusContext: Status = {
   docker_version: null, // null means we found no docker
   docker_running: true,
   srtool_version: null,
-  srtool_rustc: null,
-  srtool_latest: null,
+  srtool_latest_version: null,
+  srtool_image: null,
+  srtool_latest_image: null,
   ready: false,
   // setReady: (_: boolean) => {},
   setField: (_:Record<string, any>) => {},
