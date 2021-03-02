@@ -12,7 +12,7 @@ const Header = () => {
         </Typography>
       </Box>
 
-      <Box>
+      <Box width="400px">
         <Status />
       </Box>
 

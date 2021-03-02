@@ -1,9 +1,6 @@
 import React from "react";
 // import is from "electron-is";
-import StatusContext, {
-  defaultStatusContext,
-  Status,
-} from "../contexts/statusContext";
+import StatusContext, { Status } from "../contexts/statusContext";
 import {
   Box,
   CircularProgress,
@@ -12,12 +9,10 @@ import {
   Typography,
   WithStyles,
 } from "@material-ui/core";
-import { getDockerVersion, getDockerRunning } from "../lib/docker";
 import os from "os";
 import { withStyles } from "@material-ui/core/styles";
 import { getImage, getSrtoolRustcLatestVersion } from "../lib/srtool";
-import InitCheck, { CheckStatus } from "../lib/initChecks";
-import { Alert, AlertTitle } from "@material-ui/lab";
+import InitCheck, { CheckResult, CheckStatus } from "../lib/initChecks";
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;
@@ -198,8 +193,6 @@ class Init extends React.Component<Props, State> {
           >
             <CircularProgress
               style={{ margin: "40px", alignSelf: "center" }}
-              // variant={ready ? "determinate" : "indeterminate"}
-              // value={ready ? 100 : undefined}
               variant={this.state.determinate ? "determinate" : "indeterminate"}
               value={this.state.progress}
             />
@@ -215,7 +208,8 @@ class Init extends React.Component<Props, State> {
             </div>
             <div>docker running... {docker_running ? "Yes" : "No"}</div>
 
-            <Alert
+            {/* TODO: Hidden for now as it somehow does not hide as it should */}
+            {/* <Alert hidden={ this.state.step <= 5 }
               severity={ready ? "success" : "error"}
               color={ready ? "success" : "error"}
               style={{ margin: "20px" }}
@@ -224,7 +218,7 @@ class Init extends React.Component<Props, State> {
               Some of the checks failed so srtool cannot run any further.
               <br />
               Please check the messages above and restart srtool.
-            </Alert>
+            </Alert> */}
           </Box>
         </Box>
       )
