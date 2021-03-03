@@ -23,18 +23,32 @@ export type HistoryData = HistoryDataItem[];
  * it also allows not having to run again for a result we already have.
  */
 export default class History {
-    private _data : HistoryData;
+    private store = new Store<AppStorage>();
 
     constructor() {
-        const store = new Store<AppStorage>();
-        this._data = store.store.history;
-        console.log(`The history contains ${this._data.length} run(s).`);
+        this.show();
     }
 
-    public save(key: HistoryKey, data: SRToolResult):void {
+    private show(): void {
+        const { history } = this.store.store;
+        console.log(`The history currently contains ${history.length} run(s).`);
+    }
 
+    public save(key: HistoryKey, data: SRToolResult): void {
+        const { history } = this.store.store;
+
+        console.log('Saving to history');
+        this.show();
+        this.store.set('history', history)
+        this.show();
     }
 
     // to be continued
-
+    public clear(): void {
+        // TODO
+        this.show();
+        console.log('Clearing history');
+        this.store.reset('history')
+        this.show();
+    }
 }

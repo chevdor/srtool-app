@@ -31,13 +31,17 @@ class OutputConsole extends React.Component<any, any> {
     // let context = this.context;
 
     return (
-      <Box color="text.primary">
+      <Box
+        color="text.primary"
+        id="console-main"
+        style={{ border: "1px solid #999", borderRadius: "5px" }}
+      >
         <OutputContext.Consumer>
           {(context: any) => {
             // console.log('TRACE console', context.latest);
             const newOutputs = Outputs.addRecord(
               this.defaultOutputs,
-              OutputFactory.makeTextOutput( context.joinedMessages || '' )
+              OutputFactory.makeTextOutput(context.joinedMessages || "")
               // OutputFactory.makeTextOutput( context.messages.join('\n') )
             );
             const emulatorState = this.defaultState.setOutputs(newOutputs);

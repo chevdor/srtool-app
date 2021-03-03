@@ -5,6 +5,15 @@ import React from 'react';
 import * as Path from 'path'
 import { SRToolResultBuilder } from './message';
 
+export type RunParams = {
+    /** Those are the args for `docker run` */
+    docker_run: string[],
+    /** The image to be used */
+    image: string,
+    /** The args to pass to the image */
+    image_args: string[],
+}
+
 /**
  * The Runner is the class that is doing the work of calling
  * srtool.
@@ -45,9 +54,9 @@ export default class Runner extends React.Component<any, any> {
     }
 
     // @ts-ignore
-    public async run(): Promise<Result> {
+    public async run(p: RunParams): Promise<void> {
         const spawn = ChildProcess.spawn;
-        return new Promise<Result>((resolve, reject) => {
+        return new Promise((resolve, reject) => {
 
             console.log('Running with', this._settings);
             const timeoutDuration = this.settings.runner.watchDogDuration;
@@ -67,13 +76,16 @@ export default class Runner extends React.Component<any, any> {
             // replay of a real output, no docker, much faster...
 
             // TODO: make a test/dev container doing that
-            const replay = '/tmp/srtool-polkadot-0.8.28-nocolor.log';
-            console.log(`Using replay from ${replay}`);
-            const cmd = `awk '{print $0; system("sleep .005");}' ${replay}`
+            // const replay = '/tmp/srtool-polkadot-0.8.28-nocolor.log';
+            // console.log(`Using replay from ${replay}`);
+            // const cmd = `awk '{print $0; system("sleep .005");}' ${replay}`
 
             // real call to srtool (long...) 
             // const cmd = 'docker run --rm --name srtool srtool sh -c "sleep 1; date; sleep 1; date; sleep 2; date;"';
 
+            const cmd = `docker run ${p.docker_run.join(' ')} ${p.image} ${p.image_args.join(' ')}`
+            console.log(`command: ${cmd}`);
+            
             const s = spawn('bash', ['-c', cmd]);
 
             s.stdout.on("data", (data: Buffer) => {
@@ -102,13 +114,7 @@ export default class Runner extends React.Component<any, any> {
                 clearTimeout(timeoutHandle);
                 if (!code) {
                     console.info(`Exit code: ${code}`);
-                    const output = JSON.parse(lastLine);
-                    const result = SRToolResultBuilder.build(output)
-                    resolve({
-                        timestamp: new Date(),
-                        settings: this.settings,
-                        result,
-                    })
+                    resolve()
                 } else {
                     // console.error(`Exit code: ${code}`);
                     reject({

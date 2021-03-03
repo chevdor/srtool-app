@@ -4,11 +4,11 @@ import {
   OutputContext,
   OutputDataContextContent,
 } from "../contexts/outputContext";
-import BtnRun from "./runner";
 import OutputConsole from "./outputConsole";
 import SrtoolResultComp from "./result";
 import Latest from "./latest";
 import Verif from "./verif";
+import RunnerComp from "./runnerComp";
 
 export type MainCompProps = { visible: boolean };
 /**
@@ -25,7 +25,7 @@ class MainComp extends React.Component<MainCompProps, any> {
       <OutputContext.Consumer>
         {(_) => (
           <div>
-            <BtnRun />
+            <RunnerComp />
             <OutputConsole />
             {/* <Latest /> */}
             <SrtoolResultComp result={result} />
