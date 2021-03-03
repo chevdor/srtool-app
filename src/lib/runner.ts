@@ -4,6 +4,9 @@ import ChildProcess from 'child_process'
 import React from 'react';
 import * as Path from 'path'
 import { SRToolResultBuilder } from './message';
+import { Service } from './svc';
+import * as fs from 'fs'
+import * as util from 'util'
 
 export type RunParams = {
     /** Those are the args for `docker run` */
@@ -19,6 +22,7 @@ export type RunParams = {
  * srtool.
  */
 export default class Runner extends React.Component<any, any> {
+
     private _settings: Settings;
     private _onDataCb: (data: string) => void;
 
@@ -43,14 +47,63 @@ export default class Runner extends React.Component<any, any> {
      * repo: https://codeload.github.com/paritytech/polkadot
      * tag: v0.8.28
      * url: https://codeload.github.com/paritytech/polkadot/zip/v0.8.28
-     */
-    public async fetchVersion(repo: string, tag: string): Promise<void> {
-        console.log(`Fecthing tag ${tag} from ${repo}`);
-        const url = `${repo}/zip/${tag}`;
+      * @param owner 
+      * @param repo 
+      * @param tag 
+      */
+    public async fetchArchive(service: Service, owner: string, repo: string, tag: string): Promise<string> {
+
+        console.log(`Fetching tag ${tag} of ${owner}/${repo} from ${service}`);
+        if (service !== 'github') throw new Error(`${service} not supported yet`)
+        const url = `https://codeload.github.com/${owner}/${repo}/zip/${tag}`;
+        console.log(`Fetching from ${url}`);
+
+        const { writeFile } = require('fs');
+        const { promisify } = require('util');
+        const writeFilePromise = promisify(writeFile);
+
+        const outputFile = '/tmp/zip.zip'; // TODO: fix path
+
+        await fetch(url)
+            .then(x => x.arrayBuffer())
+            .then(x => writeFilePromise(outputFile, Buffer.from(x)));
+
+        return outputFile
     }
 
-    public async unzip(zipfile: string): Promise<void> {
-        console.log(`Unzipping ${zipfile}}`);
+    public async unzip(zipfile: string): Promise<string> {
+        console.log(`Unzipping ${zipfile}`);
+        throw new Error("Method not implemented.");
+
+        return '/path/of/the/unzipped/repo'
+    }
+
+    /**
+     * Delete the zip archive. You should do that after unzipping
+     * @param zipfile 
+     */
+    public async deleteZip(zipfile: string): Promise<void> {
+        console.log(`Deleting zip at ${zipfile}}`);
+        return new Promise((resolve, reject) => {
+            try {
+                fs.unlinkSync(zipfile);
+                resolve()
+            } catch (err) {
+                reject(err)
+            }
+        })
+    }
+
+
+    /**
+     * Delete folder where we worked.
+     * WARNING: Only call this in `httpGet` mode and NOT in `user` mode.
+     * @param folder 
+     */
+    public async cleanup(folder: string) {
+        console.log(`Deleting the whole folder ${folder}}`);
+
+        throw new Error("Method not implemented.");
     }
 
     // @ts-ignore
@@ -85,7 +138,7 @@ export default class Runner extends React.Component<any, any> {
 
             const cmd = `docker run ${p.docker_run.join(' ')} ${p.image} ${p.image_args.join(' ')}`
             console.log(`command: ${cmd}`);
-            
+
             const s = spawn('bash', ['-c', cmd]);
 
             s.stdout.on("data", (data: Buffer) => {

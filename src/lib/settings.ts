@@ -50,12 +50,7 @@ export type Settings = {
          * Otherwise, we take the value set by the user.
          */
         image: string;
-
-        /** This is mainly for debugging. If `command` is set, we will not use the regular
-         * docker run `image` but this `command` instead. This is useful to customuze how
-         * docker runs and not use the defaults, or simply not use docker at all for testing.
-         */
-        // command: string; // TODO: To be introduced later
+        
     };
     runner: {
         /** The building process can be long. If we do not get output after `watchDogDuration` ms, we
@@ -68,7 +63,7 @@ export type Settings = {
 export const defaultSettings: Settings = {
     local: {
         fetchMode: "httpGet",
-        projectPath: "/tmp/junk",
+        projectPath: os.tmpdir(),
         autoCleanup: true,
     },
     repo: {
@@ -79,8 +74,6 @@ export const defaultSettings: Settings = {
     srtool: {
         autoUpgrade: true,
         image: "chevdor/srtool:nightly-2021-02-25",
-        // TODO: To be introduced later
-        // command: 'awk '{print $0; system("sleep .005");}' /tmp/replay.log';
     },
     runner: {
         watchDogDuration: 60000,

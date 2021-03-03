@@ -72,22 +72,35 @@ export default class RunnerComp extends React.Component<any, State> {
     };
 
     const start = new Date();
-    await runner
-      // TODO: Fix args
-      .run({
-        docker_run: ["-v", "/tmp/srtool-polkadot-0.8.28-nocolor.log:/data.log"],
-        image: "busybox",
-        image_args: [
-          "awk",
-          "'{print $0; system(\"sleep .005\");}'",
-          "/data.log",
-        ],
-      })
-      .then((result) => {
-        console.info("Final Result", result);
-        this.setState({ finished: true });
-      })
-      .catch((_err) => console.error);
+    const zip = await runner.fetchArchive(
+      "github",
+      "paritytech",
+      "polkadot",
+      "v0.8.28"
+    );
+    console.log("zip located at", zip);
+    // const folder = await runner.unzip(zip);
+    // console.log("Unzipped in", folder);
+    await runner.deleteZip(zip);
+
+    // TODO: Fix args
+    // await runner.run({
+    //   docker_run: ["-v", "/tmp/srtool-polkadot-0.8.28-nocolor.log:/data.log"],
+    //   image: "busybox",
+    //   image_args: [
+    //     "awk",
+    //     "'{print $0; system(\"sleep .005\");}'",
+    //     "/data.log",
+    //   ],
+    // })
+    // .then((result) => {
+    //   console.info("Final Result", result);
+    //   this.setState({ finished: true });
+    // })
+    // .catch((_err) => console.error);
+
+    await runner.cleanup(folder);
+
     const end = new Date();
     console.log(`Duration: ${end.getTime() - start.getTime()} ms`);
   };
@@ -132,8 +145,9 @@ export default class RunnerComp extends React.Component<any, State> {
                   <Autocomplete
                     id="tag"
                     options={this.state.tags.filter(
-                      (tag: Tag) => tag.ref.indexOf("rc") < 0 ||
-                        this.state.includeRc && tag.ref.indexOf("rc") >= 0
+                      (tag: Tag) =>
+                        tag.ref.indexOf("rc") < 0 ||
+                        (this.state.includeRc && tag.ref.indexOf("rc") >= 0)
                     )}
                     getOptionLabel={(tag: Tag) => refToName(tag.ref)}
                     style={{ width: 300 }}
@@ -145,7 +159,8 @@ export default class RunnerComp extends React.Component<any, State> {
                     )}
                   />
 
-                  <FormControlLabel style={{color: "white"}}
+                  <FormControlLabel
+                    style={{ color: "white" }}
                     control={
                       <Switch
                         checked={this.state.includeRc}

@@ -22,7 +22,7 @@ export type HistoryData = HistoryDataItem[];
  * Allows storing, loading and searching previous runs.
  * it also allows not having to run again for a result we already have.
  */
-export default class History {
+export default class RunHistory {
     private store = new Store<AppStorage>();
 
     constructor() {
@@ -34,11 +34,12 @@ export default class History {
         console.log(`The history currently contains ${history.length} run(s).`);
     }
 
-    public save(key: HistoryKey, data: SRToolResult): void {
+    public addRun(key: HistoryKey, result: SRToolResult): void {
         const { history } = this.store.store;
 
         console.log('Saving to history');
         this.show();
+        history.push({key, result})
         this.store.set('history', history)
         this.show();
     }

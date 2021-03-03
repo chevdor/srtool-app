@@ -9,6 +9,10 @@ import SrtoolResultComp from "./result";
 import Latest from "./latest";
 import Verif from "./verif";
 import RunnerComp from "./runnerComp";
+import RunHistory, { HistoryKey } from "../lib/runHistory";
+import HistoryViewer from "./historyViewer";
+import { AppStorage } from "./types";
+import Store from "electron-store";
 
 export type MainCompProps = { visible: boolean };
 /**
@@ -17,22 +21,42 @@ export type MainCompProps = { visible: boolean };
 class MainComp extends React.Component<MainCompProps, any> {
   render() {
     const { visible } = this.props;
+    const store = new Store<AppStorage>();
 
     let context: OutputDataContextContent = this.context;
     const { result } = context;
 
+    // If we got a result, we add to the history
+    if (result) {
+      console.log("MainComp result", result);
+      const history = new RunHistory();
+
+      const historyKey: HistoryKey = {
+        srtoolImage: "chevdor/srtool:nightly-2021-02-25", // TODO: fix that and use real value
+        srtoolVersion: "0.9.6", // TODO: fix that and use real value => result.generator,
+        gitCommit: result.git.commit,
+        date: result.time,
+        package: result.package,
+      };
+
+      history.addRun(historyKey, result);
+    }
+
     return !visible ? null : (
-      <OutputContext.Consumer>
-        {(_) => (
-          <div>
-            <RunnerComp />
-            <OutputConsole />
-            {/* <Latest /> */}
-            <SrtoolResultComp result={result} />
-            {/* <Verif /> */}
-          </div>
-        )}
-      </OutputContext.Consumer>
+      <div>
+        <OutputContext.Consumer>
+          {(_) => (
+            <div>
+              <RunnerComp />
+              <OutputConsole />
+              {/* <Latest /> */}
+              <SrtoolResultComp result={result} />
+              {/* <Verif /> */}
+            </div>
+          )}
+        </OutputContext.Consumer>
+        { process.env.NODE_ENV === 'development' && ( <HistoryViewer history={store.store.history} /> )}
+      </div>
     );
   }
 }

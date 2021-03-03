@@ -13,7 +13,6 @@ import os from "os";
 import { withStyles } from "@material-ui/core/styles";
 import { getImage } from "../lib/srtool";
 import InitCheck, { CheckResult } from "../lib/initChecks";
-import Store from 'electron-store';
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;

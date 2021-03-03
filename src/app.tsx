@@ -104,13 +104,15 @@ class App extends React.Component<any, any> {
       },
     };
 
-    const store = new Store<AppStorage>();
+    const store = new Store<AppStorage>({
+      defaults: {
+        history: [],
+        settings: defaultSettings
+      }
+    });
 
-    // If the store is empty, init it
-    // if (!store.size) {
-      store.set("history", []);
-      store.set("settings", defaultSettings);
-    // }
+    // store.clear();
+
     console.log("appstorage", store);
   }
 
