@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
+import { BottomNavigation, BottomNavigationAction, Box, Typography } from "@material-ui/core";
 import {
   OutputContext,
   OutputDataContextContent,
@@ -13,7 +13,10 @@ import RunHistory, { HistoryKey } from "../lib/runHistory";
 import HistoryViewer from "./historyViewer";
 import { AppStorage } from "./types";
 import Store from "electron-store";
-
+import RestoreIcon from '@material-ui/icons/Restore';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import Footer from "./footer";
 export type MainCompProps = { visible: boolean };
 /**
  * Show the latest message
@@ -55,7 +58,18 @@ class MainComp extends React.Component<MainCompProps, any> {
             </div>
           )}
         </OutputContext.Consumer>
-        { process.env.NODE_ENV === 'development' && ( <HistoryViewer history={store.store.history} /> )}
+
+        {process.env.NODE_ENV === "development" && (
+          <HistoryViewer history={store.store.history} />
+        )}
+
+        {/* <BottomNavigation showLabels>
+          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+        </BottomNavigation> */}
+
+        <Footer/> 
       </div>
     );
   }

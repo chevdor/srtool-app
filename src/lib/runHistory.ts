@@ -24,6 +24,7 @@ export type HistoryData = HistoryDataItem[];
  */
 export default class RunHistory {
     private store = new Store<AppStorage>();
+    private maxRuns = 5; // TODO: get that from the settings
 
     constructor() {
         this.show();
@@ -40,6 +41,9 @@ export default class RunHistory {
         console.log('Saving to history');
         this.show();
         history.push({key, result})
+        while (history.length > this.maxRuns) {
+            history.shift()
+        }
         this.store.set('history', history)
         this.show();
     }

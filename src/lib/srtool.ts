@@ -95,7 +95,7 @@ export async function getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersi
 
     return new Promise((resolve, reject) => {
         const image = `chevdor/srtool:${tag}`
-        let cmd = spawn("bash", ["-c", `docker run ${image} version`]);
+        let cmd = spawn("bash", ["-c", `docker run --rm ${image} version`]);
 
         cmd.stdout.on("data", (data: Buffer) => {
             // TODO: remove the following hack once https://github.com/docker/cli/issues/2981 is fixed

@@ -17,6 +17,7 @@ import SettingsContext from "../contexts/settingsContext";
 import { Message, MessageBuilder } from "../lib/message";
 import { Autocomplete, AutocompleteChangeReason } from "@material-ui/lab";
 import VersionControlSystem, { Service, Tag } from "../lib/vcs";
+import { RunnerConfig } from "./runnerConfig";
 
 function showOS() {
   if (is.windows()) console.log("Windows");
@@ -62,6 +63,8 @@ export default class RunnerComp extends React.Component<any, State> {
     };
   }
 
+  // TODO: add a call to a new cleanup function that effectively stop any running srtool
+
   // function BtnRun() {
   run = async (addMessage: (_: Message) => void) => {
     console.log("Running docker");
@@ -79,39 +82,24 @@ export default class RunnerComp extends React.Component<any, State> {
       "v0.8.28",
     ];
 
-    const zip = await runner.fetchArchive(service, owner, repo, tag);
-    console.log("zip located at", zip);
-
     const workdir = "/tmp/srtool"; // TODO: use workdir instead
-    
-    console.log('Unzipping');
-    await runner.unzip(zip, workdir);
-    console.log('Unzipping done');
-    
-    
-    const folder = `${workdir}/${repo}-${tag.replace("v", "")}`; // TODO: meh....
-    console.log("Unzipped in", folder);
-    await runner.deleteZip(zip);
-
+    const folder = await runner.fetchSource(service, owner, repo, tag, workdir);
     // TODO: now set our src workdir to `folder`
-    
-    // TODO: Fix args
-    // await runner.run({
-    //   docker_run: ["-v", "/tmp/srtool-polkadot-0.8.28-nocolor.log:/data.log"],
-    //   image: "busybox",
-    //   image_args: [
-    //     "awk",
-    //     "'{print $0; system(\"sleep .005\");}'",
-    //     "/data.log",
-    //   ],
-    // })
-    // .then((result) => {
-    //   console.info("Final Result", result);
-    //   this.setState({ finished: true });
-    // })
-    // .catch((_err) => console.error);
 
-    await runner.cleanup(folder);
+    // TODO: Fix args
+    try {
+      const result = await runner.run(RunnerConfig.awk_01);
+      console.info("Final Result", result);
+      this.setState({ finished: true });
+    } catch (err: any) {
+      console.error(err);
+    }
+
+    if (false) {
+      await runner.cleanup(folder); // TODO: only do according to the settings
+    } else {
+      console.log("Skipping cleanup");
+    }
 
     const end = new Date();
     console.log(`Duration: ${end.getTime() - start.getTime()} ms`);
@@ -144,14 +132,15 @@ export default class RunnerComp extends React.Component<any, State> {
           <OutputContext.Consumer>
             {(output) => (
               <Box>
-                <TextField
+                {/* <TextField
                   id="base-url"
                   helperText="repo base url"
                   focused={false}
                   defaultValue={settings.repo.baseUrl}
                   fullWidth={true}
                   disabled={true}
-                ></TextField>
+                  hidden={true}
+                ></TextField> */}
 
                 <FormGroup row>
                   <Autocomplete

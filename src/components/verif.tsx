@@ -1,11 +1,6 @@
-import { Box, TextField, Typography } from "@material-ui/core";
+import { Box, TextField } from "@material-ui/core";
 import React from "react";
-import { createUseStyles } from "react-jss";
-import {
-  OutputContext,
-  OutputDataContextContent,
-} from "../contexts/outputContext";
-import { SRToolOutput, SRToolResult } from "../lib/message";
+import { OutputContext } from "../contexts/outputContext";
 
 /**
  * This component allows verifying (ie comparing the proposal hash)
@@ -24,7 +19,9 @@ class Verif extends React.Component<any, any> {
         {(context) => (
           <form noValidate autoComplete="off">
             <Box color="text.primary" style={{ padding: "20px" }}>
-              <label htmlFor="computed-proposal-hash">Proposal Hash from your run</label>
+              <label htmlFor="computed-proposal-hash">
+                Proposal Hash from your run
+              </label>
               <TextField
                 error={false}
                 id="computed-proposal-hash"
@@ -36,8 +33,11 @@ class Verif extends React.Component<any, any> {
                 fullWidth
               />
 
-              <br/><br/>
-              <label htmlFor="reference-proposal-hash">Reference to compare it to</label>
+              <br />
+              <br />
+              <label htmlFor="reference-proposal-hash">
+                Reference to compare it to
+              </label>
               <TextField
                 error={false}
                 id="reference-proposal-hash"

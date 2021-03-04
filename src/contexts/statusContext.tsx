@@ -36,7 +36,6 @@ export const defaultStatusContext: Status = {
   srtool_image: null,
   srtool_latest_image: null,
   ready: false,
-  // setReady: (_: boolean) => {},
   setField: (_:Record<string, any>) => {},
 };
 

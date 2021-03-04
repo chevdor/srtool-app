@@ -25,6 +25,16 @@ export type Settings = {
          * This will never be the case when `fetchMode` is set to `user`.
          */
         autoCleanup: boolean;
+
+        /**
+         * This is the path where we export the runtime we generated
+         */
+        exportFolder: string;
+
+        /**
+         * How many of the last runs do we keep
+         */
+        historyLimit: number;
     };
     repo: {
         /** This is the repo we pull the source from. For instance:
@@ -56,7 +66,7 @@ export type Settings = {
         /** The building process can be long. If we do not get output after `watchDogDuration` ms, we
          * consider the process dead. We need to set it big enough so it does not trigger on slow machines.
         */
-        watchDogDuration: number;
+        // watchDogDuration: number;
     }
 };
 
@@ -65,6 +75,8 @@ export const defaultSettings: Settings = {
         fetchMode: "httpGet",
         projectPath: os.tmpdir(),
         autoCleanup: true,
+        exportFolder: `${os.homedir()}/srtool`,
+        historyLimit: 30,
     },
     repo: {
         baseUrl: "https://github.com/paritytech/polkadot",
@@ -76,6 +88,6 @@ export const defaultSettings: Settings = {
         image: "chevdor/srtool:nightly-2021-02-25",
     },
     runner: {
-        watchDogDuration: 60000,
+        // watchDogDuration: 300e3, // TODO: remove that, it will never work, use docker inspect srtool | jq ".[].State" instead
     }
 };
