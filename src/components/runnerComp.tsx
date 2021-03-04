@@ -16,7 +16,7 @@ import {
 import SettingsContext from "../contexts/settingsContext";
 import { Message, MessageBuilder } from "../lib/message";
 import { Autocomplete, AutocompleteChangeReason } from "@material-ui/lab";
-import SourceVersionControl, { Tag } from "../lib/svc";
+import VersionControlSystem, { Service, Tag } from "../lib/vcs";
 
 function showOS() {
   if (is.windows()) console.log("Windows");
@@ -72,17 +72,29 @@ export default class RunnerComp extends React.Component<any, State> {
     };
 
     const start = new Date();
-    const zip = await runner.fetchArchive(
-      "github",
+    const [service, owner, repo, tag] = [
+      "github" as Service,
       "paritytech",
       "polkadot",
-      "v0.8.28"
-    );
+      "v0.8.28",
+    ];
+
+    const zip = await runner.fetchArchive(service, owner, repo, tag);
     console.log("zip located at", zip);
-    // const folder = await runner.unzip(zip);
-    // console.log("Unzipped in", folder);
+
+    const workdir = "/tmp/srtool"; // TODO: use workdir instead
+    
+    console.log('Unzipping');
+    await runner.unzip(zip, workdir);
+    console.log('Unzipping done');
+    
+    
+    const folder = `${workdir}/${repo}-${tag.replace("v", "")}`; // TODO: meh....
+    console.log("Unzipped in", folder);
     await runner.deleteZip(zip);
 
+    // TODO: now set our src workdir to `folder`
+    
     // TODO: Fix args
     // await runner.run({
     //   docker_run: ["-v", "/tmp/srtool-polkadot-0.8.28-nocolor.log:/data.log"],
@@ -114,7 +126,7 @@ export default class RunnerComp extends React.Component<any, State> {
   };
 
   async componentDidMount() {
-    const svc = new SourceVersionControl("github", "paritytech", "polkadot"); // TODO: fix hardcoded values
+    const svc = new VersionControlSystem("github", "paritytech", "polkadot"); // TODO: fix hardcoded values
     const tags = await svc.getTags();
     this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf("rc") < 0);
 

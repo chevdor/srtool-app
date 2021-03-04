@@ -1,12 +1,11 @@
-import { Result } from './result';
-import { defaultSettings, Settings } from './settings';
-import ChildProcess from 'child_process'
 import React from 'react';
-import * as Path from 'path'
-import { SRToolResultBuilder } from './message';
-import { Service } from './svc';
+import ChildProcess from 'child_process'
 import * as fs from 'fs'
-import * as util from 'util'
+import unzipper from 'unzipper'
+import { assert } from 'console';
+import { defaultSettings, Settings } from './settings';
+import VersionControlSystem, { Service } from './vcs';
+import del from 'del';
 
 export type RunParams = {
     /** Those are the args for `docker run` */
@@ -42,40 +41,44 @@ export default class Runner extends React.Component<any, any> {
     }
 
     /**
-     * Fetch a given version from a given repo adn store it in
+     * Fetch a given version from a given repo and store it in
      * our workDir.
      * repo: https://codeload.github.com/paritytech/polkadot
      * tag: v0.8.28
      * url: https://codeload.github.com/paritytech/polkadot/zip/v0.8.28
-      * @param owner 
-      * @param repo 
-      * @param tag 
+      * @param owner The owner of the repo. ie `paritytech`
+      * @param repo The repo name. ie `polkadot`
+      * @param tag The tag of the version to fetch
       */
     public async fetchArchive(service: Service, owner: string, repo: string, tag: string): Promise<string> {
-
-        console.log(`Fetching tag ${tag} of ${owner}/${repo} from ${service}`);
-        if (service !== 'github') throw new Error(`${service} not supported yet`)
-        const url = `https://codeload.github.com/${owner}/${repo}/zip/${tag}`;
-        console.log(`Fetching from ${url}`);
-
-        const { writeFile } = require('fs');
-        const { promisify } = require('util');
-        const writeFilePromise = promisify(writeFile);
-
-        const outputFile = '/tmp/zip.zip'; // TODO: fix path
-
-        await fetch(url)
-            .then(x => x.arrayBuffer())
-            .then(x => writeFilePromise(outputFile, Buffer.from(x)));
-
-        return outputFile
+        const vcs = new VersionControlSystem(service, owner, repo);
+        const destination = `/tmp/${owner}-${repo}-${tag}.zip`; // TODO: move to workdir
+        await vcs.fetchSourceArchive(tag, destination)
+        return destination
     }
 
-    public async unzip(zipfile: string): Promise<string> {
-        console.log(`Unzipping ${zipfile}`);
-        throw new Error("Method not implemented.");
+    public async fetchSource(service: Service, owner: string, repo: string, tag: string): Promise<string> {
+        const vcs = new VersionControlSystem(service, owner, repo);
+        const destination = `/tmp/`; // TODO: move to workdir
+        await vcs.fetchSource(tag, destination)
+        return destination
+    }
 
-        return '/path/of/the/unzipped/repo'
+
+    /**
+     * Unzip an archive 
+     * For instance `/tmp/myzip.zip` may unzip into `/tmp/polkadot-v0.28.8`
+     * @param zipfile ie `/tmp/myzip.zip`
+     */
+    public async unzip(zipfile: string, workdir: string): Promise<void> {
+        console.log(`Unzipping ${zipfile}`);
+        return new Promise((resolve, _reject) => {
+            fs.createReadStream(zipfile)
+                .pipe(unzipper.Extract({ path: workdir }))
+                .on('close', () => {
+                    resolve();
+                });
+        })
     }
 
     /**
@@ -83,7 +86,7 @@ export default class Runner extends React.Component<any, any> {
      * @param zipfile 
      */
     public async deleteZip(zipfile: string): Promise<void> {
-        console.log(`Deleting zip at ${zipfile}}`);
+        console.log(`Deleting zip at ${zipfile}`);
         return new Promise((resolve, reject) => {
             try {
                 fs.unlinkSync(zipfile);
@@ -94,16 +97,16 @@ export default class Runner extends React.Component<any, any> {
         })
     }
 
-
     /**
      * Delete folder where we worked.
      * WARNING: Only call this in `httpGet` mode and NOT in `user` mode.
      * @param folder 
      */
-    public async cleanup(folder: string) {
-        console.log(`Deleting the whole folder ${folder}}`);
-
-        throw new Error("Method not implemented.");
+    public async cleanup(folder: string): Promise<void> {
+        console.log(`Deleting the folder ${folder}`);
+        assert(folder.indexOf('/tmp') === 0, 'Trying to delete outside of /tmp ?'); 
+        const opt = { recursive: true, force: true };
+        return fs.promises.rmdir(folder, opt);
     }
 
     // @ts-ignore

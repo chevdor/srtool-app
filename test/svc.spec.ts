@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import SourceVersionControl from '../src/lib/svc';
+import SourceVersionControl from 'lib/vcs';
 
 // TODO: those fail but should pass
 describe('svc', () => {
