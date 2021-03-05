@@ -17,6 +17,7 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import Footer from "./footer";
+import SettingsComp from "./settingsComp";
 export type MainCompProps = { visible: boolean };
 /**
  * Show the latest message
@@ -59,9 +60,11 @@ class MainComp extends React.Component<MainCompProps, any> {
           )}
         </OutputContext.Consumer>
 
-        {process.env.NODE_ENV === "development" && (
-          <HistoryViewer history={store.store.history} />
-        )}
+        <SettingsComp />
+        
+        {/* {process.env.NODE_ENV === "development" && (
+           <HistoryViewer history={store.store.history} />
+        )} */}
 
         {/* <BottomNavigation showLabels>
           <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />

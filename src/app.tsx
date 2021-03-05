@@ -107,8 +107,8 @@ class App extends React.Component<any, any> {
     const store = new Store<AppStorage>({
       defaults: {
         history: [],
-        settings: defaultSettings
-      }
+        settings: defaultSettings,
+      },
     });
 
     // store.clear();

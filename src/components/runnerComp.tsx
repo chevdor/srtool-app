@@ -97,7 +97,7 @@ export default class RunnerComp extends React.Component<any, State> {
 
     // TODO: Fix args
     try {
-      const result = await runner.run(RunnerConfig.awk_01);
+      const result = await runner.run(RunnerConfig.srtool_2021_02_25);
       console.info("Final Result", result);
       this.setState({ finished: true });
     } catch (err: any) {

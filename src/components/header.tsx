@@ -1,5 +1,6 @@
 import { Box, Typography } from "@material-ui/core";
 import React from "react";
+import DockerStatus from "./dockerStatus";
 import Repo from "./repo";
 import Status from "./status";
 
@@ -10,6 +11,10 @@ const Header = () => {
         <Typography variant="h1" color="primary" component="h2" gutterBottom>
           srtool
         </Typography>
+      </Box>
+
+      <Box width="300px">
+        <DockerStatus />
       </Box>
 
       <Box width="400px">

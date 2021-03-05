@@ -1,9 +1,14 @@
 import { spawn } from 'child_process'
+import Docker, { DockerVersion } from "dockerode";
+import docker from './dockerapi'
 
 // TODO: replace cli calls by https://github.com/apocas/dockerode
 
+// TODO: swallow the dockerapi.ts here into a class
+
 /**
  * Returns the docker version that we found, or null.
+ * @deprecated use getDockerVersion2()
  */
 export async function getDockerVersion(): Promise<string | null> {
     let version: string | null = null;
@@ -31,6 +36,10 @@ export async function getDockerVersion(): Promise<string | null> {
     });
 }
 
+export async function getDockerVersion2(): Promise<string | null> {
+    let version: DockerVersion = await docker.version()
+    return version.Version
+}
 /**
  * Check whether the docker daemon is running or not
  */
