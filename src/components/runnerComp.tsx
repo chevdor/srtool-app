@@ -18,6 +18,7 @@ import { Message, MessageBuilder } from "../lib/message";
 import { Autocomplete, AutocompleteChangeReason } from "@material-ui/lab";
 import VersionControlSystem, { Service, Tag } from "../lib/vcs";
 import { RunnerConfig } from "./runnerConfig";
+import { RuntimePackage } from "../types";
 
 function showOS() {
   if (is.windows()) console.log("Windows");
@@ -34,6 +35,10 @@ export type State = {
   tags: Tag[];
   selectedTag: Tag | null;
   defaultTag: Tag | null;
+
+  packages: RuntimePackage[];
+  selectedPackage: RuntimePackage | null;
+
   finished: boolean;
   includeRc: boolean;
 };
@@ -57,8 +62,12 @@ export default class RunnerComp extends React.Component<any, State> {
     this.state = {
       tags: [],
       selectedTag: null,
-      finished: false,
       defaultTag: null,
+
+      packages: [],
+      selectedPackage: null,
+
+      finished: false,
       includeRc: false,
     };
   }
@@ -105,7 +114,7 @@ export default class RunnerComp extends React.Component<any, State> {
     console.log(`Duration: ${end.getTime() - start.getTime()} ms`);
   };
 
-  setSelected = (
+  setSelectedTag = (
     event: any,
     newTag: Tag | null,
     reason: AutocompleteChangeReason
@@ -113,12 +122,21 @@ export default class RunnerComp extends React.Component<any, State> {
     if (newTag) this.setState({ selectedTag: newTag });
   };
 
+  setSelectedPackage = (
+    event: any,
+    newPackage: RuntimePackage | null,
+    reason: AutocompleteChangeReason
+  ) => {
+    if (newPackage) this.setState({ selectedPackage: newPackage });
+  };
+
   async componentDidMount() {
     const svc = new VersionControlSystem("github", "paritytech", "polkadot"); // TODO: fix hardcoded values
     const tags = await svc.getTags();
+    const packages = ["polkadot-runtime", "kusama-runtime", "westend-runtime"]; // TODO: fetch the runtime packages from the repo
     this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf("rc") < 0);
 
-    this.setState({ tags });
+    this.setState({ tags, packages });
   }
 
   render() {
@@ -132,17 +150,44 @@ export default class RunnerComp extends React.Component<any, State> {
           <OutputContext.Consumer>
             {(output) => (
               <Box>
-                {/* <TextField
-                  id="base-url"
-                  helperText="repo base url"
-                  focused={false}
-                  defaultValue={settings.repo.baseUrl}
-                  fullWidth={true}
-                  disabled={true}
-                  hidden={true}
-                ></TextField> */}
+                <FormGroup row>
+                  <TextField
+                    id="base-url"
+                    helperText="repo base url"
+                    focused={false}
+                    defaultValue={settings.repo.baseUrl}
+                    disabled={true}
+                    style={{ width: "50%" }}
+                  ></TextField>
+                  <TextField
+                    id="base-url"
+                    helperText="repo base url"
+                    focused={false}
+                    defaultValue={settings.local.projectPath}
+                    // fullWidth={true}
+                    disabled={true}
+                    style={{ width: "50%" }}
+                  ></TextField>
+                </FormGroup>
 
                 <FormGroup row>
+                  <Autocomplete
+                    id="package"
+                    options={this.state.packages}
+                    // getOptionLabel={(package: any) => refToName(tag.ref)}
+                    style={{ width: 300 }}
+                    onChange={this.setSelectedPackage}
+                    disableClearable
+                    autoSelect
+                    defaultValue="kusama-runtime"
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        label="Package"
+                        variant="standard"
+                      />
+                    )}
+                  />
                   <Autocomplete
                     id="tag"
                     options={this.state.tags.filter(
@@ -152,7 +197,7 @@ export default class RunnerComp extends React.Component<any, State> {
                     )}
                     getOptionLabel={(tag: Tag) => refToName(tag.ref)}
                     style={{ width: 300 }}
-                    onChange={this.setSelected}
+                    onChange={this.setSelectedTag}
                     disableClearable
                     autoSelect
                     renderInput={(params: any) => (

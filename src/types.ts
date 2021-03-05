@@ -7,3 +7,8 @@ export type AppStorage = {
     settings: Settings,
     history: HistoryData
 }
+
+/**
+ * A Runtime Package, for instance `polkadot-runtime`.
+ */
+export type RuntimePackage = string;
