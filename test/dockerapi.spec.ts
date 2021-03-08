@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { DockerSystemInfo } from '../src/components/dockerStatus';
 import 'mocha';
 import docker from '../src/lib/dockerapi'
+import { getDockerRunning2 } from '../src/lib/docker';
 
 describe('dockerapi', () => {
   it('should get system info', async function () {
@@ -21,5 +22,9 @@ describe('dockerapi', () => {
     const containers = await docker.listContainers();
     const srtool = containers.find( c => c.Names.includes('/srtool'))
     console.log('srtool', srtool);   
+  });
+
+  it('should ping the docker daemon', async function () {
+    await getDockerRunning2();
   });
 });

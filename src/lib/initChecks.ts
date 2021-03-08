@@ -1,5 +1,5 @@
 import checkDiskSpace from "check-disk-space";
-import { getDockerRunning, getDockerVersion, getDockerVersion2 } from "./docker";
+import { getDockerRunning, getDockerVersion } from "./docker";
 import { getSrtoolCurrentVersions, getSrtoolLatestVersion, getSrtoolRustcLatestVersion } from "./srtool";
 
 export enum CheckStatus {
@@ -50,7 +50,7 @@ export default class InitCheck {
      */
     public static async dockerVersion(): AsyncCheckResult {
         return new Promise(async (resolve, reject) => {
-            const version = await getDockerVersion2();
+            const version = await getDockerVersion();
             if (version) {
                 resolve({ status: CheckStatus.OK, value: version, message: `Found version ${version}` })
             } else {
