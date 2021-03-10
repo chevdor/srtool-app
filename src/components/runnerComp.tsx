@@ -74,6 +74,16 @@ export default class RunnerComp extends React.Component<any, State> {
     };
   }
 
+  /**
+   * If everything went according to plan, this function should never have anything to do.
+   * If some srtool container was left behind however, we delete it before it causes issues.
+   */
+  async deleteSrtoolContainer():Promise<void> {
+    console.log('Deleting old `srtool` container if any can be found');
+    // TODO: Implement that
+    
+  }
+
   // TODO: add a call to a new cleanup function that effectively stop any running srtool
 
   // function BtnRun() {
@@ -105,7 +115,10 @@ export default class RunnerComp extends React.Component<any, State> {
     } catch (err: any) {
       console.error(err);
     }
+
     this.setState({ finished: true, running: false });
+
+    await deleteSrtoolContainer();
 
     if (false) {
       await runner.cleanup(folder); // TODO: only do according to the settings

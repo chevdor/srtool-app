@@ -77,6 +77,7 @@ class App extends React.Component<any, any> {
             (isResult(m.content) ? null : `\n${m.content}`),
           latest,
           result,
+          addMessage: this.addMessage,
         },
       }));
     };
