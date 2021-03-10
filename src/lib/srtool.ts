@@ -1,53 +1,9 @@
 import { spawn } from 'child_process'
+import { Writable } from 'stream';
+// import { Writable } from 'node:stream';
+// const { Readable } = require("stream")
 
-// TODO: replace cli calls by https://github.com/apocas/dockerode
-
-
-/**
- * Fetch the current of the Srtool APP from the package.json.
- */
-export async function getSrtoolAppCurrentVersion(): Promise<string> {
-    return new Promise((resolve) => {
-        const pkg = require("../../package.json");
-        resolve(pkg.version)
-    })
-}
-
-/**
- * Fetch the latest known version of the Srtool APP from the repo.
- */
-export async function getSrtoolAppLatestVersion(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-        const repo = "https://gitlab.com/chevdor/confmgr"; // TODO: fix this repo to srtool-app
-        const response = await fetch(`${repo}/-/raw/master/package.json`);
-        if (response.status == 200) {
-            const pkgJson = await response.text();
-            // const pkg = JSON.parse(pkgJson);
-            // resolve(pkg.version)
-            resolve("0.1.0") // TODO: stop returning a fake version once the repo is up
-        } else {
-            reject(new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`))
-        }
-    })
-}
-
-
-/**
- * Fetch the latest version of srtool (docker, not the App) from the repo.
- * This is actually the version of the build script inside the docker image.
- */
-export async function getSrtoolLatestVersion(): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-        const repo = "https://gitlab.com/chevdor/srtool";
-        const response = await fetch(`${repo}/-/raw/master/VERSION`);
-        if (response.status == 200) {
-            const version = await response.text();
-            resolve(version)
-        } else {
-            reject(new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`))
-        }
-    })
-}
+import DockerWrapper from './dockerWrapper';
 
 export type SrtoolVersions = {
     name: string;
@@ -55,84 +11,181 @@ export type SrtoolVersions = {
     rustc: string
 }
 
-
+// TODO: replace cli calls by https://github.com/apocas/dockerode
 /**
- * Calling this ensures we do have the expected `tag` version of the image or pulls it.
- * It also runs the `version` command and returns the result.
- * @param tag Expected version
+ * This class fetches and communicates with the srtool container
+ * and provides useful information from the repo such as the latest
+ * version available.
  */
-export async function getImage(tag: string): Promise<void> {
-    const image = `chevdor/srtool${tag ? ':' + tag : ''}`
-    console.log(`Getting image: ${image}`);
+export default class Srtool {
+    #docker: DockerWrapper;
 
-    return new Promise((resolve, reject) => {
-        let cmd = spawn("bash", ["-c", `docker pull -q ${image}`]);
+    constructor() {
+        this.#docker = new DockerWrapper();
+    }
 
-        cmd.stdout.on("data", (data: Buffer) => {
-            // TODO: remove the following hack once https://github.com/docker/cli/issues/2981 is fixed
-            // const txt = data.toString().split("\n")[0];
-        });
+    /**
+     * Fetch the current of the Srtool APP from the package.json.
+     */
+    async getSrtoolAppCurrentVersion(): Promise<string> {
+        return new Promise((resolve) => {
+            const pkg = require("../../package.json");
+            resolve(pkg.version)
+        })
+    }
 
-        cmd.stderr.on("data", (err: Error) => reject);
-
-        cmd.on("exit", (code: any) => {
-            if (!code) {
-                console.log(`Done getting ${image}`);
-                resolve();
+    /**
+     * Fetch the latest known version of the Srtool APP from the repo.
+     */
+    async getSrtoolAppLatestVersion(): Promise<string> {
+        return new Promise(async (resolve, reject) => {
+            const repo = "https://gitlab.com/chevdor/confmgr"; // TODO: fix this repo to srtool-app
+            const response = await fetch(`${repo}/-/raw/master/package.json`);
+            if (response.status == 200) {
+                const pkgJson = await response.text();
+                // const pkg = JSON.parse(pkgJson);
+                // resolve(pkg.version)
+                resolve("0.1.0") // TODO: stop returning a fake version once the repo is up
             } else {
-                reject(`Call returned error: ${code}`);
+                reject(new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`))
             }
-        });
-    });
-}
+        })
+    }
 
-/**
- * Get the current version of srtool while calling:
- * `srtool version` on the current image.
- */
-export async function getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersions> {
-    let info: SrtoolVersions;
+    /**
+     * Fetch the latest version of srtool (docker, not the App) from the repo.
+     * This is actually the version of the build script inside the docker image.
+     */
+    async getSrtoolLatestVersion(): Promise<string> {
+        const repo = "https://gitlab.com/chevdor/srtool";
+        const response = await fetch(`${repo}/-/raw/master/VERSION`);
 
-    return new Promise((resolve, reject) => {
-        const image = `chevdor/srtool:${tag}`
-        let cmd = spawn("bash", ["-c", `docker run --rm ${image} version`]);
+        if (response.status == 200) {
+            const version = await response.text();
+            return version.trimEnd();
+        } else {
+            throw new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`)
+        }
+    }
 
-        cmd.stdout.on("data", (data: Buffer) => {
-            // TODO: remove the following hack once https://github.com/docker/cli/issues/2981 is fixed
-            info = JSON.parse(data.toString().split("\n")[0]);
-            console.log('info', info);
+
+
+    /**
+     * Calling this ensures we do have the expected `tag` version of the image or pulls it.
+     * It also runs the `version` command and returns the result.
+     * @param tag Expected version
+     */
+    async getImage(tag: string): Promise<void> {
+        const image = `chevdor/srtool${tag ? ':' + tag : ''}`
+        console.info(`Getting image: ${image}`);
+
+        // let cmd = spawn("bash", ["-c", `docker pull -q ${image}`]);
+
+        // cmd.stdout.on("data", (data: Buffer) => {
+        //     // TODO: remove the following hack once https://github.com/docker/cli/issues/2981 is fixed
+        //     // const txt = data.toString().split("\n")[0];
+        // });
+
+        // cmd.stderr.on("data", (err: Error) => { throw err });
+
+        // cmd.on("exit", (code: any) => {
+        //     if (!code) {
+        //         console.log(`Done getting ${image}`);
+        //         return;
+        //     } else {
+        //         throw new Error(`Call returned error: ${code}`);
+        //     }
+        // });
+        return new Promise(async (resolve, _reject) => {
+            const docker = this.#docker.docker
+            // const stream = new Writable();
+            const StringDecoder = require('string_decoder').StringDecoder;
+            const decoder = new StringDecoder();
+            let output = ''
+
+            // stream._write = function write(doc: any, encoding: any, next: () => void) {
+            //     let result = decoder.write(doc);
+            //     output += result;
+            //     console.log(result);
+            //     next()
+            // };
+
+            console.log('pulling');
             
-            // info = JSON.parse(data.toString());
-        });
+            docker.pull(image, (err: any, stream: any) => {
+                if (err) console.error(err)
+                if (stream) console.log('stream', stream)
 
-        cmd.stderr.on("data", (err: Error) => reject);
+                function onFinished(err: any, output: any) {
+                    if (err) console.error(err)
+                    console.log('on Finished', output);
+                    resolve()
+                }
+    
+                function onProgress(event: any) {
+                    console.log('onProgress', event);
+                }
+    
+                docker.modem.followProgress(stream, onFinished, onProgress);
+            })
+    
+        })
+    }
 
-        cmd.on("exit", (code: any) => {
-            if (!code) {
-                resolve(info);
-            } else {
-                reject(`Call returned error: ${code}`);
-            }
-        });
-    });
-}
+    /**
+     * Get the current version of srtool while calling:
+     * `srtool version` on the current image.
+     */
+    // @ts-ignore
+    async getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersions> {
+        return new Promise((resolve, reject) => {
+            const image = `chevdor/srtool:${tag}`;
+            const cmd = ['version', '-cM'];
+            console.log(`checking version for ${image}`);
 
-/**
- * Fetch the latest version of the docker image for srtool from the repo.
- * This is the docker image tag and this is also the rustc version.
- */
-export async function getSrtoolRustcLatestVersion(): Promise<string> {
-    const repo = "https://gitlab.com/chevdor/srtool";
-    const url = `${repo}/-/raw/master/RUSTC_VERSION`;
-    console.log(`Getting latest image tag from ${url}`);
+            const outStream = new Writable();
+            const StringDecoder = require('string_decoder').StringDecoder;
+            const decoder = new StringDecoder();
+            let output = ''
 
-    return new Promise(async (resolve, reject) => {
+            outStream._write = function write(doc: any, encoding: any, next: () => void) {
+                let result = decoder.write(doc);
+                output += result;
+                next()
+            };
+
+            const handler = (error: any, data: any, container: any) => {
+                if (error) {
+                    reject(error)
+                } else {
+                    try {                        
+                        const info: SrtoolVersions = JSON.parse(output)
+                        resolve(info);
+                    } catch (e) {
+                        console.error(`Failed parsing json output from 'docker run ${image} ${cmd.join(' ')}'. You are likely running an image that is too old.`)
+                        reject(e)
+                    }
+                }
+            };
+            this.#docker.docker.run(image, cmd, outStream, { Tty: true, name: 'srtool-version', HostConfig: { AutoRemove: true }}, handler)
+        })
+    }
+
+    /**
+     * Fetch the latest version of the docker image for srtool from the repo.
+     * This is the docker image tag and this is also the rustc version.
+     */
+    async getSrtoolRustcLatestVersion(): Promise<string> {
+        const repo = "https://gitlab.com/chevdor/srtool";
+        const url = `${repo}/-/raw/master/RUSTC_VERSION`;
+        console.log(`Getting latest image tag from ${url}`);
+
         const response = await fetch(url);
         if (response.status == 200) {
             const version = await response.text();
-            resolve(version)
+            return version
         } else {
-            reject(new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`))
+            throw new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`)
         }
-    })
+    }
 }

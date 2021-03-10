@@ -2,7 +2,7 @@ import { Box } from "@material-ui/core";
 import React from "react";
 import semver from "semver";
 // import { net } from "electron";
-import { getSrtoolAppCurrentVersion, getSrtoolAppLatestVersion } from "../lib/srtool";
+import Srtool from "../lib/srtool";
 
 /**
  * This component checks whether an update is available
@@ -18,8 +18,9 @@ class VersionChecker extends React.Component<any, any> {
   }
 
   async componentDidMount() {
-    const latestVersion = await getSrtoolAppLatestVersion();
-    const currentVersion = await getSrtoolAppCurrentVersion();
+    const srtool = new Srtool();
+    const latestVersion = await srtool.getSrtoolAppLatestVersion();
+    const currentVersion = await srtool.getSrtoolAppCurrentVersion();
     this.setState({ currentVersion, latestVersion });
   }
 

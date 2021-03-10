@@ -11,8 +11,9 @@ import {
 } from "@material-ui/core";
 import os from "os";
 import { withStyles } from "@material-ui/core/styles";
-import { getImage } from "../lib/srtool";
+import getImage from "../lib/srtool";
 import InitCheck, { CheckResult } from "../lib/initChecks";
+import Srtool from "../lib/srtool";
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;
@@ -125,6 +126,8 @@ class Init extends React.Component<Props, State> {
   async run(context: Status) {
     console.log("Starting init checks");
     console.log("context", context);
+    const initCheck = new InitCheck();
+    const srtool = new Srtool();
 
     this.nextStep(steps._1_start);
     context.setField({ ready: false });
@@ -134,11 +137,11 @@ class Init extends React.Component<Props, State> {
     const _diskResult = await InitCheck.diskSpace(tmpdir);
 
     this.nextStep(steps._2_docker_installed);
-    const dockerInstalledCheck = await InitCheck.dockerVersion();
+    const dockerInstalledCheck = await initCheck.dockerVersion();
     context.setField({ docker_version: dockerInstalledCheck.value || null });
 
     this.nextStep(steps._3_docker_running);
-    const dockerRunningCheck = await InitCheck.dockerRunning();
+    const dockerRunningCheck = await initCheck.dockerRunning();
     console.log("dockerRunningCheck", dockerRunningCheck);
 
     context.setField({ docker_running: dockerRunningCheck.value });
@@ -147,20 +150,23 @@ class Init extends React.Component<Props, State> {
       dockerInstalledCheck.value !== null && dockerRunningCheck.value;
 
     this.nextStep(steps._4_get_latest_image_version);
-    const latestVersionCheck = await InitCheck.srtoolLatestversion();
+    const latestVersionCheck = await initCheck.srtoolLatestversion();
     context.setField({ srtool_latest_version: latestVersionCheck.value });
 
-    const latestImageCheck = await InitCheck.srtoolLatestImage();
+    const latestImageCheck = await initCheck.srtoolLatestImage();
     context.setField({ srtool_latest_image: latestImageCheck.value });
+    if (process.env.NODE_ENV === "development") context.setField({ srtool_latest_image: latestImageCheck.value + '-dev' });
 
-    if (docker_ok && process.env.NODE_ENV !== "development") {
-      // TODO: here we could check if we already have it and skip ?
-      this.nextStep(steps._5_get_latest_image);
-      await getImage(latestImageCheck.value);
+    if (docker_ok) {
+      // if (process.env.NODE_ENV !== "development") {
+        // TODO: here we could check if we already have it and skip ?
+        this.nextStep(steps._5_get_latest_image);
+        await srtool.getImage(latestImageCheck.value);
+      // }
     }
 
     this.nextStep(steps._6_getting_srtool_version);
-    const srtoolversionCheck = await InitCheck.srtoolVersions();
+    const srtoolversionCheck = await initCheck.srtoolVersions();
     context.setField({ srtool_version: srtoolversionCheck.value.version });
     context.setField({ srtool_image: srtoolversionCheck.value.rustc });
 
