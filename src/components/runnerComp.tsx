@@ -39,6 +39,7 @@ export type State = {
   packages: RuntimePackage[];
   selectedPackage: RuntimePackage | null;
 
+  running: boolean;
   finished: boolean;
   includeRc: boolean;
 };
@@ -67,6 +68,7 @@ export default class RunnerComp extends React.Component<any, State> {
       packages: [],
       selectedPackage: null,
 
+      running: false,
       finished: false,
       includeRc: false,
     };
@@ -77,6 +79,7 @@ export default class RunnerComp extends React.Component<any, State> {
   // function BtnRun() {
   run = async (addMessage: (_: Message) => void) => {
     console.log("Running docker");
+    this.setState({ running: true });
     const runner = new Runner();
 
     runner.onData = (data: string) => {
@@ -99,10 +102,10 @@ export default class RunnerComp extends React.Component<any, State> {
     try {
       const result = await runner.run(RunnerConfig.srtool_2021_02_25);
       console.info("Final Result", result);
-      this.setState({ finished: true });
     } catch (err: any) {
       console.error(err);
     }
+    this.setState({ finished: true, running: false });
 
     if (false) {
       await runner.cleanup(folder); // TODO: only do according to the settings
@@ -223,7 +226,7 @@ export default class RunnerComp extends React.Component<any, State> {
                     onClick={async () => {
                       await this.run(output.addMessage);
                     }}
-                    disabled={!this.state.selectedTag || this.state.finished}
+                    disabled={!this.state.selectedTag || this.state.running}
                   >
                     {!this.state.selectedTag
                       ? "Select a tag"

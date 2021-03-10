@@ -1,6 +1,9 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
-import { OutputContext } from "../contexts/outputContext";
+import {
+  OutputContext,
+  OutputDataContextContent,
+} from "../contexts/outputContext";
 import ReactTerminal from "react-terminal-component";
 import { EmulatorState, OutputFactory, Outputs } from "javascript-terminal";
 import { Box } from "@material-ui/core";

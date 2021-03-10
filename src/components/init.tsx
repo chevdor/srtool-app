@@ -65,7 +65,7 @@ const steps = {
   _5_get_latest_image: {
     step: 4,
     description:
-      "Fetching the latest srtool image. It can take a few minutes, be patient...",
+      "Fetching the latest srtool image. It takes a few minutes (depending on your connection), be patient...",
     progress: 25,
     determinate: false,
   },
