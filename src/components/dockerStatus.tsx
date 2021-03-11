@@ -63,7 +63,11 @@ export type DockerStats = {
 
 type State = DockerStats;
 
-// TODO: Query the API instead
+/**
+ * @deprecated, use the API instead
+ * @param cmd 
+ * @returns 
+ */
 async function queryDocker(cmd: string): Promise<any> {
   const spawn = ChildProcess.spawn;
   return new Promise((resolve, reject) => {
@@ -119,8 +123,8 @@ export default class DockerStatus extends React.Component<never, State> {
         pids: null,
       },
       systemInfo: {
-        ncpu: null,
-        memTotal: null,
+        NCPU: null,
+        MemTotal: null,
       },
     };
   }
@@ -130,6 +134,9 @@ export default class DockerStatus extends React.Component<never, State> {
     return 0;
   }
 
+  /** This function is called repeatedly while srtool is running into order to collect a few metrics
+   * It is mainly done to reinsure the user that "it is working" despite the process taking a long time.
+   */
   private async checkAgain(): Promise<void> {
     // docker inspect srtool | jq ".[].State"
     const cmdInspect = "docker inspect srtool";

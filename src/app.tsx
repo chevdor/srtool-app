@@ -16,6 +16,7 @@ import StatusContext from "./contexts/statusContext";
 import { AppStorage } from "./types";
 import Store from "electron-store";
 import { defaultSettings } from "./lib/settings";
+import { LoaderTargetPlugin } from "webpack";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -63,6 +64,8 @@ class App extends React.Component<any, any> {
         }
       };
 
+      // console.log(isResult(m.content) ? "R:" + m.content : "L:" + m);
+
       if (isResult(m.content)) {
         result = m.content;
       } else {
@@ -74,7 +77,7 @@ class App extends React.Component<any, any> {
           messages: getMessages(state.output.messages, m),
           joinedMessages:
             state.output.joinedMessages +
-            (isResult(m.content) ? null : `\n${m.content}`),
+            (isResult(m.content) ? "" : `${m.content}\n`),
           latest,
           result,
           addMessage: this.addMessage,
@@ -94,6 +97,7 @@ class App extends React.Component<any, any> {
         messages: [],
         latest: null,
         addMessage: this.addMessage,
+        joinedMessages: "",
       },
       status: {
         docker_version: null,

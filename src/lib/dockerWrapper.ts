@@ -46,4 +46,7 @@ export default class DockerWrapper {
             return false
         }
     }
+
+    // TODO: add and call function to list current images and containers. This should be done at startup to have it in the logs and troubleshoot potential issues.
+    // TODO: Another option is to provide a create log button that generates a report including the info above.
 }

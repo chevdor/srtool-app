@@ -1,5 +1,10 @@
 import React from "react";
-import { BottomNavigation, BottomNavigationAction, Box, Typography } from "@material-ui/core";
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  Typography,
+} from "@material-ui/core";
 import {
   OutputContext,
   OutputDataContextContent,
@@ -13,9 +18,9 @@ import RunHistory, { HistoryKey } from "../lib/runHistory";
 import HistoryViewer from "./historyViewer";
 import { AppStorage } from "./types";
 import Store from "electron-store";
-import RestoreIcon from '@material-ui/icons/Restore';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import RestoreIcon from "@material-ui/icons/Restore";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Footer from "./footer";
 import SettingsComp from "./settingsComp";
 export type MainCompProps = { visible: boolean };
@@ -61,7 +66,7 @@ class MainComp extends React.Component<MainCompProps, any> {
         </OutputContext.Consumer>
 
         <SettingsComp />
-        
+
         {/* {process.env.NODE_ENV === "development" && (
            <HistoryViewer history={store.store.history} />
         )} */}
@@ -72,7 +77,7 @@ class MainComp extends React.Component<MainCompProps, any> {
           <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
         </BottomNavigation> */}
 
-        <Footer/> 
+        <Footer />
       </div>
     );
   }

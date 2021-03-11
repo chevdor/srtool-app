@@ -79,14 +79,14 @@ export default class RunnerComp extends React.Component<any, State> {
   // function BtnRun() {
   run = async (addMessage: (_: Message) => void) => {
     const runner = new Runner();
-    
+
     // Prepare & cleanup Cleanup
     await runner.prepare();
-    
+
     runner.onData = (data: string) => {
       addMessage(MessageBuilder.build(data));
     };
-    
+
     const start = new Date();
     const [service, owner, repo, tag] = [
       "github" as Service,
@@ -94,7 +94,7 @@ export default class RunnerComp extends React.Component<any, State> {
       "polkadot",
       "v0.8.28",
     ];
-    
+
     this.setState({ running: true });
     const workdir = "/tmp/srtool"; // TODO: use workdir instead
     const folder = await runner.fetchSource(service, owner, repo, tag, workdir);
@@ -102,7 +102,7 @@ export default class RunnerComp extends React.Component<any, State> {
 
     // TODO: Fix args
     try {
-      const result = await runner.run(RunnerConfig.srtool_2021_02_25);
+      const result = await runner.run(RunnerConfig.srtool_2021_02_25_dev);
       console.info("Final Result", result);
     } catch (err: any) {
       console.error(err);

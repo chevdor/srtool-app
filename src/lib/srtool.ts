@@ -1,8 +1,5 @@
-import { spawn } from 'child_process'
 import Dockerode from 'dockerode';
 import { Writable } from 'stream';
-// import { Writable } from 'node:stream';
-// const { Readable } = require("stream")
 
 import DockerWrapper from './dockerWrapper';
 
@@ -69,8 +66,6 @@ export default class Srtool {
         }
     }
 
-
-
     /**
      * Calling this ensures we do have the expected `tag` version of the image or pulls it.
      * It also runs the `version` command and returns the result.
@@ -80,37 +75,11 @@ export default class Srtool {
         const image = `chevdor/srtool${tag ? ':' + tag : ''}`
         console.info(`Getting image: ${image}`);
 
-        // let cmd = spawn("bash", ["-c", `docker pull -q ${image}`]);
-
-        // cmd.stdout.on("data", (data: Buffer) => {
-        //     // TODO: remove the following hack once https://github.com/docker/cli/issues/2981 is fixed
-        //     // const txt = data.toString().split("\n")[0];
-        // });
-
-        // cmd.stderr.on("data", (err: Error) => { throw err });
-
-        // cmd.on("exit", (code: any) => {
-        //     if (!code) {
-        //         console.log(`Done getting ${image}`);
-        //         return;
-        //     } else {
-        //         throw new Error(`Call returned error: ${code}`);
-        //     }
-        // });
         return new Promise(async (resolve, _reject) => {
             const docker = this.#docker.docker
-            // const stream = new Writable();
             const StringDecoder = require('string_decoder').StringDecoder;
             const decoder = new StringDecoder();
             let output = ''
-
-            // stream._write = function write(doc: any, encoding: any, next: () => void) {
-            //     let result = decoder.write(doc);
-            //     output += result;
-            //     console.log(result);
-            //     next()
-            // };
-
             console.log('pulling');
 
             docker.pull(image, (err: any, stream: any) => {
@@ -129,7 +98,6 @@ export default class Srtool {
 
                 docker.modem.followProgress(stream, onFinished, onProgress);
             })
-
         })
     }
 

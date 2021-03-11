@@ -54,4 +54,19 @@ export const RunnerConfig = {
             "--app",
         ],
     },
+    srtool_2021_02_25_dev: {
+        docker_run: [
+            "-t",
+            "--name", "srtool",
+            // "-v", "/tmp/srtool/polkadot-0.8.28:/build",
+            // "-v", "/tmp/cargo:/cargo-home",
+            // "-e", "PACKAGE=polkadot-runtime",
+            "-e", "SLEEP=0.01",
+        ],
+        image: "chevdor/srtool-dev:nightly-2021-02-25",
+        image_args: [
+            "build",
+            "--app",
+        ],
+    }
 }

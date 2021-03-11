@@ -1,20 +1,20 @@
 import React from 'react';
-import ChildProcess from 'child_process'
 import * as fs from 'fs'
 import unzipper from 'unzipper'
 import { assert } from 'console';
 import { defaultSettings, Settings } from './settings';
 import VersionControlSystem, { Service } from './vcs';
-import del from 'del';
 import DockerWrapper from './dockerWrapper';
 import Dockerode from 'dockerode';
+import { Writable } from 'stream';
+import { isResult, SRToolOutput, SRToolResult } from './message';
 
 export type RunParams = {
-    /** Those are the args for `docker run` */
+    /** An array of args for `docker run`. Example: `['-t', '--name', 'foobar']`. @deprecated Use Dockerode.ContainerCreateOptions instead  */
     docker_run: string[],
-    /** The image to be used */
+    /** The image to be used. For instance: "chevdor/srtool:nightly-2021-02-25" */
     image: string,
-    /** The args to pass to the image */
+    /** The args to pass to the image. For instance: `['build', '--json']` */
     image_args: string[],
 }
 
@@ -137,7 +137,6 @@ export default class Runner extends React.Component<any, any> {
      */
     public async prepare(): Promise<void> {
         console.log('Deleting old `srtool` container if any can be found');
-        // TODO: Implement that
         const docker = this.#docker.docker;
 
         const containers = await docker.listContainers({ name: 'srtool' });
@@ -157,73 +156,80 @@ export default class Runner extends React.Component<any, any> {
         console.log('Done preparing');
     }
 
-    // @ts-ignore
-    public async run(p: RunParams): Promise<void> {
-        const spawn = ChildProcess.spawn;
+    /**
+     * This is the function that is actually running the srtool container.
+     * 
+     * @param p 
+     * @returns 
+     */
+    public async run(p: RunParams): Promise<SRToolOutput> {
+        const containerName = 'srtool'
+        const { image } = p;
+        const image_args = ['build', '--app']; // --app is critical! 
+
         return new Promise((resolve, reject) => {
+            const outStream = new Writable();
+            const StringDecoder = require('string_decoder').StringDecoder;
+            const decoder = new StringDecoder();
+            let output = ''
+            let lastLine = ''
 
-            console.log('Running with', this.#settings);
-            const errors: Error[] = [];
-            let lastLine: string;
+            outStream._write = (doc: any, _encoding: any, next: () => void) => {
+                let manyLines = decoder.write(doc);
+                // console.log('>', manyLines);
+                output += manyLines;
+                manyLines.split('\r\n')
+                    .filter((line: string | any[]) => line.length)
+                    .forEach((line: string) => {
+                        this.#onDataCb(line);
+                        lastLine = line;     // TODO: we could optimize here and set only the last one
 
-            // test call, fake output
-            // const cmd = 'docker run --rm --name srtool busybox sh -c "sleep 1; date; sleep 1; date; sleep 2; date; sleep 1; echo { \"x\": 42, \"test\": 23 }"';
-
-            // replay of a real output, no docker, much faster...
-
-            // TODO: make a test/dev container doing that
-            // const replay = '/tmp/srtool-polkadot-0.8.28-nocolor.log';
-            // console.log(`Using replay from ${replay}`);
-            // const cmd = `awk '{print $0; system("sleep .005");}' ${replay}`
-
-            // real call to srtool (long...) 
-            // const cmd = 'docker run --rm --name srtool srtool sh -c "sleep 1; date; sleep 1; date; sleep 2; date;"';
-
-            const cmd = `docker run --rm ${p.docker_run.join(' ')} ${p.image} ${p.image_args.join(' ')}`
-            console.log(`command: ${cmd}`);
-
-            const s = spawn('bash', ['-c', cmd]);
-
-            s.stdout.on("data", (data: Buffer) => {
-                if (this.#onDataCb) {
-                    data.toString().split('\r\n')
-                        .filter(line => line.length)
-                        .forEach((line: string) => {
-                            lastLine = line;
-                            this.#onDataCb(line);
-                        })
-                }
-            });
-
-            // Output on stderr, is not (yet) an error for us and we want to
-            // catch it to show it in our console. 
-            s.stderr.on("data", (data: Buffer) => {
-                if (this.#onDataCb) {
-                    data.toString().split('\r\n')
-                        .filter(line => line.length)
-                        .forEach((line: string) => {
-                            lastLine = line;
-                            this.#onDataCb('|' + line);
-                        })
-                }
-            });
-
-            s.on("exit", (code: any) => {
-                console.log('on exit', code);
-
-                if (!code) {
-                    console.info(`Exit code: ${code}`);
-                    resolve()
-                } else {
-                    // console.error(`Exit code: ${code}`);
-                    reject({
-                        exit_code: code,
-                        errors,
+                        if (isResult(lastLine)) {
+                            const result: SRToolOutput = JSON.parse(lastLine)
+                            resolve(result)
+                        }
                     })
-                }
+                next()
+            };
 
-                spawn('bash', ['-c', 'docker rm -f srtool']);
-            });
+            const handler = (error: any, data: any, container: any) => {
+                if (error) {
+                    reject(error)
+                } else {
+                    // console.log('handler data', data);
+                    const { StatusCode: code } = data;
+
+                    if (!data.StatusCode) {
+                        console.info(`Exit code: ${code}`);
+
+                    } else {
+                        reject({
+                            exit_code: code,
+                        })
+                    }
+                }
+            };
+
+            const create_options: Dockerode.ContainerCreateOptions = {
+                Tty: true,
+                name: containerName,
+                Labels: {
+                    app: 'srtool'
+                },
+                HostConfig: {
+                    AutoRemove: true,
+                    Binds: [
+                        '/tmp/srtool/polkadot-0.8.28:/build', // FIXME: /tmp/srtool/polkadot-0.8.28 should not be hard coded
+                        // '/tmp/cargo:/cargo-home',
+                    ],
+                },
+                Env: [
+                    'PACKAGE=polkadot-runtime', // TODO: FIX ME 
+                    'SLEEP=0.03', // this is for the srtool-dev image and will be ignored by the real srtool
+                ]
+            };
+
+            this.#docker.docker.run(image, image_args, outStream, create_options, handler)
         })
     }
 }
