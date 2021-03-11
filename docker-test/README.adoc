@@ -1,0 +1,8 @@
+= Docker test
+
+This folder contains a Dockerfile that **looks** like srtool but only replays runs without compiling anything.
+It makes it much lighter on CPU when you are testing but also much faster.
+
+It can be called exactly like the real `srtool` image except that the name is `srtool-dev`. Special options are managed using `ENV`.
+
+WARNING: This image does not provide a full mockup and most options/flags will be ignored. For instance the build will behave like calling srtool with `build --app` whatever options you pass.
