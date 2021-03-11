@@ -6,6 +6,8 @@ import { assert } from 'console';
 import { defaultSettings, Settings } from './settings';
 import VersionControlSystem, { Service } from './vcs';
 import del from 'del';
+import DockerWrapper from './dockerWrapper';
+import Dockerode from 'dockerode';
 
 export type RunParams = {
     /** Those are the args for `docker run` */
@@ -21,23 +23,24 @@ export type RunParams = {
  * srtool.
  */
 export default class Runner extends React.Component<any, any> {
-
-    private _settings: Settings;
-    private _onDataCb: (data: string) => void;
+    #settings: Settings;
+    #onDataCb: (data: string) => void;
+    #docker: DockerWrapper;
 
     constructor(props?: any) {
         super(props)
-        this._settings = defaultSettings; // TODO: we should be using the settings context here
-        this._onDataCb = (_data: string) => { };
+        this.#settings = defaultSettings; // TODO: we should be using the settings context here
+        this.#onDataCb = (_data: string) => { };
+        this.#docker = new DockerWrapper();
     }
 
     public set onData(cb: (data: string) => void) {
         if (!cb) throw new Error('Invalid onData callback')
-        this._onDataCb = cb;
+        this.#onDataCb = cb;
     }
 
     public get settings(): Settings {
-        return this._settings;
+        return this.#settings;
     }
 
     /**
@@ -129,12 +132,37 @@ export default class Runner extends React.Component<any, any> {
         return fs.promises.rmdir(folder, opt);
     }
 
+    /**
+     * If some srtool container was left behind however, we delete it before it causes issues.
+     */
+    public async prepare(): Promise<void> {
+        console.log('Deleting old `srtool` container if any can be found');
+        // TODO: Implement that
+        const docker = this.#docker.docker;
+
+        const containers = await docker.listContainers({ name: 'srtool' });
+        if (containers.length) {
+            console.log('Found old srtool container(s), cleaning up');
+            containers.forEach(async (containerInfo: Dockerode.ContainerInfo) => {
+                console.log(` - Dealing with ${containerInfo.Names.toString()} (${containerInfo.Id} from ${containerInfo.Image})`);
+                const container = docker.getContainer(containerInfo.Id)
+                // all of our containers start with --rm so it *should* be enough
+                await container.stop()
+                // however, the user may start srtool manually...
+                try {
+                    await container.remove()
+                } catch (_e) { }
+            })
+        }
+        console.log('Done preparing');
+    }
+
     // @ts-ignore
     public async run(p: RunParams): Promise<void> {
         const spawn = ChildProcess.spawn;
         return new Promise((resolve, reject) => {
 
-            console.log('Running with', this._settings);
+            console.log('Running with', this.#settings);
             const errors: Error[] = [];
             let lastLine: string;
 
@@ -157,12 +185,12 @@ export default class Runner extends React.Component<any, any> {
             const s = spawn('bash', ['-c', cmd]);
 
             s.stdout.on("data", (data: Buffer) => {
-                if (this._onDataCb) {
+                if (this.#onDataCb) {
                     data.toString().split('\r\n')
                         .filter(line => line.length)
                         .forEach((line: string) => {
                             lastLine = line;
-                            this._onDataCb(line);
+                            this.#onDataCb(line);
                         })
                 }
             });
@@ -170,12 +198,12 @@ export default class Runner extends React.Component<any, any> {
             // Output on stderr, is not (yet) an error for us and we want to
             // catch it to show it in our console. 
             s.stderr.on("data", (data: Buffer) => {
-                if (this._onDataCb) {
+                if (this.#onDataCb) {
                     data.toString().split('\r\n')
                         .filter(line => line.length)
                         .forEach((line: string) => {
                             lastLine = line;
-                            this._onDataCb('|' + line);
+                            this.#onDataCb('|' + line);
                         })
                 }
             });

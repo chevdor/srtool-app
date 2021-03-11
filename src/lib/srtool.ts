@@ -1,4 +1,5 @@
 import { spawn } from 'child_process'
+import Dockerode from 'dockerode';
 import { Writable } from 'stream';
 // import { Writable } from 'node:stream';
 // const { Readable } = require("stream")
@@ -111,7 +112,7 @@ export default class Srtool {
             // };
 
             console.log('pulling');
-            
+
             docker.pull(image, (err: any, stream: any) => {
                 if (err) console.error(err)
                 if (stream) console.log('stream', stream)
@@ -121,14 +122,14 @@ export default class Srtool {
                     console.log('on Finished', output);
                     resolve()
                 }
-    
+
                 function onProgress(event: any) {
                     console.log('onProgress', event);
                 }
-    
+
                 docker.modem.followProgress(stream, onFinished, onProgress);
             })
-    
+
         })
     }
 
@@ -138,6 +139,8 @@ export default class Srtool {
      */
     // @ts-ignore
     async getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersions> {
+        const containerName = 'srtool-version'
+
         return new Promise((resolve, reject) => {
             const image = `chevdor/srtool:${tag}`;
             const cmd = ['version', '-cM'];
@@ -158,7 +161,7 @@ export default class Srtool {
                 if (error) {
                     reject(error)
                 } else {
-                    try {                        
+                    try {
                         const info: SrtoolVersions = JSON.parse(output)
                         resolve(info);
                     } catch (e) {
@@ -167,7 +170,18 @@ export default class Srtool {
                     }
                 }
             };
-            this.#docker.docker.run(image, cmd, outStream, { Tty: true, name: 'srtool-version', HostConfig: { AutoRemove: true }}, handler)
+            const create_options: Dockerode.ContainerCreateOptions = {
+                Tty: true,
+                name: containerName,
+                Labels: {
+                    app: 'srtool'
+                },
+                HostConfig: {
+                    AutoRemove: true
+                }
+            };
+
+            this.#docker.docker.run(image, cmd, outStream, create_options, handler)
         })
     }
 

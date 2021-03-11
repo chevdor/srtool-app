@@ -74,28 +74,19 @@ export default class RunnerComp extends React.Component<any, State> {
     };
   }
 
-  /**
-   * If everything went according to plan, this function should never have anything to do.
-   * If some srtool container was left behind however, we delete it before it causes issues.
-   */
-  async deleteSrtoolContainer():Promise<void> {
-    console.log('Deleting old `srtool` container if any can be found');
-    // TODO: Implement that
-    
-  }
-
   // TODO: add a call to a new cleanup function that effectively stop any running srtool
 
   // function BtnRun() {
   run = async (addMessage: (_: Message) => void) => {
-    console.log("Running docker");
-    this.setState({ running: true });
     const runner = new Runner();
-
+    
+    // Prepare & cleanup Cleanup
+    await runner.prepare();
+    
     runner.onData = (data: string) => {
       addMessage(MessageBuilder.build(data));
     };
-
+    
     const start = new Date();
     const [service, owner, repo, tag] = [
       "github" as Service,
@@ -103,7 +94,8 @@ export default class RunnerComp extends React.Component<any, State> {
       "polkadot",
       "v0.8.28",
     ];
-
+    
+    this.setState({ running: true });
     const workdir = "/tmp/srtool"; // TODO: use workdir instead
     const folder = await runner.fetchSource(service, owner, repo, tag, workdir);
     // TODO: now set our src workdir to `folder`
@@ -117,8 +109,6 @@ export default class RunnerComp extends React.Component<any, State> {
     }
 
     this.setState({ finished: true, running: false });
-
-    await deleteSrtoolContainer();
 
     if (false) {
       await runner.cleanup(folder); // TODO: only do according to the settings
