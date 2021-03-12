@@ -7,25 +7,26 @@ import Store from 'electron-store';
 require("babel-polyfill");
 
 let mainWindow: Electron.BrowserWindow | null;
+const devMode = process.env.NODE_ENV === "development"
 
 function createWindow() {
   // TODO: remove that, this is just set for now to reduce the logs at start
-  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = (!devMode).toString();
 
   mainWindow = new BrowserWindow({
-    width: process.env.NODE_ENV === "development" ? 1800 : 1100,
-    height: process.env.NODE_ENV === "development" ? 1200 : 750,
+    width: devMode ? 1800 : 1200,
+    height: devMode ? 1200 : 900,
     backgroundColor: '#2222',
     minimizable: false,
     maximizable: false,
-    resizable: process.env.NODE_ENV === "development",
+    resizable: devMode,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
     },
   });
 
-  if (process.env.NODE_ENV === "development") {
+  if (devMode) {
     mainWindow.loadURL(`http://localhost:4000`);
     mainWindow.webContents.openDevTools();
   } else {
