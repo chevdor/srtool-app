@@ -17,7 +17,8 @@
     "dist:all": "npm run build && electron-builder build --mac --linux --win",
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
     "clean": "rm -rf node_modules build/{js,main.*,index.html} dist *.log",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "ci:test:mac": "gitlab-runner exec docker pack:mac"
   },
   "keywords": [],
   "author": "chevdor",
