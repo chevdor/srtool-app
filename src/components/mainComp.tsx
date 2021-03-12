@@ -18,11 +18,9 @@ import RunHistory, { HistoryKey } from "../lib/runHistory";
 import HistoryViewer from "./historyViewer";
 import { AppStorage } from "./types";
 import Store from "electron-store";
-import RestoreIcon from "@material-ui/icons/Restore";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import LocationOnIcon from "@material-ui/icons/LocationOn";
 import Footer from "./footer";
 import SettingsComp from "./settingsComp";
+import { SRToolResult } from "../lib/message";
 export type MainCompProps = { visible: boolean };
 /**
  * Show the latest message
@@ -50,6 +48,29 @@ class MainComp extends React.Component<MainCompProps, any> {
 
       history.addRun(historyKey, result);
     }
+
+    // The following is there for debugging
+    // TODO: remove debugging stuff !
+    // const result2: SRToolResult = {
+    //   generator: "srtool v0.9.6",
+    //   git: {
+    //     commit: "371681c298eb96b74ad04a09ca8097f19c777e68",
+    //     tag: "v0.8.28",
+    //     branch: "heads/v0.8.28",
+    //   },
+    //   rustc: "rustc 1.49.0-nightly (fd542592f 2020-10-26)",
+    //   package: "polkadot-runtime",
+    //   time: new Date(),
+    //   duration: 4980000,
+    //   size: 2151335,
+    //   proposalHash:
+    //     "0x8e2a831f00c994558f75a7a4ef1d71d173a87365079280952ec2a4b56a36275b",
+    //   sha256:
+    //     "887c755518ead3af05e95d0db16473e26a4bdcfd9ca4d45db88144bd10db26c1",
+    //   wasm: {
+    //     path: "/some/path/runtime.wasm",
+    //   },
+    // };
 
     return !visible ? null : (
       <div>
