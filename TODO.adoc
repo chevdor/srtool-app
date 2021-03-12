@@ -1,0 +1,32 @@
+= todo and plans, wishes and idea:
+
+Here is simply a bucket of ideas and no commitment regarding what and how features will be implemented.
+
+== Basic
+
+- [x] other users may not have git nor the will to install it. In this case, we can download the zip of a given tagged version
+- [x] we need to be able to fetch the list of available tags for the user to pick
+- [x] docker is mandatory so we need to check
+- [ ] copy / export report
+- [ ] check with release notes and show a big green box
+- [x] show progress during compile
+- [x] works on MacOS, Windows, Linux (check on Arm...)
+- [ ] link to tweet result
+- [x] check for available update
+- [x] run checks at start
+
+== Nice to have
+
+- [ ] show historical runs, recall them
+- [ ] record of previous runs duration
+- [ ] archive/export produced runtimes somewhere
+- [ ] load show runtime version release notes
+- [ ] dark/light mode
+
+== Advanced
+
+- [ ] allow background mode (slower but less taxing)
+- [ ] when picking a tag, the user should see the DATE of it
+- [ ] advanced users will simply checkout whatever commit ref
+- [ ] some users may have all the tools such as git & co. Those need to be able to pick the folder of their choice and we need to work there.
+- [ ] companion bin wrapper in Rust ?
