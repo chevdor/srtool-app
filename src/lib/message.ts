@@ -1,6 +1,4 @@
-
-export type Hash = string;
-export type ProposalHash = Hash;
+import { Hash, ProposalHash } from "../types";
 
 /**
  * Describes the json output as sent by srtool

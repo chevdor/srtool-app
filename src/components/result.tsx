@@ -1,8 +1,8 @@
-import { Box, Button, Typography } from "@material-ui/core";
 import React from "react";
-import { SRToolResult } from "../lib/message";
 import Hash from "./hash";
 import Pre from "./pre";
+import { Box, Button, Typography } from "@material-ui/core";
+import { SRToolResult } from "../lib/message";
 import { clipboard } from "electron";
 
 export type Props = {
@@ -76,7 +76,7 @@ class SrtoolResultComp extends React.Component<Props, never> {
     return result ? (
       <Box color="text.primary" style={{ margin: "20px" }}>
         <Button
-          style={{ border: "1px solid #ff9800", marginRight: '10px' }}
+          style={{ border: "1px solid #ff9800", marginRight: "10px" }}
           color="primary"
           onClick={() => {
             this.copyResultToClipboard(result, "text");
@@ -85,7 +85,7 @@ class SrtoolResultComp extends React.Component<Props, never> {
           Copy TXT
         </Button>
         <Button
-          style={{ border: "1px solid #ff9800", marginRight: '10px' }}
+          style={{ border: "1px solid #ff9800", marginRight: "10px" }}
           color="primary"
           onClick={() => {
             this.copyResultToClipboard(result, "markdown");
@@ -94,7 +94,7 @@ class SrtoolResultComp extends React.Component<Props, never> {
           Copy Markdown
         </Button>
         <Button
-          style={{ border: "1px solid #ff9800", marginRight: '10px' }}
+          style={{ border: "1px solid #ff9800", marginRight: "10px" }}
           color="primary"
           onClick={() => {
             this.copyResultToClipboard(result, "json");
@@ -103,9 +103,9 @@ class SrtoolResultComp extends React.Component<Props, never> {
           Copy JSON
         </Button>
 
-        {/* TODO: The following should be done within the 'Hash' component, or even for all fields ? */}
+        {/* TODO LATER: The following should be done within the 'Hash' component, or even for all fields ? */}
         <Button
-          style={{ border: "1px solid #ff9800", marginRight: '10px' }}
+          style={{ border: "1px solid #ff9800", marginRight: "10px" }}
           color="primary"
           onClick={() => {
             this.copyResultToClipboard(result, "proposalHash");

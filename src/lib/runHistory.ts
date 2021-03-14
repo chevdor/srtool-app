@@ -24,7 +24,7 @@ export type HistoryData = HistoryDataItem[];
  */
 export default class RunHistory {
     private store = new Store<AppStorage>();
-    private maxRuns = 5; // TODO: get that from the settings
+    private maxRuns = 5; // TODO LATER: get that from the settings
 
     constructor() {
         this.show();
@@ -48,9 +48,8 @@ export default class RunHistory {
         this.show();
     }
 
-    // to be continued
     public clear(): void {
-        // TODO
+        // TODO LATER: 
         this.show();
         console.log('Clearing history');
         this.store.reset('history')

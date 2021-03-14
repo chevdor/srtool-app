@@ -1,10 +1,9 @@
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { OutputContext } from "../contexts/outputContext";
-import ReactTerminal from "react-terminal-component";
 import { EmulatorState, OutputFactory, Outputs } from "javascript-terminal";
 import { Box } from "@material-ui/core";
-// import { Message } from "../lib/message";
+import ReactTerminal from "react-terminal-component";
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -25,11 +24,8 @@ class OutputConsole extends React.Component<any, any> {
     super(props);
   }
 
-  // TODO: The following is far from efficient over time as we recreate the whole output
+  // TODO LATER: The following is far from efficient over time as we recreate the whole output
   render() {
-    // let props = this.props;
-    // let context = this.context;
-
     return (
       <Box
         color="text.primary"
@@ -38,11 +34,9 @@ class OutputConsole extends React.Component<any, any> {
       >
         <OutputContext.Consumer>
           {(context: any) => {
-            // console.log('TRACE console', context.latest);
             const newOutputs = Outputs.addRecord(
               this.defaultOutputs,
               OutputFactory.makeTextOutput(context.joinedMessages || "")
-              // OutputFactory.makeTextOutput( context.messages.join('\n') )
             );
             const emulatorState = this.defaultState.setOutputs(newOutputs);
             return (
@@ -53,8 +47,6 @@ class OutputConsole extends React.Component<any, any> {
                   width: "100%",
                   "overflow-x": "hidden!important",
                 }}
-                // inputStr={context.messages.join("\n")}
-                // inputStr={context.latest}
                 emulatorState={emulatorState}
               />
             );

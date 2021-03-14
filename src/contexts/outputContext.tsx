@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Message, SRToolResult } from "../lib/message";
 
 export type OutputDataContextContent = {
@@ -13,7 +13,7 @@ export const OutputDataContextDefault = {
   messages: new Array(1024),
   latest: null,
   result: null,
-  joinedMessages: '', 
+  joinedMessages: "",
   addMessage: (m: Message) => {
     console.log("addMessage");
   },

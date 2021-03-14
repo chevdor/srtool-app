@@ -1,7 +1,6 @@
 import { Box } from "@material-ui/core";
 import React from "react";
 import semver from "semver";
-// import { net } from "electron";
 import Srtool from "../lib/srtool";
 
 /**

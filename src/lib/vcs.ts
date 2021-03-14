@@ -9,7 +9,6 @@ export type GithubTag = {
     }
 }
 
-// TODO: This is a tag for github, to see if we get similar with gitlab
 export type Tag = GithubTag;
 export type Service = 'github';
 
@@ -30,7 +29,8 @@ export default class VersionControlSystem {
     }
 
     /**
-     * Fetch the list of tags. it returns only the latest 30 tags.
+     * Fetch the list of tags. 
+     * WARNING: it returns only the latest 30 tags.
      */
     async getTags(): Promise<Tag[]> {
         return new Promise(async (resolve, reject) => {
@@ -41,10 +41,9 @@ export default class VersionControlSystem {
                 headers: { 'Content-Type': 'application/json' },
             });
 
-            // TODO: It would be nice to avoid getting all and truncating after
             if (response.status === 200) {
                 const json = await response.json();
-                const sorted = json.reverse().slice(0, 30); // TODO: we show only the last 30, we may want a setting for that or let the user use free text
+                const sorted = json.reverse().slice(0, 30);
                 resolve(sorted)
             } else {
                 reject(new Error(`Something went wrong fetching the tags from ${url}. Status: ${response.status}`))

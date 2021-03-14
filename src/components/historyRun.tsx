@@ -1,17 +1,14 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
-import { HistoryData, HistoryDataItem } from "../lib/runHistory";
+import { HistoryDataItem } from "../lib/runHistory";
 import Hash from "./hash";
 
 export type Props = {
   item: HistoryDataItem;
-
 };
 
+// TODO LATER: Open a modal showing the run result
 export class HistoryRun extends React.Component<Props, never> {
-  handleOpen = () => {
-    console.log("TODO: open a modal showing the run");
-  };
+  handleOpen = () => {};
 
   render() {
     const { item } = this.props;

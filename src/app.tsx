@@ -16,7 +16,6 @@ import StatusContext from "./contexts/statusContext";
 import { AppStorage } from "./types";
 import Store from "electron-store";
 import { defaultSettings } from "./lib/settings";
-import { LoaderTargetPlugin } from "webpack";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -63,8 +62,6 @@ class App extends React.Component<any, any> {
           return messages;
         }
       };
-
-      // console.log(isResult(m.content) ? "R:" + m.content : "L:" + m);
 
       if (isResult(m.content)) {
         result = m.content;

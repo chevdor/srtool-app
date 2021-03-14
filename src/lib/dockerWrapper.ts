@@ -1,5 +1,4 @@
-import Dockerode, { Container, DockerVersion } from "dockerode";
-import Docker from "dockerode";
+import Docker, { Container, DockerVersion } from "dockerode";
 
 /**
  * This class wraps the Docker API.
@@ -39,17 +38,14 @@ export default class DockerWrapper {
      */
     public async getContainer(): Promise<Container | null> {
         const opts = {
-            "limit": 1,
-            "filters": `{"name": ["${this.containerName}"]}`
+            limit: 1,
+            filters: { name: [this.containerName] }
         }
 
         const containers = await this.#docker.listContainers(opts);
 
         if (containers.length) {
-            console.log(`Found container ${containers[0].Names.join(',')} while searching for ${this.containerName}`);
             return this.#docker.getContainer(containers[0].Id)
-        } else {
-            console.log(`No container found while searching for ${this.containerName}`);
         }
         return null;
     }
@@ -77,6 +73,6 @@ export default class DockerWrapper {
         }
     }
 
-    // TODO: add and call function to list current images and containers. This should be done at startup to have it in the logs and troubleshoot potential issues.
-    // TODO: Another option is to provide a create log button that generates a report including the info above.
+    // TODO LATER: add and call function to list current images and containers. This should be done at startup to have it in the logs and troubleshoot potential issues.
+    // TODO LATER: Another option is to provide a create log button that generates a report including the info above.
 }

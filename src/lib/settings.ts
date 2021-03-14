@@ -1,7 +1,5 @@
 import os from 'os';
-
-export type KnownRuntime = 'kusama-runtime' | 'polkadot-runtime';
-export type Package = KnownRuntime | string;
+import { Package } from '../types';
 
 export type Settings = {
     local: {
@@ -60,14 +58,9 @@ export type Settings = {
          * Otherwise, we take the value set by the user.
          */
         image: string;
-        
+
     };
-    runner: {
-        /** The building process can be long. If we do not get output after `watchDogDuration` ms, we
-         * consider the process dead. We need to set it big enough so it does not trigger on slow machines.
-        */
-        // watchDogDuration: number;
-    }
+    runner: {}
 };
 
 export const defaultSettings: Settings = {
@@ -87,7 +80,5 @@ export const defaultSettings: Settings = {
         autoUpgrade: true,
         image: "chevdor/srtool:nightly-2021-02-25",
     },
-    runner: {
-        // watchDogDuration: 300e3, // TODO: remove that, it will never work, use docker inspect srtool | jq ".[].State" instead
-    }
+    runner: {}
 };

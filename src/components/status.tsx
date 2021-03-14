@@ -1,6 +1,6 @@
-import { Box, Typography } from "@material-ui/core";
-import React, { useContext } from "react";
+import React from "react";
 import StatusContext from "../contexts/statusContext";
+import { Box, Typography } from "@material-ui/core";
 
 class Status extends React.Component {
   render() {

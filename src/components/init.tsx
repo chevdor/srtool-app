@@ -1,5 +1,4 @@
 import React from "react";
-// import is from "electron-is";
 import StatusContext, { Status } from "../contexts/statusContext";
 import {
   Box,
@@ -11,7 +10,6 @@ import {
 } from "@material-ui/core";
 import os from "os";
 import { withStyles } from "@material-ui/core/styles";
-import getImage from "../lib/srtool";
 import InitCheck, { CheckResult } from "../lib/initChecks";
 import Srtool from "../lib/srtool";
 
@@ -33,9 +31,6 @@ export interface State {
   determinate: boolean;
   results: CheckResult[];
 }
-
-// TODO: check the docker version => is docker installed
-// TODO: run something like docker ps => is docker currently running
 
 const steps = {
   _1_start: {
@@ -132,8 +127,8 @@ class Init extends React.Component<Props, State> {
     this.nextStep(steps._1_start);
     context.setField({ ready: false });
 
-    // TODO: we may later want to add this check to the list
-    const tmpdir = os.tmpdir(); // TODO: use setting folder instead
+    // TODO LATER: we may later want to add this check to the list
+    const tmpdir = os.tmpdir(); // TODO WORKDIR: use setting folder instead
     const _diskResult = await InitCheck.diskSpace(tmpdir);
 
     this.nextStep(steps._2_docker_installed);
@@ -155,14 +150,14 @@ class Init extends React.Component<Props, State> {
 
     const latestImageCheck = await initCheck.srtoolLatestImage();
     context.setField({ srtool_latest_image: latestImageCheck.value });
-    if (process.env.NODE_ENV === "development") context.setField({ srtool_latest_image: latestImageCheck.value + '-dev' });
+    if (process.env.NODE_ENV === "development")
+      context.setField({
+        srtool_latest_image: latestImageCheck.value + "-dev",
+      });
 
     if (docker_ok) {
-      // if (process.env.NODE_ENV !== "development") {
-        // TODO: here we could check if we already have it and skip ?
-        this.nextStep(steps._5_get_latest_image);
-        await srtool.getImage(latestImageCheck.value);
-      // }
+      this.nextStep(steps._5_get_latest_image);
+      await srtool.getImage(latestImageCheck.value);
     }
 
     this.nextStep(steps._6_getting_srtool_version);
@@ -213,7 +208,7 @@ class Init extends React.Component<Props, State> {
             </div>
             <div>docker running... {docker_running ? "Yes" : "No"}</div>
 
-            {/* TODO: Hidden for now as it somehow does not hide as it should */}
+            {/* TODO LATER: Hidden for now as it somehow does not hide as it should */}
             {/* <Alert hidden={ this.state.step <= 5 }
               severity={ready ? "success" : "error"}
               color={ready ? "success" : "error"}

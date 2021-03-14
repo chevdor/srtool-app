@@ -123,7 +123,7 @@ export default class InitCheck {
      * This returns both the image version (=rustc) as well as the srtool version (=script) itself.
      */
     async srtoolVersions(): AsyncCheckResult {
-        const versions = await this.srtool.getSrtoolCurrentVersions('nightly-2021-02-25-dev'); // TODO: fixme, it should not be hardcoded
+        const versions = await this.srtool.getSrtoolCurrentVersions('nightly-2021-02-25-dev'); // TODO NOW: fixme, it should not be hardcoded
 
         if (versions) {
             return { status: CheckStatus.OK, value: versions, message: `srtool version: ${JSON.stringify(versions)}` }

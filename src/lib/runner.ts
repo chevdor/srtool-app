@@ -29,7 +29,7 @@ export default class Runner extends React.Component<any, any> {
 
     constructor(props?: any) {
         super(props)
-        this.#settings = defaultSettings; // TODO: we should be using the settings context here
+        this.#settings = defaultSettings; // TODO NOW: we should be using the settings context here
         this.#onDataCb = (_data: string) => { };
         this.#docker = new DockerWrapper();
     }
@@ -55,7 +55,7 @@ export default class Runner extends React.Component<any, any> {
       */
     private async fetchArchive(service: Service, owner: string, repo: string, tag: string): Promise<string> {
         const vcs = new VersionControlSystem(service, owner, repo);
-        const destination = `/tmp/${owner}-${repo}-${tag}.zip`; // TODO: move to workdir
+        const destination = `/tmp/${owner}-${repo}-${tag}.zip`; // TODO WORKDIR: move to workdir
         await vcs.fetchSourceArchive(tag, destination)
         return destination
     }
@@ -101,11 +101,6 @@ export default class Runner extends React.Component<any, any> {
      * @param tag 
      */
     public async fetchSource(service: Service, owner: string, repo: string, tag: string, workdir: string): Promise<string> {
-        // const vcs = new VersionControlSystem(service, owner, repo);
-        // const destination = `/tmp/`; // TODO: move to workdir
-        // await vcs.fetchSource(tag, destination)
-        // return destination
-
         const zip = await this.fetchArchive(service, owner, repo, tag);
         console.log("zip located at", zip);
 
@@ -113,7 +108,7 @@ export default class Runner extends React.Component<any, any> {
         await this.unzip(zip, workdir);
         console.log('Unzipping done');
 
-        const folder = `${workdir}/${repo}-${tag.replace("v", "")}`; // TODO: meh....
+        const folder = `${workdir}/${repo}-${tag.replace("v", "")}`; // TODO WORKDIR: meh....
         console.log("Unzipped in", folder);
         await this.deleteZip(zip);
 
@@ -177,7 +172,7 @@ export default class Runner extends React.Component<any, any> {
                     .filter((line: string | any[]) => line.length)
                     .forEach((line: string) => {
                         this.#onDataCb(line);
-                        lastLine = line;     // TODO: we could optimize here and set only the last one
+                        lastLine = line;     // TODO LATER: we could optimize here and set only the last one
 
                         if (isResult(lastLine)) {
                             const result: SRToolOutput = JSON.parse(lastLine)
@@ -214,12 +209,12 @@ export default class Runner extends React.Component<any, any> {
                 HostConfig: {
                     AutoRemove: true,
                     Binds: [
-                        '/tmp/srtool/polkadot-0.8.28:/build', // FIXME: /tmp/srtool/polkadot-0.8.28 should not be hard coded
+                        '/tmp/srtool/polkadot-0.8.28:/build', // FIXME WORKDIR: /tmp/srtool/polkadot-0.8.28 should not be hard coded
                         // '/tmp/cargo:/cargo-home',
                     ],
                 },
                 Env: [
-                    'PACKAGE=polkadot-runtime', // TODO: FIX ME 
+                    'PACKAGE=polkadot-runtime', // FIXME NOW: use value from the settings / user selection 
                     'SLEEP=0.03', // this is for the srtool-dev image and will be ignored by the real srtool
                 ]
             };

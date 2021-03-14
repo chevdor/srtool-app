@@ -9,7 +9,6 @@ import {
  */
 class Latest extends React.Component<any, any> {
   render() {
-    // let props = this.props;
     let context = this.context;
     const latest = context.latest;
 

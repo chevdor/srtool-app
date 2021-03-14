@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext } from "react";
 import is from "electron-is";
 import {
   Box,
@@ -74,9 +74,6 @@ export default class RunnerComp extends React.Component<any, State> {
     };
   }
 
-  // TODO: add a call to a new cleanup function that effectively stop any running srtool
-
-  // function BtnRun() {
   run = async (addMessage: (_: Message) => void) => {
     const runner = new Runner();
 
@@ -96,11 +93,11 @@ export default class RunnerComp extends React.Component<any, State> {
     ];
 
     this.setState({ running: true });
-    const workdir = "/tmp/srtool"; // TODO: use workdir instead
+    const workdir = "/tmp/srtool"; // TODO WORKDIR: use workdir instead
     const folder = await runner.fetchSource(service, owner, repo, tag, workdir);
-    // TODO: now set our src workdir to `folder`
+    // TODO WORKDIR: now set our src workdir to `folder`
 
-    // TODO: Fix args
+    // TODO IMAGE: Fix args
     try {
       const result = await runner.run(RunnerConfig.srtool_2021_02_25_dev);
       console.info("Final Result", result);
@@ -111,7 +108,7 @@ export default class RunnerComp extends React.Component<any, State> {
     this.setState({ finished: true, running: false });
 
     if (false) {
-      await runner.cleanup(folder); // TODO: only do according to the settings
+      await runner.cleanup(folder); // TODO WORKDIR: only do according to the settings
     } else {
       console.log("Skipping cleanup");
     }
@@ -137,9 +134,9 @@ export default class RunnerComp extends React.Component<any, State> {
   };
 
   async componentDidMount() {
-    const svc = new VersionControlSystem("github", "paritytech", "polkadot"); // TODO: fix hardcoded values
+    const svc = new VersionControlSystem("github", "paritytech", "polkadot"); // TODO LATER: fix hardcoded values
     const tags = await svc.getTags();
-    const packages = ["polkadot-runtime", "kusama-runtime", "westend-runtime"]; // TODO: fetch the runtime packages from the repo
+    const packages = ["polkadot-runtime", "kusama-runtime", "westend-runtime"]; // TODO LATER: fetch the runtime packages from the repo
     this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf("rc") < 0);
 
     this.setState({ tags, packages });
@@ -170,7 +167,6 @@ export default class RunnerComp extends React.Component<any, State> {
                     helperText="Project Path"
                     focused={false}
                     defaultValue={settings.local.projectPath}
-                    // fullWidth={true}
                     disabled={true}
                     style={{ width: "50%" }}
                   ></TextField>
@@ -179,7 +175,6 @@ export default class RunnerComp extends React.Component<any, State> {
                     helperText="Docker image"
                     focused={false}
                     defaultValue={settings.srtool.image}
-                    // fullWidth={true}
                     disabled={process.env.NODE_ENV !== "development"}
                     style={{ width: "50%" }}
                   ></TextField>

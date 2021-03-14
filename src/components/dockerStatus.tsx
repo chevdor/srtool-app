@@ -2,7 +2,7 @@ import React from "react";
 import { Box, CircularProgress, Typography } from "@material-ui/core";
 import DockerWrapper from "../lib/dockerWrapper";
 
-// TODO: Dockerode likely defined this type already
+// TODO LATER: Dockerode likely defined this type already
 export type DockerInspectContent = {
   Status: string;
   Running: boolean;

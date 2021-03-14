@@ -1,6 +1,5 @@
-import Dockerode from 'dockerode';
 import { Writable } from 'stream';
-
+import Dockerode from 'dockerode';
 import DockerWrapper from './dockerWrapper';
 
 export type SrtoolVersions = {
@@ -9,7 +8,6 @@ export type SrtoolVersions = {
     rustc: string
 }
 
-// TODO: replace cli calls by https://github.com/apocas/dockerode
 /**
  * This class fetches and communicates with the srtool container
  * and provides useful information from the repo such as the latest
@@ -37,13 +35,13 @@ export default class Srtool {
      */
     async getSrtoolAppLatestVersion(): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            const repo = "https://gitlab.com/chevdor/confmgr"; // TODO: fix this repo to srtool-app
+            const repo = "https://gitlab.com/chevdor/confmgr"; // TODO SOON: fix this repo to srtool-app
             const response = await fetch(`${repo}/-/raw/master/package.json`);
             if (response.status == 200) {
                 const pkgJson = await response.text();
                 // const pkg = JSON.parse(pkgJson);
                 // resolve(pkg.version)
-                resolve("0.1.0") // TODO: stop returning a fake version once the repo is up
+                resolve("0.1.0") // TODO SOON: stop returning a fake version once the repo is up
             } else {
                 reject(new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`))
             }
@@ -105,7 +103,6 @@ export default class Srtool {
      * Get the current version of srtool while calling:
      * `srtool version` on the current image.
      */
-    // @ts-ignore
     async getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersions> {
         const containerName = 'srtool-version'
 

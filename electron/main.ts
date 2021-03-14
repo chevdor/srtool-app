@@ -10,9 +10,6 @@ let mainWindow: Electron.BrowserWindow | null;
 const devMode = process.env.NODE_ENV === "development"
 
 function createWindow() {
-  // TODO: remove that, this is just set for now to reduce the logs at start
-  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = (!devMode).toString();
-
   mainWindow = new BrowserWindow({
     width: devMode ? 1080 : 1200,
     height: devMode ? 650 : 900,
