@@ -137,21 +137,16 @@ export default class Runner extends React.Component<any, any> {
      */
     public async prepare(): Promise<void> {
         console.log('Deleting old `srtool` container if any can be found');
-        const docker = this.#docker.docker;
 
-        const containers = await docker.listContainers({ name: 'srtool' });
-        if (containers.length) {
-            console.log('Found old srtool container(s), cleaning up');
-            containers.forEach(async (containerInfo: Dockerode.ContainerInfo) => {
-                console.log(` - Dealing with ${containerInfo.Names.toString()} (${containerInfo.Id} from ${containerInfo.Image})`);
-                const container = docker.getContainer(containerInfo.Id)
-                // all of our containers start with --rm so it *should* be enough
-                await container.stop()
-                // however, the user may start srtool manually...
-                try {
-                    await container.remove()
-                } catch (_e) { }
-            })
+        const container = await this.#docker.getContainer()
+        
+        if (container) {
+            await container.stop()
+            // all of our containers start with --rm so it *should* be enough
+            // however, the user may start srtool manually...
+            try {
+                await container.remove()
+            } catch (_e) { }
         }
         console.log('Done preparing');
     }

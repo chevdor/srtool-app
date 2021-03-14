@@ -1,10 +1,11 @@
-import { DockerVersion } from "dockerode";
+import Dockerode, { Container, DockerVersion } from "dockerode";
 import Docker from "dockerode";
 
 /**
  * This class wraps the Docker API.
  */
 export default class DockerWrapper {
+
     #docker: Docker;
 
     /** Docker API wrapper */
@@ -20,10 +21,39 @@ export default class DockerWrapper {
         this.#docker = new Docker(options);
     }
 
-    public get docker() : Docker {
+    public get docker(): Docker {
         return this.#docker;
     }
-    
+
+    /**
+     * Return the name of the srtool container.
+     * Usually simply 'srtool'.
+     */
+    public get containerName() {
+        return 'srtool'
+    }
+
+    /**
+     * Return the srtool container if we can find it
+     * @returns 
+     */
+    public async getContainer(): Promise<Container | null> {
+        const opts = {
+            "limit": 1,
+            "filters": `{"name": ["${this.containerName}"]}`
+        }
+
+        const containers = await this.#docker.listContainers(opts);
+
+        if (containers.length) {
+            console.log(`Found container ${containers[0].Names.join(',')} while searching for ${this.containerName}`);
+            return this.#docker.getContainer(containers[0].Id)
+        } else {
+            console.log(`No container found while searching for ${this.containerName}`);
+        }
+        return null;
+    }
+
     /**
      * Returns the detected Docker version.
      * We use that to check whether or not Docker is installed at all.

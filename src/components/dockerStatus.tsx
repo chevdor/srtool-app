@@ -1,44 +1,17 @@
 import React from "react";
 import { Box, CircularProgress, Typography } from "@material-ui/core";
-import ChildProcess from "child_process";
-import Docker from "dockerode";
+import DockerWrapper from "../lib/dockerWrapper";
 
-// docker inspect srtool | jq ".[].State"
-//   {
-//     "Status": "running",
-//     "Running": true,
-//     "Paused": false,
-//     "Restarting": false,
-//     "OOMKilled": false,
-//     "Dead": false,
-//     "Pid": 39109,
-//     "ExitCode": 0,
-//     "Error": "",
-//     "StartedAt": "2021-03-05T15:46:29.9761637Z",
-//     "FinishedAt": "0001-01-01T00:00:00Z"
-//   }
-
-// docker stats --no-stream --format "{{json .}}" srtool | jq
-// {
-//   "BlockIO": "337MB / 410kB",
-//   "CPUPerc": "140.75%",
-//   "Container": "srtool",
-//   "ID": "2d4641575c10",
-//   "MemPerc": "14.25%",
-//   "MemUsage": "1.108GiB / 7.778GiB",
-//   "Name": "srtool",
-//   "NetIO": "175MB / 1.15MB",
-//   "PIDs": "27"
-// }
-
+// TODO: Dockerode likely defined this type already
 export type DockerInspectContent = {
-  status: string;
-  running: boolean;
-  paused: boolean;
-  error: string;
-  startedAt: Date | null;
-  finishedAt: Date | null;
+  Status: string;
+  Running: boolean;
+  Paused: boolean;
+  Error: string;
+  StartedAt: string | null;
+  FinishedAt: string | null;
 };
+
 export type DockerStatsContent = {
   cpuPerc: string;
   container: string;
@@ -63,54 +36,21 @@ export type DockerStats = {
 
 type State = DockerStats;
 
-/**
- * @deprecated, use the API instead
- * @param cmd 
- * @returns 
- */
-async function queryDocker(cmd: string): Promise<any> {
-  const spawn = ChildProcess.spawn;
-  return new Promise((resolve, reject) => {
-    const s = spawn("bash", ["-c", cmd]);
-
-    s.stdout.on("data", (data: Buffer) => {
-      const s = data.toString();
-      console.log("s", s);
-    });
-
-    s.stderr.on("data", (data: Buffer) => {
-      console.error(data.toString());
-    });
-
-    s.on("exit", (code: any) => {
-      if (!code) {
-        // console.info(`Exit code: ${code}`);
-        resolve({});
-      } else {
-        // console.error(`Exit code: ${code}`);
-        reject({ code });
-      }
-    });
-  });
-}
-
-export default class DockerStatus extends React.Component<never, State> {
-  private docker: Docker;
+export default class DockerStatus extends React.Component<any, State> {
+  #dockerWrapper: DockerWrapper;
 
   constructor(props: never) {
     super(props);
-    this.docker = new Docker({ host: "127.0.0.1", port: 3000 });
-
-    this.docker.info
+    this.#dockerWrapper = new DockerWrapper();
 
     this.state = {
       inspect: {
-        status: "",
-        running: false,
-        paused: false,
-        error: "string",
-        startedAt: null,
-        finishedAt: null,
+        Status: "",
+        Running: false,
+        Paused: false,
+        Error: "string",
+        StartedAt: null,
+        FinishedAt: null,
       },
       stats: {
         cpuPerc: "",
@@ -130,7 +70,7 @@ export default class DockerStatus extends React.Component<never, State> {
   }
 
   private getSpinnerValue(): number {
-    if (this.state.inspect.finishedAt) return 100;
+    if (this.state.inspect.FinishedAt) return 100;
     return 0;
   }
 
@@ -138,25 +78,34 @@ export default class DockerStatus extends React.Component<never, State> {
    * It is mainly done to reinsure the user that "it is working" despite the process taking a long time.
    */
   private async checkAgain(): Promise<void> {
-    // docker inspect srtool | jq ".[].State"
-    const cmdInspect = "docker inspect srtool";
+    const container = await this.#dockerWrapper.getContainer();
 
-    // docker stats --no-stream --format "{{json .}}" srtool | jq
-    const cmdStats = 'docker stats --no-stream --format "{{json .}}" srtool';
+    if (container) {
+      const inspect = await container.inspect();
+      // const stats = await container.stats();
 
-    // docker system info --format "{{json .}}" | jq .NCPU
-    // docker system info --format "{{json .}}" | jq .MemTotal
-    const cmdInfo = 'docker system info --format "{{json .}}"';
-
-    const inspect = (await queryDocker(cmdInspect)) as DockerInspectContent;
-    const stats = (await queryDocker(cmdInspect)) as DockerStatsContent;
-    const systemInfo = (await queryDocker(cmdInspect)) as DockerSystemInfo;
-
-    this.setState({ inspect, stats, systemInfo });
+      this.setState({ inspect: inspect.State });
+    } else {
+      this.setState({
+        inspect: {
+          Running: false,
+          Error: "",
+          FinishedAt: "",
+          Paused: false,
+          Status: "Not running",
+          StartedAt: "",
+        },
+      });
+    }
   }
 
-  componentDidMount() {
-    setInterval(this.checkAgain, 1000e3);
+  async componentDidMount() {
+    const docker = this.#dockerWrapper.docker;
+
+    const intervalInSeconds = 3;
+    setInterval(this.checkAgain.bind(this), intervalInSeconds * 1e3);
+    const systemInfo = await docker.info();
+    this.setState({ systemInfo });
   }
 
   render() {
@@ -165,20 +114,24 @@ export default class DockerStatus extends React.Component<never, State> {
     return (
       <Box id="status-box" style={{ color: "orange" }}>
         <Typography variant="caption" display="block">
-          container running: {inspect.running.toString()}
+          ncpu: {`${systemInfo.NCPU || "n/a"} cores`}
+        </Typography>
+        <Typography variant="caption" display="block">
+          memTotal:{" "}
+          {`${
+            systemInfo.MemTotal
+              ? (systemInfo.MemTotal / 1024 / 1024 / 1024).toFixed(2)
+              : "n/a"
+          } GB`}
         </Typography>
 
         <Typography variant="caption" display="block">
-          cpu: {stats.cpuPerc}
-        </Typography>
-
-        <Typography variant="caption" display="block">
-          ncpu: {systemInfo.ncpu} - memTotal: {systemInfo.memTotal}
+          srtool running: {inspect.Running.toString()}
         </Typography>
 
         <CircularProgress
           style={{ margin: "40px", alignSelf: "center" }}
-          variant={inspect.running ? "indeterminate" : "determinate"}
+          variant={inspect.Running ? "indeterminate" : "determinate"}
           value={this.getSpinnerValue()}
         />
       </Box>

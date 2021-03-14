@@ -159,19 +159,28 @@ export default class RunnerComp extends React.Component<any, State> {
                 <FormGroup row>
                   <TextField
                     id="base-url"
-                    helperText="repo base url"
+                    helperText="Repository Base url"
                     focused={false}
                     defaultValue={settings.repo.baseUrl}
                     disabled={true}
                     style={{ width: "50%" }}
                   ></TextField>
                   <TextField
-                    id="base-url"
-                    helperText="repo base url"
+                    id="project-path"
+                    helperText="Project Path"
                     focused={false}
                     defaultValue={settings.local.projectPath}
                     // fullWidth={true}
                     disabled={true}
+                    style={{ width: "50%" }}
+                  ></TextField>
+                  <TextField
+                    id="docker-image"
+                    helperText="Docker image"
+                    focused={false}
+                    defaultValue={settings.srtool.image}
+                    // fullWidth={true}
+                    disabled={process.env.NODE_ENV !== "development"}
                     style={{ width: "50%" }}
                   ></TextField>
                 </FormGroup>

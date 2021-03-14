@@ -14,8 +14,8 @@ function createWindow() {
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = (!devMode).toString();
 
   mainWindow = new BrowserWindow({
-    width: devMode ? 1800 : 1200,
-    height: devMode ? 1200 : 900,
+    width: devMode ? 1080 : 1200,
+    height: devMode ? 650 : 900,
     backgroundColor: '#2222',
     minimizable: false,
     maximizable: false,
