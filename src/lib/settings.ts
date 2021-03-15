@@ -1,7 +1,13 @@
 import os from 'os';
 import { Package } from '../types';
+import * as Path from 'path'
+import { folderBase } from '../constants';
 
-export type Settings = {
+export interface SettingSetter {
+    set: (section: string, key: string, value: any) => void;
+}
+
+export interface Settings {
     local: {
         /** This flag defines how/if the source is provided.
          * - httpGet: srtool-app does fetch the source into a temp folder and sets `projectPath` accordingly
@@ -13,21 +19,28 @@ export type Settings = {
         fetchMode: "httpGet" | "user";
 
         /**
+         * This is the global temp folder we are using. Nothing should be exported here
+         * and the content should be considered transient.
+         */
+        workDir: string;
+
+        /**
          * This is the local path where the source to build is located.
          * The source may come from the user (using git or download),
-         * or have been downloaded by us.
+         * or have been downloaded by us. In `httpGet` mode, this is
+         * a folder under the `workDir`.
          */
         projectPath: string;
+
+        /**
+         * This is the path where we export the runtime we generated.
+         */
+        exportFolder: string;
 
         /** Whether or not we wipe the source after a successful run.
          * This will never be the case when `fetchMode` is set to `user`.
          */
         autoCleanup: boolean;
-
-        /**
-         * This is the path where we export the runtime we generated
-         */
-        exportFolder: string;
 
         /**
          * How many of the last runs do we keep
@@ -63,12 +76,16 @@ export type Settings = {
     runner: {}
 };
 
-export const defaultSettings: Settings = {
+
+export type SettingsContextContent = Settings & SettingSetter;
+
+export const defaultSettings: SettingsContextContent = {
     local: {
         fetchMode: "httpGet",
-        projectPath: os.tmpdir(),
+        workDir: Path.join(os.tmpdir(), folderBase),
+        projectPath: Path.join(os.tmpdir(), folderBase), // Not ideal but good enough as a started until we know more
+        exportFolder: Path.join(os.homedir(), folderBase),
         autoCleanup: true,
-        exportFolder: `${os.homedir()}/srtool`,
         historyLimit: 30,
     },
     repo: {
@@ -80,5 +97,6 @@ export const defaultSettings: Settings = {
         autoUpgrade: true,
         image: "chevdor/srtool:nightly-2021-02-25",
     },
-    runner: {}
+    runner: {},
+    set: (a, b) => { },
 };

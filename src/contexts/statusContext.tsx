@@ -24,11 +24,15 @@ export type Status = {
 
   /** If we detected no critical blocker, the app will be able to run and `ready` switches to true. */
   ready: boolean;
-  // setReady: (_: boolean) => void;
-  setField: (name: Record<string, any>) => void;
 };
 
-export const defaultStatusContext: Status = {
+export type StatusContextContent = Status & StatusSetter;
+
+export interface StatusSetter {
+  setField: (name: Record<string, any>) => void;
+}
+
+export const defaultStatusContext: StatusContextContent = {
   docker_version: null, // null means we found no docker
   docker_running: true,
   srtool_version: null,

@@ -2,27 +2,21 @@ import React from 'react';
 import * as fs from 'fs'
 import unzipper from 'unzipper'
 import { assert } from 'console';
-import { defaultSettings, Settings } from './settings';
+import { defaultSettings, Settings, SettingsContextContent } from './settings';
 import VersionControlSystem, { Service } from './vcs';
 import DockerWrapper from './dockerWrapper';
 import Dockerode from 'dockerode';
 import { Writable } from 'stream';
 import { isResult, SRToolOutput, SRToolResult } from './message';
-
-export type RunParams = {
-    /** An array of args for `docker run`. Example: `['-t', '--name', 'foobar']`. @deprecated Use Dockerode.ContainerCreateOptions instead  */
-    docker_run: string[],
-    /** The image to be used. For instance: "chevdor/srtool:nightly-2021-02-25" */
-    image: string,
-    /** The args to pass to the image. For instance: `['build', '--json']` */
-    image_args: string[],
-}
+import { RunnerConfig } from '../components/runnerConfig';
+import SettingsContext from '../contexts/settingsContext';
+import { containerName } from '../constants';
 
 /**
  * The Runner is the class that is doing the work of calling
  * srtool.
  */
-export default class Runner extends React.Component<any, any> {
+class Runner extends React.Component<any, any> {
     #settings: Settings;
     #onDataCb: (data: string) => void;
     #docker: DockerWrapper;
@@ -101,6 +95,8 @@ export default class Runner extends React.Component<any, any> {
      * @param tag 
      */
     public async fetchSource(service: Service, owner: string, repo: string, tag: string, workdir: string): Promise<string> {
+        assert(tag.indexOf('refs') < 0, `We need a tag here, not a ref, you passed ${tag}`)
+        
         const zip = await this.fetchArchive(service, owner, repo, tag);
         console.log("zip located at", zip);
 
@@ -108,7 +104,7 @@ export default class Runner extends React.Component<any, any> {
         await this.unzip(zip, workdir);
         console.log('Unzipping done');
 
-        const folder = `${workdir}/${repo}-${tag.replace("v", "")}`; // TODO WORKDIR: meh....
+        const folder = `${workdir}/${repo}-${tag.replace("v", "")}`;
         console.log("Unzipped in", folder);
         await this.deleteZip(zip);
 
@@ -152,9 +148,12 @@ export default class Runner extends React.Component<any, any> {
      * @param p 
      * @returns 
      */
-    public async run(p: RunParams): Promise<SRToolOutput> {
-        const containerName = 'srtool'
-        const { image } = p;
+    public async run(params: RunnerConfig): Promise<SRToolOutput> {
+        console.log('Running srtool using', params);
+        const settings: SettingsContextContent = this.context;  
+        console.log('Settings', settings);
+
+        const { image, package: runtime } = params;
         const image_args = ['build', '--app']; // --app is critical! 
 
         return new Promise((resolve, reject) => {
@@ -200,21 +199,22 @@ export default class Runner extends React.Component<any, any> {
                 }
             };
 
+            const projectPath = settings.local.projectPath;
             const create_options: Dockerode.ContainerCreateOptions = {
                 Tty: true,
                 name: containerName,
                 Labels: {
-                    app: 'srtool'
+                    app: containerName,
                 },
                 HostConfig: {
                     AutoRemove: true,
                     Binds: [
-                        '/tmp/srtool/polkadot-0.8.28:/build', // FIXME WORKDIR: /tmp/srtool/polkadot-0.8.28 should not be hard coded
+                        `${projectPath}:/build`, // FIXME WORKDIR: /tmp/srtool/polkadot-0.8.28 should not be hard coded
                         // '/tmp/cargo:/cargo-home',
                     ],
                 },
                 Env: [
-                    'PACKAGE=polkadot-runtime', // FIXME NOW: use value from the settings / user selection 
+                    `PACKAGE=${runtime}`, // FIXME NOW: use value from the settings / user selection 
                     'SLEEP=0.03', // this is for the srtool-dev image and will be ignored by the real srtool
                 ]
             };
@@ -223,3 +223,6 @@ export default class Runner extends React.Component<any, any> {
         })
     }
 }
+
+Runner.contextType = SettingsContext;
+export default Runner;

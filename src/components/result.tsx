@@ -26,7 +26,7 @@ class SrtoolResultComp extends React.Component<Props, never> {
         res = r.proposalHash;
         break;
       case "markdown":
-        res += `I ran \`srtool\` to generate and verifiy a substrate runtime and there is my result:\n`;
+        res += `I ran \`srtool\` to generate and verify a substrate runtime and there is my result:\n`;
         res += `- generator: \`${r.generator}\`\n`;
         res += `- git:\n`;
         res += `  - commit: \`${r.git.commit}\`\n`;
@@ -41,7 +41,7 @@ class SrtoolResultComp extends React.Component<Props, never> {
         res += `- time: \`${r.time}\`\n`;
         break;
       case "text":
-        res += `I ran srtool to generate and verifiy a substrate runtime and there is my result:\n`;
+        res += `I ran srtool to generate and verify a substrate runtime and there is my result:\n`;
         res += `- generator: ${r.generator}\n`;
         res += `- git:\n`;
         res += `  - commit: ${r.git.commit}\n`;

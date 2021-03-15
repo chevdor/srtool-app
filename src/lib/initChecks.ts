@@ -41,7 +41,7 @@ export default class InitCheck {
             const total = (diskSpaceResult.size * 1e-9).toFixed(2);
             const min = (minFolderSize * 1e-9).toFixed(2);
 
-            console.log(`free disk space on the disk hosting ${dir} is ${free} / ${total} Go`);
+            console.log(`free disk space on the disk hosting our workDir ${dir} is ${free} / ${total} Go`);
 
             if (diskSpaceResult.free > minFolderSize) {
                 resolve({ status: CheckStatus.OK, value: free, message: `Free disk is ok: ${free}/${total}Go and we need ${min}Go` })

@@ -16,9 +16,10 @@ import {
 import SettingsContext from "../contexts/settingsContext";
 import { Message, MessageBuilder } from "../lib/message";
 import { Autocomplete, AutocompleteChangeReason } from "@material-ui/lab";
-import VersionControlSystem, { Service, Tag } from "../lib/vcs";
 import { RunnerConfig } from "./runnerConfig";
 import { RuntimePackage } from "../types";
+import { SettingsContextContent } from "../lib/settings";
+import VersionControlSystem, { Service, Tag } from "../lib/vcs";
 
 function showOS() {
   if (is.windows()) console.log("Windows");
@@ -33,7 +34,7 @@ export const outputDataContext = createContext(OutputDataContextDefault);
 
 export type State = {
   tags: Tag[];
-  selectedTag: Tag | null;
+  selectedTag: Tag;
   defaultTag: Tag | null;
 
   packages: RuntimePackage[];
@@ -55,14 +56,14 @@ function refToName(ref: string): string {
 /**
  * This runner is actually doing the job when the user clicks the button
  */
-export default class RunnerComp extends React.Component<any, State> {
+class RunnerComp extends React.Component<any, State> {
   defaultTag?: Tag;
 
   constructor(props: never) {
     super(props);
     this.state = {
       tags: [],
-      selectedTag: null,
+      selectedTag: { ref: "refs/tags/v0.8.29" },
       defaultTag: null,
 
       packages: [],
@@ -76,6 +77,7 @@ export default class RunnerComp extends React.Component<any, State> {
 
   run = async (addMessage: (_: Message) => void) => {
     const runner = new Runner();
+    const settings: SettingsContextContent = this.context;
 
     // Prepare & cleanup Cleanup
     await runner.prepare();
@@ -89,17 +91,21 @@ export default class RunnerComp extends React.Component<any, State> {
       "github" as Service,
       "paritytech",
       "polkadot",
-      "v0.8.28",
+      refToName(this.state.selectedTag.ref),
     ];
 
     this.setState({ running: true });
-    const workdir = "/tmp/srtool"; // TODO WORKDIR: use workdir instead
+    const workdir = settings.local.workDir;
     const folder = await runner.fetchSource(service, owner, repo, tag, workdir);
-    // TODO WORKDIR: now set our src workdir to `folder`
+    settings.set("local", "projectPath", folder);
+    console.log("project path set to", folder, settings.local);
 
-    // TODO IMAGE: Fix args
     try {
-      const result = await runner.run(RunnerConfig.srtool_2021_02_25_dev);
+      const runnerConfig: RunnerConfig = {
+        image: settings.srtool.image,
+        package: settings.repo.package,
+      };
+      const result = await runner.run(runnerConfig);
       console.info("Final Result", result);
     } catch (err: any) {
       console.error(err);
@@ -107,8 +113,11 @@ export default class RunnerComp extends React.Component<any, State> {
 
     this.setState({ finished: true, running: false });
 
-    if (false) {
-      await runner.cleanup(folder); // TODO WORKDIR: only do according to the settings
+    // We do NOT delete if the user uses his own git repo folder
+    // If that's not the case, we check what the users wants from the settings.
+    if (settings.local.fetchMode === "httpGet" && settings.local.autoCleanup) {
+      console.log(`Deleting ${folder}`);
+      // await runner.cleanup(folder); // TODO WORKDIR: bring back once 100% sure it works
     } else {
       console.log("Skipping cleanup");
     }
@@ -140,6 +149,16 @@ export default class RunnerComp extends React.Component<any, State> {
     this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf("rc") < 0);
 
     this.setState({ tags, packages });
+  }
+
+  private imageChangedHandler(event: any): void {
+    const { value } = event.target;
+    console.log(
+      `The image has changed into ${value}. Reload for the new image to take effect`
+    );
+    const settings: SettingsContextContent = this.context;
+    console.log("Settings", settings);
+    settings.set("srtool", "image", value);
   }
 
   render() {
@@ -177,27 +196,11 @@ export default class RunnerComp extends React.Component<any, State> {
                     defaultValue={settings.srtool.image}
                     disabled={process.env.NODE_ENV !== "development"}
                     style={{ width: "50%" }}
+                    onBlur={this.imageChangedHandler.bind(this)}
                   ></TextField>
                 </FormGroup>
 
                 <FormGroup row>
-                  <Autocomplete
-                    id="package"
-                    options={this.state.packages}
-                    // getOptionLabel={(package: any) => refToName(tag.ref)}
-                    style={{ width: 300 }}
-                    onChange={this.setSelectedPackage}
-                    disableClearable
-                    autoSelect
-                    defaultValue="kusama-runtime"
-                    renderInput={(params: any) => (
-                      <TextField
-                        {...params}
-                        label="Package"
-                        variant="standard"
-                      />
-                    )}
-                  />
                   <Autocomplete
                     id="tag"
                     options={this.state.tags.filter(
@@ -210,6 +213,8 @@ export default class RunnerComp extends React.Component<any, State> {
                     onChange={this.setSelectedTag}
                     disableClearable
                     autoSelect
+                    defaultValue={this.state.selectedTag}
+                    getOptionSelected={(a, b) => a.ref === b.ref}
                     renderInput={(params: any) => (
                       <TextField {...params} label="Tag" variant="standard" />
                     )}
@@ -226,6 +231,24 @@ export default class RunnerComp extends React.Component<any, State> {
                       />
                     }
                     label="Include RC"
+                  />
+
+                  <Autocomplete
+                    id="package"
+                    options={this.state.packages}
+                    // getOptionLabel={(package: any) => refToName(tag.ref)}
+                    style={{ width: 300 }}
+                    onChange={this.setSelectedPackage}
+                    disableClearable
+                    autoSelect
+                    defaultValue="kusama-runtime"
+                    renderInput={(params: any) => (
+                      <TextField
+                        {...params}
+                        label="Package"
+                        variant="standard"
+                      />
+                    )}
                   />
 
                   <Button
@@ -248,3 +271,6 @@ export default class RunnerComp extends React.Component<any, State> {
     );
   }
 }
+
+RunnerComp.contextType = SettingsContext;
+export default RunnerComp;

@@ -10,7 +10,7 @@ export class Intro extends Component {
         <a href="https://gitlab.com/chevdor/srtool" target="_blank">
           here
         </a>
-        . srtool helped you build and verifiy the runtime of a Substratre based
+        . srtool helped you build and verify the runtime of a Substratre based
         chain. Building such a runtime takes a fair amount of time and your
         computer will be rather busy during this process. Depending on your
         machine, it can take up to 1 hour or more. Patience is required! You

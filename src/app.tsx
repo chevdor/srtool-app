@@ -12,10 +12,11 @@ import { isResult, Message, SRToolResult } from "./lib/message";
 import Init from "./components/init";
 import Header from "./components/header";
 import MainComp from "./components/mainComp";
-import StatusContext from "./contexts/statusContext";
+import StatusContext, { StatusContextContent } from "./contexts/statusContext";
 import { AppStorage } from "./types";
 import Store from "electron-store";
-import { defaultSettings } from "./lib/settings";
+import { defaultSettings, SettingsContextContent } from "./lib/settings";
+import SettingsContext from "./contexts/settingsContext";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -35,12 +36,15 @@ const darkTheme = createMuiTheme({
 export type State = {
   theme: Theme;
   output: OutputDataContextContent;
+  status: StatusContextContent;
+  settings: SettingsContextContent;
 };
 
 class App extends React.Component<any, any> {
   toggleTheme: () => void;
   addMessage: (m: Message) => void;
   setField: (keyval: Record<string, any>) => void;
+  setSetting: (section: string, key: string, value: any) => void;
 
   constructor(props: never) {
     super(props);
@@ -82,6 +86,28 @@ class App extends React.Component<any, any> {
       }));
     };
 
+    const store = new Store<AppStorage>({
+      defaults: {
+        history: [],
+        settings: defaultSettings,
+      },
+    });
+    //store.clear();
+    console.log("appstorage", store);
+
+    this.setSetting = (section: string, key: string, value: any) => {
+      console.log(`Setting settings.${section}.${key} to ${value}`);
+      const settingKey = `settings.${section}.${key}`;
+      store.set(settingKey, value);
+      let settings = this.state.settings;
+      settings[section][key] = value;
+
+      this.setState(() => ({
+        settings,
+      }));
+      console.log("state is now", this.state);
+    };
+
     this.setField = (keyval: Record<string, any>) => {
       const { status } = this.state;
       this.setState(() => ({
@@ -104,32 +130,29 @@ class App extends React.Component<any, any> {
         ready: false,
         setField: this.setField,
       },
+      settings: {
+        ...store.store.settings,
+        set: this.setSetting,
+      },
     };
 
-    const store = new Store<AppStorage>({
-      defaults: {
-        history: [],
-        settings: defaultSettings,
-      },
-    });
-
-    // store.clear();
-
-    console.log("appstorage", store);
+    console.log("state", this.state);
   }
 
   render() {
     return (
       <ThemeProvider theme={darkTheme}>
         <StatusContext.Provider value={this.state.status}>
-          <Header />
-          <Beta stage="alpha" />
-          <OutputContext.Provider value={this.state.output}>
-            {/* <VersionChecker /> */}
+          <SettingsContext.Provider value={this.state.settings}>
+            <Header />
+            <Beta stage="alpha" />
+            <OutputContext.Provider value={this.state.output}>
+              {/* <VersionChecker /> */}
 
-            <Init visible={!this.state.status.ready} />
-            <MainComp visible={this.state.status.ready} />
-          </OutputContext.Provider>
+              <Init visible={!this.state.status.ready} settings={this.state.settings}/>
+              <MainComp visible={this.state.status.ready} />
+            </OutputContext.Provider>
+          </SettingsContext.Provider>
         </StatusContext.Provider>
       </ThemeProvider>
     );

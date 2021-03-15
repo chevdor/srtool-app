@@ -1,7 +1,11 @@
-import React from "react";
-import StatusContext, { Status } from "../contexts/statusContext";
+import React, { useContext } from "react";
+import StatusContext, {
+  Status,
+  StatusContextContent,
+} from "../contexts/statusContext";
 import {
   Box,
+  Button,
   CircularProgress,
   createStyles,
   Theme,
@@ -12,9 +16,12 @@ import os from "os";
 import { withStyles } from "@material-ui/core/styles";
 import InitCheck, { CheckResult } from "../lib/initChecks";
 import Srtool from "../lib/srtool";
+import SettingsContext from "../contexts/settingsContext";
+import { SettingsContextContent } from "../lib/settings";
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;
+  settings: SettingsContextContent;
 }
 
 export interface Step {
@@ -101,57 +108,54 @@ class Init extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    const { context } = this;
-
-    // if (process.env.NODE_ENV === "development") {
-    //   console.log('Running in dev mode, skipping init checks');
-    //   context.setField({ ready: true })
-    // } else
-    await this.run(context as Status);
+    const { context: status } = this;
+    const { settings } = this.props;
+    await this.run(status, settings);
   }
 
   /**
    * Move to the next step
    */
   private nextStep(step: Step) {
-    // const { step: current } = this.state.;
     this.setState(step);
   }
 
-  async run(context: Status) {
+  async run(status: StatusContextContent, settings: SettingsContextContent) {
     console.log("Starting init checks");
-    console.log("context", context);
+    console.log("status context", status);
+    console.log("settings context", settings);
+
     const initCheck = new InitCheck();
     const srtool = new Srtool();
 
     this.nextStep(steps._1_start);
-    context.setField({ ready: false });
+    status.setField({ ready: false });
 
-    // TODO LATER: we may later want to add this check to the list
-    const tmpdir = os.tmpdir(); // TODO WORKDIR: use setting folder instead
+    // We may later want to add this check to the list of checks, for now this is just an info
+    const tmpdir = settings.local.workDir;
     const _diskResult = await InitCheck.diskSpace(tmpdir);
 
     this.nextStep(steps._2_docker_installed);
     const dockerInstalledCheck = await initCheck.dockerVersion();
-    context.setField({ docker_version: dockerInstalledCheck.value || null });
+    status.setField({ docker_version: dockerInstalledCheck.value || null });
 
     this.nextStep(steps._3_docker_running);
     const dockerRunningCheck = await initCheck.dockerRunning();
     console.log("dockerRunningCheck", dockerRunningCheck);
 
-    context.setField({ docker_running: dockerRunningCheck.value });
+    status.setField({ docker_running: dockerRunningCheck.value });
 
     const docker_ok: boolean =
       dockerInstalledCheck.value !== null && dockerRunningCheck.value;
 
     this.nextStep(steps._4_get_latest_image_version);
     const latestVersionCheck = await initCheck.srtoolLatestversion();
-    context.setField({ srtool_latest_version: latestVersionCheck.value });
+    status.setField({ srtool_latest_version: latestVersionCheck.value });
 
     const latestImageCheck = await initCheck.srtoolLatestImage();
-    context.setField({ srtool_latest_image: latestImageCheck.value });
+    status.setField({ srtool_latest_image: latestImageCheck.value });
     if (process.env.NODE_ENV === "development")
-      context.setField({
+      status.setField({
         srtool_latest_image: latestImageCheck.value + "-dev",
       });
 
@@ -162,10 +166,10 @@ class Init extends React.Component<Props, State> {
 
     this.nextStep(steps._6_getting_srtool_version);
     const srtoolversionCheck = await initCheck.srtoolVersions();
-    context.setField({ srtool_version: srtoolversionCheck.value.version });
-    context.setField({ srtool_image: srtoolversionCheck.value.rustc });
+    status.setField({ srtool_version: srtoolversionCheck.value.version });
+    status.setField({ srtool_image: srtoolversionCheck.value.rustc });
 
-    context.setField({ ready: docker_ok });
+    status.setField({ ready: docker_ok });
 
     this.nextStep(steps._7_end);
   }
@@ -206,7 +210,12 @@ class Init extends React.Component<Props, State> {
               Checking docker version... found v{docker_version} -{" "}
               {docker_version ? "OK" : "ERROR"}
             </div>
-            <div>docker running... {docker_running ? "Yes" : "No"}</div>
+            <div>
+              docker running...{" "}
+              {docker_running
+                ? "Yes"
+                : "No. Press CTRL+R or CMD+R to test again"}
+            </div>
 
             {/* TODO LATER: Hidden for now as it somehow does not hide as it should */}
             {/* <Alert hidden={ this.state.step <= 5 }

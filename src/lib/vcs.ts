@@ -1,11 +1,14 @@
+import { assert } from "console";
+
 export type GithubTag = {
-    "ref": string,
-    "node_id": string,
-    "url": string,
-    "object": {
-        "sha": string,
-        "type": 'commit' | 'tag',
-        "url": string,
+    /** looks like refs/tags/v1.2.3 */
+    ref: string,
+    node_id?: string,
+    url?: string,
+    object?: {
+        sha?: string,
+        type?: 'commit' | 'tag',
+        url?: string,
     }
 }
 
@@ -59,7 +62,7 @@ export default class VersionControlSystem {
      */
     public async fetchSourceArchive(tag: string, destination: string): Promise<void> {
         const { owner, repo, service } = this;
-
+        assert(tag.indexOf('refs') < 0, `Invalid tag: ${tag}`)
         console.log(`Fetching tag ${tag} of ${owner}/${repo} from ${service}`);
 
         if (service !== 'github') throw new Error(`${service} not supported yet`)
