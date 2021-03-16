@@ -22,6 +22,7 @@ import Footer from "./footer";
 import SettingsComp from "./settingsComp";
 import { SRToolResult } from "../lib/message";
 export type MainCompProps = { visible: boolean };
+
 /**
  * Show the latest message
  */

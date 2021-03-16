@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { MessageBuilder } from '../src/lib/message';
+import { isResult, Message, MessageBuilder } from '../src/lib/message';
 import 'mocha';
 
 const srtool_valid = {
@@ -40,4 +40,14 @@ describe('builder', () => {
         expect(MessageBuilder.build(JSON.stringify(srtool_invalid)).content).to.be.a("object")
     });
 
+    it('should see that this is not a result', async function () {
+        const s = 'foobar'
+        const m: Message = MessageBuilder.build(s)
+        expect(isResult(m.content)).equal(false)
+    });
+
+    it('should see that this *is*  a result', async function () {
+        const m = MessageBuilder.build(JSON.stringify(srtool_valid))
+        expect(isResult(m.content)).equal(true)
+    });
 });

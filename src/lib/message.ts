@@ -1,7 +1,8 @@
 import { Hash, ProposalHash } from "../types";
 
 /**
- * Describes the json output as sent by srtool
+ * Describes the json output as sent by srtool.
+ * Usually we build from a `SRToolOutput` into a `SRToolResult` using the `SRToolResultBuilder`.
  */
 export type SRToolOutput = {
     gen: string,
@@ -32,6 +33,9 @@ export type SRToolInfo = {
     package: string,
 }
 
+/**
+ * This is a formatted result after we massaged it.
+ */
 export type SRToolResult = SRToolInfo & {
     time: Date, // date of the generation of the result
     duration?: number; // in ms
@@ -103,10 +107,11 @@ export class SRToolResultBuilder {
 }
 
 export class MessageBuilder {
+    /** This method takes a string and builds a `Message` */
     public static build(s: string): Message {
         try {
             const output: SRToolOutput = JSON.parse(s);
-            const content = SRToolResultBuilder.build(output);
+            const content: SRToolResult = SRToolResultBuilder.build(output);
             return {
                 received: new Date(),
                 content,

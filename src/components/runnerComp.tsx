@@ -20,6 +20,8 @@ import { RunnerConfig } from "./runnerConfig";
 import { RuntimePackage } from "../types";
 import { SettingsContextContent } from "../lib/settings";
 import VersionControlSystem, { Service, Tag } from "../lib/vcs";
+import { folderBase } from "../constants";
+import { assert } from "../lib/assert";
 
 function showOS() {
   if (is.windows()) console.log("Windows");
@@ -38,7 +40,7 @@ export type State = {
   defaultTag: Tag | null;
 
   packages: RuntimePackage[];
-  selectedPackage: RuntimePackage | null;
+  selectedPackage: RuntimePackage;
 
   running: boolean;
   finished: boolean;
@@ -67,7 +69,7 @@ class RunnerComp extends React.Component<any, State> {
       defaultTag: null,
 
       packages: [],
-      selectedPackage: null,
+      selectedPackage: 'polkadot-runtime',
 
       running: false,
       finished: false,
@@ -76,12 +78,13 @@ class RunnerComp extends React.Component<any, State> {
   }
 
   run = async (addMessage: (_: Message) => void) => {
-    const runner = new Runner();
     const settings: SettingsContextContent = this.context;
+    const runner = new Runner(settings);
 
     // Prepare & cleanup Cleanup
     await runner.prepare();
 
+    // TODO NOW: can we get a Message instead of a string ?
     runner.onData = (data: string) => {
       addMessage(MessageBuilder.build(data));
     };
@@ -103,12 +106,13 @@ class RunnerComp extends React.Component<any, State> {
     try {
       const runnerConfig: RunnerConfig = {
         image: settings.srtool.image,
-        package: settings.repo.package,
+        package: this.state.selectedPackage,
+        folder,
       };
       const result = await runner.run(runnerConfig);
-      console.info("Final Result", result);
+      console.log("Final Result", result);
     } catch (err: any) {
-      console.error(err);
+      console.error("We got an error", err);
     }
 
     this.setState({ finished: true, running: false });
@@ -116,14 +120,14 @@ class RunnerComp extends React.Component<any, State> {
     // We do NOT delete if the user uses his own git repo folder
     // If that's not the case, we check what the users wants from the settings.
     if (settings.local.fetchMode === "httpGet" && settings.local.autoCleanup) {
-      console.log(`Deleting ${folder}`);
-      // await runner.cleanup(folder); // TODO WORKDIR: bring back once 100% sure it works
+      
+      await runner.cleanup(folder); // TODO WORKDIR: bring back once 100% sure it works
     } else {
       console.log("Skipping cleanup");
     }
 
     const end = new Date();
-    console.log(`Duration: ${end.getTime() - start.getTime()} ms`);
+    console.log(`Duration: ${(end.getTime() - start.getTime()) / 1000} s`);
   };
 
   setSelectedTag = (
@@ -139,7 +143,10 @@ class RunnerComp extends React.Component<any, State> {
     newPackage: RuntimePackage | null,
     reason: AutocompleteChangeReason
   ) => {
-    if (newPackage) this.setState({ selectedPackage: newPackage });
+    if (newPackage) {
+      this.setState({ selectedPackage: newPackage });
+      // TODO NOW: update store
+    }
   };
 
   async componentDidMount() {
@@ -241,7 +248,7 @@ class RunnerComp extends React.Component<any, State> {
                     onChange={this.setSelectedPackage}
                     disableClearable
                     autoSelect
-                    defaultValue="kusama-runtime"
+                    defaultValue="polkadot-runtime"
                     renderInput={(params: any) => (
                       <TextField
                         {...params}
@@ -254,6 +261,7 @@ class RunnerComp extends React.Component<any, State> {
                   <Button
                     color="primary"
                     onClick={async () => {
+                      // TODO: delete the output content on new runs
                       await this.run(output.addMessage);
                     }}
                     disabled={!this.state.selectedTag || this.state.running}

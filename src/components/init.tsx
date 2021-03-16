@@ -18,6 +18,7 @@ import InitCheck, { CheckResult } from "../lib/initChecks";
 import Srtool from "../lib/srtool";
 import SettingsContext from "../contexts/settingsContext";
 import { SettingsContextContent } from "../lib/settings";
+import { assert } from "../lib/assert";
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;

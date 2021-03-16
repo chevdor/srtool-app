@@ -1,7 +1,7 @@
+import 'mocha';
 import { expect } from 'chai';
 import { DockerSystemInfo } from '../src/components/dockerStatus';
-import 'mocha';
-import DockerWrapper from 'lib/dockerWrapper';
+import DockerWrapper from '../src/lib/dockerWrapper';
 
 const dw = new DockerWrapper();
 

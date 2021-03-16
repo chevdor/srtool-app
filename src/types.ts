@@ -8,13 +8,13 @@ export type AppStorage = {
     history: HistoryData
 }
 
-/**
- * A Runtime Package, for instance `polkadot-runtime`.
- */
-export type RuntimePackage = string;
 
 export type Hash = string;
 export type ProposalHash = Hash;
 
 export type KnownRuntime = 'westend-runtime' | 'kusama-runtime' | 'polkadot-runtime';
-export type Package = KnownRuntime | string;
+/**
+ * A Runtime Package, for instance `polkadot-runtime`.
+ */
+
+export type RuntimePackage = KnownRuntime | string;

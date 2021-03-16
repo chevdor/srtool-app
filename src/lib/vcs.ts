@@ -1,4 +1,4 @@
-import { assert } from "console";
+import { assert } from "./assert";
 
 export type GithubTag = {
     /** looks like refs/tags/v1.2.3 */
