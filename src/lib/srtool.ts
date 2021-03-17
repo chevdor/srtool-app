@@ -103,11 +103,10 @@ export default class Srtool {
      * Get the current version of srtool while calling:
      * `srtool version` on the current image.
      */
-    async getSrtoolCurrentVersions(tag: string): Promise<SrtoolVersions> {
+    async getSrtoolCurrentVersions(image: string): Promise<SrtoolVersions> {
         const containerName = 'srtool-version'
 
         return new Promise((resolve, reject) => {
-            const image = `chevdor/srtool:${tag}`;
             const cmd = ['version', '-cM'];
             console.log(`checking version for ${image}`);
 
@@ -166,5 +165,13 @@ export default class Srtool {
         } else {
             throw new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`)
         }
+    }
+
+    /**
+     * This is: docker rm -f srtool
+     */
+    async removeContainer(): Promise<void> {
+        const container = await this.#docker.getContainer();
+        await container?.remove({ force: true })
     }
 }

@@ -15,7 +15,7 @@ const Header = () => {
           variant="h1"
           color="primary"
           component="h2"
-          style={{ margin: "0px 20px 0px 20px" }}
+          style={{ margin: "0px 20px 0px 20px", userSelect: "none" }}
         >
           srtool
         </Typography>

@@ -17,6 +17,7 @@ import { AppStorage } from "./types";
 import Store from "electron-store";
 import { defaultSettings, SettingsContextContent } from "./lib/settings";
 import SettingsContext from "./contexts/settingsContext";
+import pkg from "../package.json";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);
@@ -93,7 +94,10 @@ class App extends React.Component<any, any> {
       },
     });
     //store.clear();
+    console.log(`Starting ${pkg.name} v${pkg.version}`);
     console.log("appstorage", store);
+    console.log(`Your config is located at ${store.path}`);
+    console.log(`App WorkDir set at ${store.store.settings.local.workDir}`);
 
     this.setSetting = (section: string, key: string, value: any) => {
       console.log(`Setting settings.${section}.${key} to ${value}`);
@@ -149,7 +153,10 @@ class App extends React.Component<any, any> {
             <OutputContext.Provider value={this.state.output}>
               {/* <VersionChecker /> */}
 
-              <Init visible={!this.state.status.ready} settings={this.state.settings}/>
+              <Init
+                visible={!this.state.status.ready}
+                settings={this.state.settings}
+              />
               <MainComp visible={this.state.status.ready} />
             </OutputContext.Provider>
           </SettingsContext.Provider>

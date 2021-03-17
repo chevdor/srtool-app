@@ -125,8 +125,8 @@ class Init extends React.Component<Props, State> {
     console.log("Starting init checks");
     console.log("status context", status);
     console.log("settings context", settings);
-
-    const initCheck = new InitCheck();
+    
+    const initCheck = new InitCheck(settings);
     const srtool = new Srtool();
 
     this.nextStep(steps._1_start);
@@ -155,11 +155,7 @@ class Init extends React.Component<Props, State> {
 
     const latestImageCheck = await initCheck.srtoolLatestImage();
     status.setField({ srtool_latest_image: latestImageCheck.value });
-    if (process.env.NODE_ENV === "development")
-      status.setField({
-        srtool_latest_image: latestImageCheck.value + "-dev",
-      });
-
+  
     if (docker_ok) {
       this.nextStep(steps._5_get_latest_image);
       await srtool.getImage(latestImageCheck.value);
@@ -218,7 +214,7 @@ class Init extends React.Component<Props, State> {
                 : "No. Press CTRL+R or CMD+R to test again"}
             </div>
 
-            {/* TODO LATER: Hidden for now as it somehow does not hide as it should */}
+            {/* TODO LATER: Hidden currently as it somehow does not hide as it should */}
             {/* <Alert hidden={ this.state.step <= 5 }
               severity={ready ? "success" : "error"}
               color={ready ? "success" : "error"}

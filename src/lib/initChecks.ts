@@ -1,5 +1,6 @@
 import checkDiskSpace from "check-disk-space";
 import DockerWrapper from "./dockerWrapper";
+import { Settings } from "./settings";
 import Srtool from "./srtool";
 
 export enum CheckStatus {
@@ -21,12 +22,14 @@ type AsyncCheckResult = Promise<CheckResult>;
  * srtool will be able to run.
  */
 export default class InitCheck {
-    docker: DockerWrapper;
-    srtool: Srtool;
+    #docker: DockerWrapper;
+    #srtool: Srtool;
+    #settings: Settings;
 
-    constructor() {
-        this.docker = new DockerWrapper();
-        this.srtool = new Srtool();
+    constructor(settings: Settings) {
+        this.#docker = new DockerWrapper();
+        this.#srtool = new Srtool();
+        this.#settings = settings;
     }
 
     /**
@@ -57,7 +60,7 @@ export default class InitCheck {
      */
     public async dockerVersion(): AsyncCheckResult {
         return new Promise(async (resolve, reject) => {
-            const version = await this.docker.getDockerVersion();
+            const version = await this.#docker.getDockerVersion();
             if (version) {
                 resolve({ status: CheckStatus.OK, value: version, message: `Found version ${version}` })
             } else {
@@ -74,7 +77,7 @@ export default class InitCheck {
             let running = false;
 
             try {
-                running = await this.docker.getDockerRunning()
+                running = await this.#docker.getDockerRunning()
             } catch (e) {
                 console.error(e);
             }
@@ -93,7 +96,7 @@ export default class InitCheck {
     */
     public async srtoolLatestImage(): AsyncCheckResult {
         return new Promise(async (resolve, reject) => {
-            const latestImage = await this.srtool.getSrtoolRustcLatestVersion();
+            const latestImage = await this.#srtool.getSrtoolRustcLatestVersion();
 
             if (latestImage) {
                 resolve({ status: CheckStatus.OK, value: latestImage, message: `Latest srtool image: ${latestImage}` })
@@ -109,7 +112,7 @@ export default class InitCheck {
         * This will typically return something like `nightly-2021-02-25`.
         */
     public async srtoolLatestversion(): AsyncCheckResult {
-        const latestVersion = await this.srtool.getSrtoolLatestVersion();
+        const latestVersion = await this.#srtool.getSrtoolLatestVersion();
 
         if (latestVersion) {
             return { status: CheckStatus.OK, value: latestVersion, message: `Latest srtool version: ${latestVersion}` }
@@ -123,7 +126,7 @@ export default class InitCheck {
      * This returns both the image version (=rustc) as well as the srtool version (=script) itself.
      */
     async srtoolVersions(): AsyncCheckResult {
-        const versions = await this.srtool.getSrtoolCurrentVersions('nightly-2021-02-25-dev'); // TODO NOW: fixme, it should not be hardcoded
+        const versions = await this.#srtool.getSrtoolCurrentVersions(this.#settings.srtool.image);
 
         if (versions) {
             return { status: CheckStatus.OK, value: versions, message: `srtool version: ${JSON.stringify(versions)}` }

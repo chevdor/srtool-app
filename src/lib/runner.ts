@@ -1,17 +1,18 @@
 import React from 'react';
 import * as fs from 'fs'
 import unzipper from 'unzipper'
-import { defaultSettings, Settings, SettingsContextContent } from './settings';
+import { SettingsContextContent } from './settings';
+import SettingsContext from '../contexts/settingsContext';
 import VersionControlSystem, { Service } from './vcs';
 import DockerWrapper from './dockerWrapper';
 import Dockerode from 'dockerode';
 import { Writable } from 'stream';
 import { isResult, Message, MessageBuilder, SRToolOutput, SRToolResult, SRToolResultBuilder } from './message';
 import { RunnerConfig } from '../components/runnerConfig';
-import SettingsContext from '../contexts/settingsContext';
 import { containerName, folderBase } from '../constants';
 import { assert } from './assert';
 import * as Path from 'path'
+import mkdirp from 'mkdirp'
 
 /**
  * The Runner is the class that is doing the work of calling
@@ -51,7 +52,12 @@ class Runner extends React.Component<any, any> {
     private async fetchArchive(service: Service, owner: string, repo: string, tag: string): Promise<string> {
         const vcs = new VersionControlSystem(service, owner, repo);
         assert(this.settings, 'no settings')
-        const destination = Path.join(this.settings.local.workDir, `${owner}-${repo}-${tag}.zip`); // TODO WORKDIR: move to workdir
+        const destination = Path.join(this.settings.local.workDir, `${owner}-${repo}-${tag}.zip`);
+
+        console.log(`Creating ${this.settings.local.workDir}`);
+        await mkdirp(this.settings.local.workDir);
+        console.log(`WorkDir created`);
+
         await vcs.fetchSourceArchive(tag, destination)
         return destination
     }
@@ -62,13 +68,15 @@ class Runner extends React.Component<any, any> {
      * @param zipfile ie `/tmp/myzip.zip`
      */
     private async unzip(zipfile: string, workdir: string): Promise<void> {
-        console.log(`Unzipping ${zipfile}`);
+        console.log(`Unzipping ${zipfile} to ${workdir}`);
         return new Promise((resolve, _reject) => {
             fs.createReadStream(zipfile)
+                .on('error', console.error)
                 .pipe(unzipper.Extract({ path: workdir }))
+                .on('error', console.error)
                 .on('close', () => {
                     resolve();
-                });
+                })
         })
     }
 
@@ -98,11 +106,10 @@ class Runner extends React.Component<any, any> {
      */
     public async fetchSource(service: Service, owner: string, repo: string, tag: string, workdir: string): Promise<string> {
         assert(tag.indexOf('refs') < 0, `We need a tag here, not a ref, you passed ${tag}`)
-
         const zip = await this.fetchArchive(service, owner, repo, tag);
         console.log("zip located at", zip);
 
-        console.log('Unzipping');
+        console.log(`Unzipping to workdir: ${workdir}`);
         await this.unzip(zip, workdir);
         console.log('Unzipping done');
 
@@ -186,7 +193,7 @@ class Runner extends React.Component<any, any> {
                             console.log('result set to', result);
 
                             // resolve(result)
-                        } 
+                        }
                         // else {
                         //     console.log('lastline is not result', lastLine);
                         // }

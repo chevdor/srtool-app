@@ -1,5 +1,5 @@
 import os from 'os';
-import { Package } from '../types';
+import { RuntimePackage } from '../types';
 import * as Path from 'path'
 import { folderBase } from '../constants';
 
@@ -57,7 +57,7 @@ export interface Settings {
         tag: string;
 
         /** The package to build. ie polkadot-runtime, kusama-runtime, etc.... */
-        package: Package;
+        package: RuntimePackage;
     };
     srtool: {
         /** When set to the default (true), the srtool-app
@@ -76,7 +76,6 @@ export interface Settings {
     runner: {}
 };
 
-
 export type SettingsContextContent = Settings & SettingSetter;
 
 export const defaultSettings: SettingsContextContent = {
@@ -90,12 +89,12 @@ export const defaultSettings: SettingsContextContent = {
     },
     repo: {
         baseUrl: "https://github.com/paritytech/polkadot",
-        tag: "v0.8.28",
+        tag: "v0.8.29",
         package: 'polkadot-runtime'
     },
     srtool: {
         autoUpgrade: true,
-        image: "chevdor/srtool:nightly-2021-02-25",
+        image: "chevdor/srtool:nightly-2021-03-15",
     },
     runner: {},
     set: (a, b) => { },

@@ -69,7 +69,7 @@ class RunnerComp extends React.Component<any, State> {
       defaultTag: null,
 
       packages: [],
-      selectedPackage: 'polkadot-runtime',
+      selectedPackage: "polkadot-runtime",
 
       running: false,
       finished: false,
@@ -84,9 +84,8 @@ class RunnerComp extends React.Component<any, State> {
     // Prepare & cleanup Cleanup
     await runner.prepare();
 
-    // TODO NOW: can we get a Message instead of a string ?
-    runner.onData = (data: string) => {
-      addMessage(MessageBuilder.build(data));
+    runner.onData = (s: string) => {
+      addMessage(MessageBuilder.build(s));
     };
 
     const start = new Date();
@@ -120,8 +119,7 @@ class RunnerComp extends React.Component<any, State> {
     // We do NOT delete if the user uses his own git repo folder
     // If that's not the case, we check what the users wants from the settings.
     if (settings.local.fetchMode === "httpGet" && settings.local.autoCleanup) {
-      
-      await runner.cleanup(folder); // TODO WORKDIR: bring back once 100% sure it works
+      await runner.cleanup(folder);
     } else {
       console.log("Skipping cleanup");
     }
@@ -131,17 +129,17 @@ class RunnerComp extends React.Component<any, State> {
   };
 
   setSelectedTag = (
-    event: any,
+    _event: any,
     newTag: Tag | null,
-    reason: AutocompleteChangeReason
+    _reason: AutocompleteChangeReason
   ) => {
     if (newTag) this.setState({ selectedTag: newTag });
   };
 
   setSelectedPackage = (
-    event: any,
+    _event: any,
     newPackage: RuntimePackage | null,
-    reason: AutocompleteChangeReason
+    _reason: AutocompleteChangeReason
   ) => {
     if (newPackage) {
       this.setState({ selectedPackage: newPackage });
@@ -186,7 +184,7 @@ class RunnerComp extends React.Component<any, State> {
                     focused={false}
                     defaultValue={settings.repo.baseUrl}
                     disabled={true}
-                    style={{ width: "50%" }}
+                    style={{ width: "50%", display: 'none' }}
                   ></TextField>
                   <TextField
                     id="project-path"
@@ -194,7 +192,8 @@ class RunnerComp extends React.Component<any, State> {
                     focused={false}
                     defaultValue={settings.local.projectPath}
                     disabled={true}
-                    style={{ width: "50%" }}
+                    style={{ width: "50%", display: 'none'  }}
+                    hidden={true}
                   ></TextField>
                   <TextField
                     id="docker-image"

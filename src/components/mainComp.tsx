@@ -40,8 +40,8 @@ class MainComp extends React.Component<MainCompProps, any> {
       const history = new RunHistory();
 
       const historyKey: HistoryKey = {
-        srtoolImage: "chevdor/srtool:nightly-2021-02-25", // TODO IMAGE: fix that and use real value
-        srtoolVersion: "0.9.6", // TODO NOW: fix that and use real value => result.generator,
+        srtoolImage: "chevdor/srtool:nightly-2021-03-15", // TODO IMAGE: fix that and use real value
+        srtoolVersion: "0.9.7", // TODO HISTORY: fix that and use real value => result.generator,
         gitCommit: result.git.commit,
         date: result.time,
         package: result.package,
@@ -64,7 +64,7 @@ class MainComp extends React.Component<MainCompProps, any> {
           )}
         </OutputContext.Consumer>
 
-        <SettingsComp />
+        {/* <SettingsComp /> */}
 
         {/* {process.env.NODE_ENV === "development" && (
            <HistoryViewer history={store.store.history} />

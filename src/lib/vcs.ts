@@ -64,6 +64,7 @@ export default class VersionControlSystem {
         const { owner, repo, service } = this;
         assert(tag.indexOf('refs') < 0, `Invalid tag: ${tag}`)
         console.log(`Fetching tag ${tag} of ${owner}/${repo} from ${service}`);
+        console.log(`The archive will be stored at ${destination}`);
 
         if (service !== 'github') throw new Error(`${service} not supported yet`)
         const url = `https://codeload.github.com/${owner}/${repo}/zip/${tag}`;
