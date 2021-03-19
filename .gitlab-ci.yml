@@ -1,6 +1,6 @@
 stages:
   - build
-  - pack
+  - dist
   # - deploy
 
 cache:
@@ -17,8 +17,8 @@ build:
   script:
     - yarn build
 
-pack:mac:
-  stage: pack
+dist:mac:
+  stage: dist
   tags:
     - mac
   only:
@@ -36,8 +36,8 @@ pack:mac:
       - dist/*mac.zip
     expire_in: 1h
 
-pack:linux:
-  stage: pack
+dist:linux:
+  stage: dist
   only:
     - tags
   image: electronuserland/builder:wine
@@ -53,8 +53,8 @@ pack:linux:
       - dist/*.AnnImage
     expire_in: 1h
 
-pack:win:
-  stage: pack
+dist:win:
+  stage: dist
   only:
     - tags
   image: electronuserland/builder:wine
@@ -74,7 +74,7 @@ pack:win:
 #   only:
 #     - tags
 #   dependencies: 
-#     - pack
+#     - dist
 #   script:
 #     - mkdir .public
 #     - cp -r * .public
