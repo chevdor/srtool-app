@@ -23,7 +23,6 @@ pack:mac:
     - mac
   only:
     - tags
-  image: electronuserland/builder:wine
   before_script:
     - yarn clean
     - yarn install
@@ -40,7 +39,9 @@ pack:linux:
   stage: pack
   only:
     - tags
-  image: electronuserland/builder:wine
+  tags:
+    - linux
+  image: electronuserland/builder:14
   before_script:
     - yarn clean
     - yarn install
@@ -57,6 +58,8 @@ pack:win:
   stage: pack
   only:
     - tags
+  tags:
+    - windows
   image: electronuserland/builder:wine
   before_script:
     - yarn clean

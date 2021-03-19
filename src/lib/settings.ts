@@ -1,7 +1,7 @@
 import os from 'os'
 import { RuntimePackage } from '../types'
 import * as Path from 'path'
-import { folderBase } from '../constants'
+import { Constants } from '../constants'
 
 export interface SettingSetter {
 	set: (section: string, key: string, value: any) => void
@@ -87,9 +87,9 @@ export type SettingsContextContent = Settings & SettingSetter
 export const defaultSettings: SettingsContextContent = {
 	local: {
 		fetchMode: 'httpGet',
-		workDir: Path.join(os.tmpdir(), folderBase),
-		projectPath: Path.join(os.tmpdir(), folderBase), // Not ideal but good enough as a started until we know more
-		exportFolder: Path.join(os.homedir(), folderBase),
+		workDir: Path.join(os.tmpdir(), Constants.folderBase),
+		projectPath: Path.join(os.tmpdir(), Constants.folderBase), // Not ideal but good enough as a started until we know more
+		exportFolder: Path.join(os.homedir(), Constants.folderBase),
 		cargoCache: Path.join(os.tmpdir(), 'cargo-home'),
 		autoCleanup: true,
 		historyLimit: 30,

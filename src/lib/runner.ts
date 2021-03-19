@@ -9,7 +9,7 @@ import Dockerode from 'dockerode'
 import { Writable } from 'stream'
 import { isResult, Message, MessageBuilder, SRToolResult } from './message'
 import { RunnerConfig } from '../components/runnerConfig'
-import { containerName, folderBase } from '../constants'
+import { Constants } from '../constants'
 import { assert } from './assert'
 import * as Path from 'path'
 import mkdirp from 'mkdirp'
@@ -145,7 +145,7 @@ class Runner extends React.Component<any, any> {
 	public async cleanup(folder: string): Promise<void> {
 		console.log(`Deleting the folder ${folder}`)
 		assert(
-			folder.indexOf(folderBase) >= 0,
+			folder.indexOf(Constants.folderBase) >= 0,
 			`That does not look like a folder we should delete, we got: ${folder}`
 		)
 
@@ -232,9 +232,9 @@ class Runner extends React.Component<any, any> {
 
 			const create_options: Dockerode.ContainerCreateOptions = {
 				Tty: true,
-				name: containerName,
+				name: Constants.containerName,
 				Labels: {
-					app: containerName,
+					app: Constants.containerName,
 				},
 				HostConfig: {
 					AutoRemove: true,
