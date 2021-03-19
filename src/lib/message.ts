@@ -1,67 +1,67 @@
-import { Hash, ProposalHash } from "../types";
+import { Hash, ProposalHash } from '../types'
 
 /**
  * Describes the json output as sent by srtool.
  * Usually we build from a `SRToolOutput` into a `SRToolResult` using the `SRToolResultBuilder`.
  */
 export type SRToolOutput = {
-    gen: string,
-    commit: string,
-    tag: string,
-    branch: string,
-    tmsp: string,
-    rustc: string,
-    size: string,
-    pkg: string,
-    prop: string,
-    sha256: string,
-    wasm: string
-};
+	gen: string
+	commit: string
+	tag: string
+	branch: string
+	tmsp: string
+	rustc: string
+	size: string
+	pkg: string
+	prop: string
+	sha256: string
+	wasm: string
+}
 
 /**
  * Those are infos coming from srtool before we need to start any (long)
  * compilation task.
  */
 export type SRToolInfo = {
-    generator: string,
-    git: {
-        commit: string,
-        tag?: string,
-        branch?: string,
-    },
-    rustc: string;
-    package: string,
+	generator: string
+	git: {
+		commit: string
+		tag?: string
+		branch?: string
+	}
+	rustc: string
+	package: string
 }
 
 /**
  * This is a formatted result after we massaged it.
  */
 export type SRToolResult = SRToolInfo & {
-    time: Date, // date of the generation of the result
-    duration?: number; // in ms
-    size: number; // in bytes
-    proposalHash: ProposalHash;
-    sha256: Hash;
-    wasm: {
-        path: string;
-        // content: Buffer;  // srtool currently does not provide this
-        // preview: string;
-    }
-};
-export type OutputMessage = string;
+	time: Date // date of the generation of the result
+	duration?: number // in ms
+	size: number // in bytes
+	proposalHash: ProposalHash
+	sha256: Hash
+	wasm: {
+		path: string
+		// content: Buffer;  // srtool currently does not provide this
+		// preview: string;
+	}
+}
+export type OutputMessage = string
 
 export type Message = {
-    received: Date,
-    // type: 'output' | 'result',
-    content: OutputMessage | SRToolResult
-};
+	received: Date
+	// type: 'output' | 'result',
+	content: OutputMessage | SRToolResult
+}
 
 /**
  * Return whether m is a SRToolResult or not.
- * @param m 
+ * @param m
  */
 export function isResult(m: OutputMessage | SRToolResult): m is SRToolResult {
-    return (<SRToolResult>m).generator !== undefined;
+	return (<SRToolResult>m).generator !== undefined
 }
 
 /**
@@ -81,46 +81,46 @@ export function isResult(m: OutputMessage | SRToolResult): m is SRToolResult {
  *  }
  */
 export class SRToolResultBuilder {
-    public static build(res: SRToolOutput): SRToolResult {
-        const result = {
-            generator: res.gen,
-            git: {
-                commit: res.commit,
-                tag: res.tag,
-                branch: res.branch,
-            },
-            time: new Date(res.tmsp), // date of the generation of the result
-            // duration?: number; // in ms, not provided by srtool
-            rustc: res.rustc,
-            size: parseInt(res.size), // in bytes
-            package: res.pkg,
-            proposalHash: res.prop,
-            sha256: res.sha256,
-            wasm: {
-                path: res.wasm,
-                // content: Buffer;  // srtool currently does not provide this
-                // preview: res.;    // srtool currently does not provide this
-            }
-        }
-        return result;
-    }
+	public static build(res: SRToolOutput): SRToolResult {
+		const result = {
+			generator: res.gen,
+			git: {
+				commit: res.commit,
+				tag: res.tag,
+				branch: res.branch,
+			},
+			time: new Date(res.tmsp), // date of the generation of the result
+			// duration?: number; // in ms, not provided by srtool
+			rustc: res.rustc,
+			size: parseInt(res.size), // in bytes
+			package: res.pkg,
+			proposalHash: res.prop,
+			sha256: res.sha256,
+			wasm: {
+				path: res.wasm,
+				// content: Buffer;  // srtool currently does not provide this
+				// preview: res.;    // srtool currently does not provide this
+			},
+		}
+		return result
+	}
 }
 
 export class MessageBuilder {
-    /** This method takes a string and builds a `Message` */
-    public static build(s: string): Message {
-        try {
-            const output: SRToolOutput = JSON.parse(s);
-            const content: SRToolResult = SRToolResultBuilder.build(output);
-            return {
-                received: new Date(),
-                content,
-            }
-        } catch (e) {
-            return {
-                received: new Date(),
-                content: s,
-            }
-        }
-    }
+	/** This method takes a string and builds a `Message` */
+	public static build(s: string): Message {
+		try {
+			const output: SRToolOutput = JSON.parse(s)
+			const content: SRToolResult = SRToolResultBuilder.build(output)
+			return {
+				received: new Date(),
+				content,
+			}
+		} catch (e) {
+			return {
+				received: new Date(),
+				content: s,
+			}
+		}
+	}
 }

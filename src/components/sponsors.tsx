@@ -1,12 +1,12 @@
-import { Box, Typography } from "@material-ui/core";
-import React from "react";
+import { Typography } from '@material-ui/core'
+import React from 'react'
 
 export default class Sponsor extends React.Component {
-  render() {
-    return (
-      <div>
-        <Typography variant="caption">You name here</Typography>
-      </div>
-    );
-  }
+	render(): React.ReactNode {
+		return (
+			<div>
+				<Typography variant="caption">You name here</Typography>
+			</div>
+		)
+	}
 }

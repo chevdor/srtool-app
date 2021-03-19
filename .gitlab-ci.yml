@@ -3,6 +3,12 @@ stages:
   - pack
   # - deploy
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - build/
+
 build:
   stage: build
   image: node:14
