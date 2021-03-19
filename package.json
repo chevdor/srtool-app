@@ -46,6 +46,7 @@
     "@types/chai": "^4.2.11",
     "@types/cors": "2.8.10",
     "@types/dockerode": "^3.2.2",
+    "@types/mkdirp": "^1.0.1",
     "@types/mocha": "8.2.1",
     "@types/node": "14.14.31",
     "@types/rimraf": "^3.0.0",
@@ -95,5 +96,4 @@
     "styled-components": "^5.2.1",
     "unzipper": "^0.10.11"
   }
->>>>>>> Initial commit
 }

@@ -230,8 +230,7 @@ class Runner extends React.Component<any, any> {
                 HostConfig: {
                     AutoRemove: true,
                     Binds: [
-                        `${params.folder}:/build`,
-                        // '/tmp/cargo:/cargo-home',
+                        `${params.folder}:/build`
                     ],
                 },
                 Env: [
@@ -239,6 +238,11 @@ class Runner extends React.Component<any, any> {
                     'SLEEP=0.03', // this is for the srtool-dev image and will be ignored by the real srtool
                 ]
             };
+
+            if (this.settings.srtool.useCache) {
+                console.log(`Cargo cache will be mounted from ${this.settings.local.cargoCache}`);
+                create_options.HostConfig?.Binds?.push(`${this.settings.local.cargoCache}:/cargo-home`)
+            }
 
             this.#docker.docker.run(image, image_args, outStream, create_options, handler)
         })

@@ -2,12 +2,12 @@ import { Box } from "@material-ui/core";
 import React from "react";
 import semver from "semver";
 import Srtool from "../lib/srtool";
+import { shell } from "electron";
 
 /**
  * This component checks whether an update is available
  */
 class VersionChecker extends React.Component<any, any> {
-
   constructor(props?: any) {
     super(props);
     this.state = {
@@ -25,19 +25,28 @@ class VersionChecker extends React.Component<any, any> {
 
   render() {
     const { currentVersion, latestVersion } = this.state;
-
     if (latestVersion && semver.lt(currentVersion, latestVersion))
       return (
         <Box color="text.secondary">
-          <div>current: v{this.state.currentVersion}</div>
-          <div>latest: {this.state.latestVersion}</div>
-          <div>DOWNLOAD LATEST</div>
+          <span>Current version: v{this.state.currentVersion}</span> -&nbsp;
+          <span>Latest version: v{this.state.latestVersion}</span> -&nbsp;
+          <span>
+            Download the latest version of Srtool ->&nbsp;
+            <span
+              onClick={() =>
+                shell.openExternal(
+                  "https://gitlab.com/chevdor/srtool-app/-/releases"
+                )
+              }
+            >here
+            </span>.
+          </span>
         </Box>
       );
     else
       return (
         <Box color="text.secondary">
-          <div>You have the latest version: v{this.state.currentVersion}</div>
+          <div>You have the latest version of the Srtool App (v{this.state.currentVersion})</div>
         </Box>
       );
   }

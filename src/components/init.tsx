@@ -19,6 +19,7 @@ import Srtool from "../lib/srtool";
 import SettingsContext from "../contexts/settingsContext";
 import { SettingsContextContent } from "../lib/settings";
 import { assert } from "../lib/assert";
+import mkdirp from 'mkdirp'
 
 export interface Props extends WithStyles<typeof styles> {
   visible: boolean;
@@ -114,6 +115,13 @@ class Init extends React.Component<Props, State> {
     await this.run(status, settings);
   }
 
+  /** Bascically ensures the folder is created */
+  async initCargoCache(settings: SettingsContextContent): Promise<void> {
+    console.log(`Making sure ${settings.local.cargoCache} is created`);
+    await mkdirp(settings.local.cargoCache);
+    console.log(`Cache is currently set to be ${settings.srtool.useCache ? '' : 'NOT '}used`)
+  }
+
   /**
    * Move to the next step
    */
@@ -130,6 +138,7 @@ class Init extends React.Component<Props, State> {
     const srtool = new Srtool();
 
     this.nextStep(steps._1_start);
+    await this.initCargoCache(settings);
     status.setField({ ready: false });
 
     // We may later want to add this check to the list of checks, for now this is just an info
@@ -235,7 +244,10 @@ class Init extends React.Component<Props, State> {
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      // color: "red",
+      margin: "0px 50px 0px 50px ",
+      padding: "20px",
+    },
+    debug: {
       margin: "0px 50px 0px 50px ",
       padding: "20px",
       border: "1px solid red",

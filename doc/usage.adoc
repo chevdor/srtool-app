@@ -1,0 +1,13 @@
+
+= Usage
+
+Using {prj} is rather straight forward. When you start {prj}, it will perform a few checks and initialize your system. 
+
+Once {prj} is ready, you will be able to select:
+
+- a version
+- a runtime
+
+Pressing the button will then start building your runtime. 
+
+WARNING: Building a runtime from scratch does take a long time. While some machines will manage under 10 minutes, some older computers may need up to 2 hours. {prj} constantly shows the status so make sure you don't interrupt the process once it runs.

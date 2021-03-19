@@ -18,6 +18,7 @@ import Store from "electron-store";
 import { defaultSettings, SettingsContextContent } from "./lib/settings";
 import SettingsContext from "./contexts/settingsContext";
 import pkg from "../package.json";
+import VersionChecker from "./components/versionChecker";
 
 const mainElement = document.createElement("div");
 document.body.appendChild(mainElement);

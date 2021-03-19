@@ -1,5 +1,8 @@
 = srtool app
 :toc: right
+:prj: Srtool App
+
+include::doc/usage.adoc[leveloffset=+1]
 
 == Usage
 
@@ -26,8 +29,6 @@ NOTE: Please note that some of the field below may be set to ReadOnly on some ve
 
 - folder to use (when using a repo)
 - temp folder
-- wipe all data after process complete (only if NOT using a repo)
-- allow skipping the checks
 - delete image after use
 - wipe target before build (cargo clean)
 - wipe srtool target after build

@@ -25,6 +25,11 @@ export interface Settings {
         workDir: string;
 
         /**
+         * Location of our Cargo cache. It may be enabled or not.
+         */
+        cargoCache: string;
+
+        /**
          * This is the local path where the source to build is located.
          * The source may come from the user (using git or download),
          * or have been downloaded by us. In `httpGet` mode, this is
@@ -72,6 +77,8 @@ export interface Settings {
          */
         image: string;
 
+        useCache: boolean;
+
     };
     runner: {}
 };
@@ -84,6 +91,7 @@ export const defaultSettings: SettingsContextContent = {
         workDir: Path.join(os.tmpdir(), folderBase),
         projectPath: Path.join(os.tmpdir(), folderBase), // Not ideal but good enough as a started until we know more
         exportFolder: Path.join(os.homedir(), folderBase),
+        cargoCache: Path.join(os.tmpdir(), 'cargo-home'),
         autoCleanup: true,
         historyLimit: 30,
     },
@@ -95,6 +103,7 @@ export const defaultSettings: SettingsContextContent = {
     srtool: {
         autoUpgrade: true,
         image: "chevdor/srtool:nightly-2021-03-15",
+        useCache: false,
     },
     runner: {},
     set: (a, b) => { },

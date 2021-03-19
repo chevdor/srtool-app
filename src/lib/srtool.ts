@@ -33,15 +33,17 @@ export default class Srtool {
     /**
      * Fetch the latest known version of the Srtool APP from the repo.
      */
+    // TODO: we may consider using TAGs instead of the package.json
     async getSrtoolAppLatestVersion(): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            const repo = "https://gitlab.com/chevdor/confmgr"; // TODO SOON: fix this repo to srtool-app
+            const repo = "https://gitlab.com/chevdor/srtool-app";
             const response = await fetch(`${repo}/-/raw/master/package.json`);
             if (response.status == 200) {
                 const pkgJson = await response.text();
-                // const pkg = JSON.parse(pkgJson);
-                // resolve(pkg.version)
-                resolve("0.1.0") // TODO SOON: stop returning a fake version once the repo is up
+                const pkg = JSON.parse(pkgJson);
+                console.log(`SrtoolApp Latest Version: ${pkg.version}`);
+                
+                resolve(pkg.version)
             } else {
                 reject(new Error(`Something went wrong in getSrtoolAppLatestVersion. http status = ${response.status}`))
             }
@@ -107,7 +109,7 @@ export default class Srtool {
         const containerName = 'srtool-version'
 
         return new Promise((resolve, reject) => {
-            const cmd = ['version', '-cM'];
+            const version_cmd = ['version', '-cM'];
             console.log(`checking version for ${image}`);
 
             const outStream = new Writable();
@@ -130,7 +132,7 @@ export default class Srtool {
                         resolve(info);
                     } catch (e) {
                         // TODO SOON: Not a fan of the following, need to get out as soon as polkadot 0.8.30 is out.
-                        console.warn(`Failed parsing json output from 'docker run ${image} ${cmd.join(' ')}'. You are likely running an image that is too old.`)
+                        console.warn(`Failed parsing json output from 'docker run ${image} ${version_cmd.join(' ')}'. You are likely running an image that is too old.`)
                         resolve({ "name": "srtool", "version": "0.9.0", "rustc": "nightly-2021-02-25" })
                         // reject(e)
                     }
@@ -145,10 +147,10 @@ export default class Srtool {
                     AutoRemove: true
                 }
             };
-            
-            console.log('Starting container to check the version', image, cmd, create_options);
-            
-            this.#docker.docker.run(image, cmd, outStream, create_options, handler)
+
+            console.log('Starting container to check the version', image, version_cmd, create_options);
+
+            this.#docker.docker.run(image, version_cmd, outStream, create_options, handler)
         })
     }
 
