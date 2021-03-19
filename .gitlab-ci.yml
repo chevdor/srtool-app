@@ -23,10 +23,10 @@ pack:mac:
     - mac
   only:
     - tags
-  before_script:
-    - yarn clean
-    - yarn install
-    - yarn build
+  # before_script:
+    # - yarn clean
+    # - yarn install
+    # - yarn build
   script:
     - yarn dist:mac
   artifacts:
@@ -41,11 +41,11 @@ pack:linux:
     - tags
   tags:
     - linux
-  image: electronuserland/builder:14
-  before_script:
-    - yarn clean
-    - yarn install
-    - yarn build
+  image: electronuserland/builder:12
+  # before_script:
+    # - yarn clean
+    # - yarn install
+    # - yarn build
   script:
     - yarn dist:linux
   artifacts:
@@ -61,10 +61,10 @@ pack:win:
   tags:
     - windows
   image: electronuserland/builder:wine
-  before_script:
-    - yarn clean
-    - yarn install
-    - yarn build
+  # before_script:
+  #   - yarn clean
+  #   - yarn install
+  #   - yarn build
   script:
     - yarn dist:win
   artifacts:
