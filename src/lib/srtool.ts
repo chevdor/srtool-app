@@ -129,14 +129,15 @@ export default class Srtool {
                         const info: SrtoolVersions = JSON.parse(output)
                         resolve(info);
                     } catch (e) {
-                        console.error(`Failed parsing json output from 'docker run ${image} ${cmd.join(' ')}'. You are likely running an image that is too old.`)
-                        reject(e)
+                        // TODO SOON: Not a fan of the following, need to get out as soon as polkadot 0.8.30 is out.
+                        console.warn(`Failed parsing json output from 'docker run ${image} ${cmd.join(' ')}'. You are likely running an image that is too old.`)
+                        resolve({ "name": "srtool", "version": "0.9.0", "rustc": "nightly-2021-02-25" })
+                        // reject(e)
                     }
                 }
             };
             const create_options: Dockerode.ContainerCreateOptions = {
                 Tty: true,
-                name: containerName,
                 Labels: {
                     app: 'srtool'
                 },
@@ -144,7 +145,9 @@ export default class Srtool {
                     AutoRemove: true
                 }
             };
-
+            
+            console.log('Starting container to check the version', image, cmd, create_options);
+            
             this.#docker.docker.run(image, cmd, outStream, create_options, handler)
         })
     }

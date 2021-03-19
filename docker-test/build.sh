@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-RUSTC_VERSION=nightly-2021-02-25
+RUSTC_VERSION=nightly-2021-03-15
 
 docker build -t chevdor/srtool-dev:$RUSTC_VERSION .
 

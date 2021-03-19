@@ -20,7 +20,7 @@ export class Beta extends React.Component<BetaProps, any> {
           <AlertTitle>!!! {stage} version !!!</AlertTitle>
           This is {stage === "alpha" ? "an" : "a"} {stage} version. Bugs are to
           be expected and you can greatly help simply by reporting them. If you
-          run into an issue, please &nbsp;
+          run into an issue, please&nbsp;
           <a
             style={{ textDecoration: "underline", fontWeight: 900 }}
             color="primary"

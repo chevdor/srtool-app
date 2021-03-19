@@ -108,9 +108,9 @@ export default class InitCheck {
 
 
     /**
-        * Check the latest srtool version from the repo.
-        * This will typically return something like `nightly-2021-02-25`.
-        */
+    * Check the latest srtool version from the repo.
+    * This will typically return something like `nightly-2021-02-25`.
+    */
     public async srtoolLatestversion(): AsyncCheckResult {
         const latestVersion = await this.#srtool.getSrtoolLatestVersion();
 

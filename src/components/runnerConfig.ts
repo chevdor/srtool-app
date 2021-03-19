@@ -73,7 +73,7 @@ export const RunnerConfigs: Record<string, RunnerConfig> = {
             "-v", "/tmp/srtool/polkadot-0.8.28:/build",
             // "-v", "/tmp/cargo:/cargo-home",
             "-e", "PACKAGE=polkadot-runtime"],
-        image: "chevdor/srtool:nightly-2021-02-25",
+        image: "chevdor/srtool:nightly-2021-03-15",
         package: 'polkadot-runtime',
         folder: '/tmp/srtool-polkadot-0.8.28',
         image_args: [
@@ -82,7 +82,7 @@ export const RunnerConfigs: Record<string, RunnerConfig> = {
         ],
     },
     srtool_2021_02_25_dev: {
-        image: "chevdor/srtool-dev:nightly-2021-02-25",
+        image: "chevdor/srtool-dev:nightly-2021-03-15",
         package: 'polkadot-runtime',
         folder: '/tmp/srtool-polkadot-0.8.28',
         docker_run: [
