@@ -11,3 +11,15 @@ Once {prj} is ready, you will be able to select:
 Pressing the button will then start building your runtime. 
 
 WARNING: Building a runtime from scratch does take a long time. While some machines will manage under 10 minutes, some older computers may need up to 2 hours. {prj} constantly shows the status so make sure you don't interrupt the process once it runs.
+
+== Troubleshooting
+
+If you run into some issues, there are a few steps you can take to try fixing them. If those don't help, please report the issue and provide as much details as you can, including the logs.
+
+=== Config reset
+
+In some cases, it may help resetting the configuration. You can simply delete the following file `/Users/<username>/Library/Application Support/srtool-app/config.json` and restart {prj}.
+
+=== Docker reset
+
+You may open Docker Desktop and click on the bug icon. You will find a few options that will restore docker to a clean state.
