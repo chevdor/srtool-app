@@ -1,9 +1,20 @@
 stages:
+  - build
   - pack
   # - deploy
 
+build:
+  stage: build
+  image: node:14
+  before_script:
+    - yarn install
+  script:
+    - yarn build
+
 pack:mac:
   stage: pack
+  tags:
+    - mac
   only:
     - tags
   image: electronuserland/builder:wine
@@ -15,7 +26,8 @@ pack:mac:
     - yarn dist:mac
   artifacts:
     paths:
-      - packages
+      - dist/*.dmg
+      - dist/*mac.zip
     expire_in: 1h
 
 pack:linux:
@@ -31,7 +43,8 @@ pack:linux:
     - yarn dist:linux
   artifacts:
     paths:
-      - packages
+      - dist/*.snap
+      - dist/*.AnnImage
     expire_in: 1h
 
 pack:win:
@@ -47,7 +60,7 @@ pack:win:
     - yarn dist:win
   artifacts:
     paths:
-      - packages
+      - dist/*.exe
     expire_in: 1h
 
 # pages:

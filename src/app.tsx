@@ -94,7 +94,10 @@ class App extends React.Component<any, any> {
         settings: defaultSettings,
       },
     });
-    //store.clear();
+    
+    // For now we clear by default to ensure the schema remains valid
+    store.clear();
+    
     console.log(`Starting ${pkg.name} v${pkg.version}`);
     console.log("appstorage", store);
     console.log(`Your config is located at ${store.path}`);
