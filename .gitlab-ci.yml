@@ -11,6 +11,8 @@ cache:
 
 build:
   stage: build
+  tags:
+    - docker
   image: node:14
   before_script:
     - yarn install
