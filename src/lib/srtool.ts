@@ -213,7 +213,7 @@ export default class Srtool {
 	/**
 	 * This removes all srtool images.
 	 */
-	 async removeImages(): Promise<void> {
-		return this.#docker.deleteImages('srtool');
+	async removeImages(): Promise<void> {
+		return this.#docker.deleteImages('srtool')
 	}
 }

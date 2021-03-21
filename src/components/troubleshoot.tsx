@@ -59,9 +59,9 @@ class Troubleshoot extends React.Component<Props, never> {
 				<Box color="text.primary" style={styles.box} hidden={false}>
 					<Typography variant="body2">
 						Overtime, you may accumulate several older images. This button will
-						delete all srtool images. You
-						will recover disk space and there is no risk in doing so. Make sure to restart the Application
-						after that and only the latest srtool image will be downloaded.
+						delete all srtool images. You will recover disk space and there is
+						no risk in doing so. Make sure to restart the Application after that
+						and only the latest srtool image will be downloaded.
 					</Typography>
 					<Button
 						style={styles.button}

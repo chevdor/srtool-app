@@ -3,7 +3,7 @@
  */
 
 export const Constants = {
-    containerName: 'srtool',
+	containerName: 'srtool',
 
-    folderBase: 'com.chevdor.srtool'
-};
+	folderBase: 'com.chevdor.srtool',
+}
