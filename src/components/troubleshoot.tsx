@@ -29,8 +29,9 @@ class Troubleshoot extends React.Component<Props, never> {
 
 				<Box color="text.primary" style={styles.box}>
 					<Typography variant="body2">
-						If srtool is currently running and you need to interrupt it (any
-						work done so far will be lost), you may click this button.
+						If srtool is currently running and you need to interrupt it, you may
+						click this button. Beware that any work done so far will be lost:
+						your next run will start from stratch.
 					</Typography>
 					<Button
 						style={styles.button}
@@ -39,7 +40,7 @@ class Troubleshoot extends React.Component<Props, never> {
 							await this.#srtool.removeContainer()
 						}}
 					>
-						Force Remove Srtool Container
+						Remove Container
 					</Button>
 				</Box>
 
@@ -55,8 +56,20 @@ class Troubleshoot extends React.Component<Props, never> {
 					</Button>
 				</Box>
 
-				<Box color="text.primary" style={styles.box} hidden={true}>
-					<Button style={styles.button} color="primary" onClick={() => {}}>
+				<Box color="text.primary" style={styles.box} hidden={false}>
+					<Typography variant="body2">
+						Overtime, you may accumulate several older images. This button will
+						delete all srtool images. You
+						will recover disk space and there is no risk in doing so. Make sure to restart the Application
+						after that and only the latest srtool image will be downloaded.
+					</Typography>
+					<Button
+						style={styles.button}
+						color="primary"
+						onClick={async () => {
+							await this.#srtool.removeImages()
+						}}
+					>
 						Reset Images
 					</Button>
 				</Box>

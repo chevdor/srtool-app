@@ -94,7 +94,7 @@ class Runner extends React.Component<any, any> {
 	 */
 	private async deleteZip(zipfile: string): Promise<void> {
 		console.log(`Deleting zip at ${zipfile}`)
-		return new Promise((resolve, _reject) => {
+		return new Promise((resolve, reject) => {
 			try {
 				fs.unlinkSync(zipfile)
 				resolve()

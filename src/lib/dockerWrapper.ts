@@ -45,6 +45,19 @@ export default class DockerWrapper {
 		return null
 	}
 
+	public async deleteImages(name: string): Promise<void> {
+		const images = await this.#docker.listImages({})
+		console.log(`Found ${images.length} image(s)`);
+
+		images.filter(img => img.RepoTags.filter(tag => tag.indexOf(name) >= 0).length)
+			.forEach(async img => {
+				console.log(`Deleting image ${img.RepoTags}`);
+				console.log(img);
+				const i = this.#docker.getImage(img.RepoTags[0])
+				i.remove({ force: true })
+			})
+	}
+
 	/**
 	 * Returns the detected Docker version.
 	 * We use that to check whether or not Docker is installed at all.

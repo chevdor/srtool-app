@@ -209,4 +209,11 @@ export default class Srtool {
 		const container = await this.#docker.getContainer()
 		await container?.remove({ force: true })
 	}
+
+	/**
+	 * This removes all srtool images.
+	 */
+	 async removeImages(): Promise<void> {
+		return this.#docker.deleteImages('srtool');
+	}
 }
