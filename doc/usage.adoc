@@ -3,6 +3,8 @@
 
 Using {prj} is rather straight forward. When you start {prj}, it will perform a few checks and initialize your system. 
 
+IMPORTANT: {prj} requires Docker to be installed and running. You do need to do anything with Docker yourself though, it only needs to be available on your computer.
+
 Once {prj} is ready, you will be able to select:
 
 - a version
@@ -11,6 +13,12 @@ Once {prj} is ready, you will be able to select:
 Pressing the button will then start building your runtime. 
 
 WARNING: Building a runtime from scratch does take a long time. While some machines will manage under 10 minutes, some older computers may need up to 2 hours. {prj} constantly shows the status so make sure you don't interrupt the process once it runs.
+
+== Windows users
+
+Windows users will need to enable option in their Docker settings:
+
+image::doc/windows_tls.png[]
 
 == Troubleshooting
 
