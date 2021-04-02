@@ -42,7 +42,7 @@ pack:linux:
     - tags
   tags:
     - linux
-  image: electronuserland/builder:12
+  image: electronuserland/builder:14
   before_script:
     - yarn install
     - yarn build
