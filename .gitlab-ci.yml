@@ -25,10 +25,10 @@ pack:mac:
     - mac
   only:
     - tags
-  # before_script:
+  before_script:
     # - yarn clean
-    # - yarn install
-    # - yarn build
+    - yarn install
+    - yarn build
   script:
     - yarn dist:mac
   artifacts:
