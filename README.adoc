@@ -2,38 +2,19 @@
 :toc: right
 :prj: Srtool App
 
+This application is a multi-platform frontend for the https://gitlab.com/chevdor/srtool[srtool] project.
+
+image:resources/ss01.png[]
+
+It takes care of fetching the latest docker image for you:
+image:resources/ss02.png[]
+
+It builds your WASM runtime:
+image:resources/ss03.png[]
+
+It shows you the proposal hash and allows you to easily share your results:
+image:resources/ss04.png[]
+
 include::doc/usage.adoc[leveloffset=+1]
-
-== Usage
-
-NOTE: Please note that some of the field below may be set to ReadOnly on some versions.
-
-- select repo
-- select tag / version
-- select chain / runtime
-- Run and wait...
-
-== Start checks
-
-- docker installed
-- disk available
-- number of OS CPUs (eventually warning)
-- number of docker CPUs (eventually warning)
-
-== local storage
-
-- app settings
-- cache/store results for each recall with previous run duration and result
-
-== app settings:
-
-- folder to use (when using a repo)
-- temp folder
-- delete image after use
-- wipe target before build (cargo clean)
-- wipe srtool target after build
-- let user pick a `--cpus` value for docker (=> bakcground mode )
-- support `--cpu-shares 1024` to play on the prio with other docker
-
 
 include::TODO.adoc[leveloffset=+1]

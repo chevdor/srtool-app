@@ -153,7 +153,7 @@ class App extends React.Component<any, any> {
 				<StatusContext.Provider value={this.state.status}>
 					<SettingsContext.Provider value={this.state.settings}>
 						<Header />
-						<Beta stage="alpha" />
+						<Beta stage="beta" />
 						<OutputContext.Provider value={this.state.output}>
 							{/* <VersionChecker /> */}
 

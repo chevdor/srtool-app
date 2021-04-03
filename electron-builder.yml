@@ -7,18 +7,12 @@ files:
 directories:
   output: dist
 
-# asar: false
-
 mac: 
   category: public.app-category.developer-tools
   target:
     - dmg
     - pkg
-
-# build:
-#   extraMetadata:
-#     main: build/main.js
-#   # extends: null
+    - zip
 
 linux:
   target:
@@ -26,7 +20,6 @@ linux:
     - tar.gz
     - deb
     - apk
-    # - snap
     - rpm
   synopsis: A graphical user interface for srtool
   description: Srtool allows building Polkadot and Substrate based chains WASM runtimes.
@@ -45,6 +38,3 @@ nsis:
   perMachine: true
   runAfterFinish: true
   deleteAppDataOnUninstall: true
-
-# publish:
-#   - null

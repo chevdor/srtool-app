@@ -33,7 +33,8 @@ pack:mac:
     paths:
       - dist/*.dmg
       - dist/*mac.zip
-    expire_in: 1h
+      - dist/*.pkg
+    expire_in: 1 week
 
 pack:linux:
   stage: pack
@@ -48,9 +49,12 @@ pack:linux:
     - yarn dist:linux
   artifacts:
     paths:
-      - dist/*.snap
       - dist/*.AppImage
-    expire_in: 1h
+      - dist/*.tar.gz
+      - dist/*.deb
+      - dist/*.apk
+      - dist/*.rpm
+    expire_in: 1 week
 
 pack:win:
   stage: pack
@@ -66,7 +70,7 @@ pack:win:
   artifacts:
     paths:
       - dist/*.exe
-    expire_in: 1h
+    expire_in: 1 week
 
 # pages:
 #   stage: deploy
