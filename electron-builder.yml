@@ -1,0 +1,50 @@
+productName: SRTOOL-App
+appId: com.chevdor.srtool-app
+
+files: 
+  - build/**/*
+
+directories:
+  output: dist
+
+# asar: false
+
+mac: 
+  category: public.app-category.developer-tools
+  target:
+    - dmg
+    - pkg
+
+# build:
+#   extraMetadata:
+#     main: build/main.js
+#   # extends: null
+
+linux:
+  target:
+    - AppImage
+    - tar.gz
+    - deb
+    - apk
+    # - snap
+    - rpm
+  synopsis: A graphical user interface for srtool
+  description: Srtool allows building Polkadot and Substrate based chains WASM runtimes.
+  category: Development
+
+win:
+  target:
+    - nsis
+
+snap:
+  publish:
+    - null
+
+nsis:
+  oneClick: false
+  perMachine: true
+  runAfterFinish: true
+  deleteAppDataOnUninstall: true
+
+# publish:
+#   - null

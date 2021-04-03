@@ -27,7 +27,6 @@ pack:mac:
     - tags
   before_script:
     - yarn install
-    - yarn build
   script:
     - yarn dist:mac
   artifacts:
@@ -45,7 +44,6 @@ pack:linux:
   image: electronuserland/builder:14
   before_script:
     - yarn install
-    - yarn build
   script:
     - yarn dist:linux
   artifacts:
@@ -63,7 +61,6 @@ pack:win:
   image: electronuserland/builder:wine
   before_script:
     - yarn install
-    - yarn build
   script:
     - yarn dist:win
   artifacts:
