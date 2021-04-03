@@ -5,18 +5,18 @@ import { Hash, ProposalHash } from '../types'
  * Usually we build from a `SRToolOutput` into a `SRToolResult` using the `SRToolResultBuilder`.
  */
 export type SRToolOutput = {
-	gen: string;
-	src: 'zip' | 'git';
-	commit: string;
-	tag: string;
-	branch: string;
-	tmsp: string;
-	rustc: string;
-	size: string;
-	pkg: string;
-	prop: string;
-	sha256: string;
-	wasm: string;
+	gen: string
+	src: 'zip' | 'git'
+	commit: string
+	tag: string
+	branch: string
+	tmsp: string
+	rustc: string
+	size: string
+	pkg: string
+	prop: string
+	sha256: string
+	wasm: string
 }
 
 /**

@@ -1,7 +1,6 @@
 stages:
   - build
   - pack
-  # - deploy
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -34,7 +33,6 @@ pack:mac:
       - dist/*.dmg
       - dist/*mac.zip
       - dist/*.pkg
-    expire_in: 1 week
 
 pack:linux:
   stage: pack
@@ -54,7 +52,6 @@ pack:linux:
       - dist/*.deb
       - dist/*.apk
       - dist/*.rpm
-    expire_in: 1 week
 
 pack:win:
   stage: pack
@@ -70,18 +67,3 @@ pack:win:
   artifacts:
     paths:
       - dist/*.exe
-    expire_in: 1 week
-
-# pages:
-#   stage: deploy
-#   only:
-#     - tags
-#   dependencies: 
-#     - dist
-#   script:
-#     - mkdir .public
-#     - cp -r * .public
-#     - mv .public public
-#   artifacts:
-#     paths:
-#       - public
