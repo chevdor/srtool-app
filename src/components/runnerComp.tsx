@@ -21,6 +21,11 @@ import { RuntimePackage } from '../types'
 import { SettingsContextContent } from '../lib/settings'
 import VersionControlSystem, { Service, Tag } from '../lib/vcs'
 
+const styles = {
+	// box: { margin: '20px' },
+	// button: { border: '1px solid #ff9800', margin: '0px' },
+}
+
 function _showOS(): void {
 	if (is.windows()) console.log('Windows')
 	//   appendOutput("Windows Detected.")
@@ -52,6 +57,7 @@ export type State = {
 function refToName(ref: string): string {
 	return ref.replace('refs/tags/', '')
 }
+
 
 /**
  * This runner is actually doing the job when the user clicks the button
@@ -148,7 +154,12 @@ class RunnerComp extends React.Component<any, State> {
 	async componentDidMount() {
 		const svc = new VersionControlSystem('github', 'paritytech', 'polkadot') // TODO LATER: fix hardcoded values
 		const tags = await svc.getTags()
-		const packages = ['polkadot-runtime', 'kusama-runtime', 'westend-runtime', 'rococo-runtime'] // TODO LATER: fetch the runtime packages from the repo
+		const packages = [
+			'polkadot-runtime',
+			'kusama-runtime',
+			'westend-runtime',
+			'rococo-runtime',
+		] // TODO LATER: fetch the runtime packages from the repo
 		this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf('rc') < 0)
 
 		this.setState({ tags, packages })
@@ -165,6 +176,8 @@ class RunnerComp extends React.Component<any, State> {
 	}
 
 	render(): React.ReactNode {
+		const { classes } = this.props;
+
 		const handleRcChange = (
 			event: React.ChangeEvent<HTMLInputElement>
 		): void => {
@@ -177,99 +190,106 @@ class RunnerComp extends React.Component<any, State> {
 					<OutputContext.Consumer>
 						{output => (
 							<Box>
-								<FormGroup row>
-									<TextField
-										id="base-url"
-										helperText="Repository Base url"
-										focused={false}
-										defaultValue={settings.repo.baseUrl}
-										disabled={true}
-										style={{ width: '50%', display: 'none' }}
-									></TextField>
-									<TextField
-										id="project-path"
-										helperText="Project Path"
-										focused={false}
-										defaultValue={settings.local.projectPath}
-										disabled={true}
-										style={{ width: '50%', display: 'none' }}
-										hidden={true}
-									></TextField>
-									<TextField
-										id="docker-image"
-										helperText="Docker image"
-										focused={false}
-										defaultValue={settings.srtool.image}
-										disabled={process.env.NODE_ENV !== 'development'}
-										style={{ width: '50%' }}
-										onBlur={this.imageChangedHandler.bind(this)}
-									></TextField>
-								</FormGroup>
+								<form>
+									<FormGroup row>
+										<TextField
+											id="base-url"
+											helperText="Repository Base url"
+											focused={false}
+											defaultValue={settings.repo.baseUrl}
+											disabled={true}
+											style={{ width: '50%', display: 'none' }}
+										></TextField>
+										<TextField
+											id="project-path"
+											helperText="Project Path"
+											focused={false}
+											defaultValue={settings.local.projectPath}
+											disabled={true}
+											style={{ width: '50%', display: 'none' }}
+										></TextField>
+										<TextField
+											id="docker-image"
+											helperText="Docker image"
+											focused={false}
+											defaultValue={settings.srtool.image}
+											disabled={process.env.NODE_ENV !== 'development'}
+											style={{ width: '50%' }}
+											onBlur={this.imageChangedHandler.bind(this)}
+										></TextField>
+									</FormGroup>
 
-								<FormGroup row>
-									<Autocomplete
-										id="tag"
-										options={this.state.tags.filter(
-											(tag: Tag) =>
-												tag.ref.indexOf('rc') < 0 ||
-												(this.state.includeRc && tag.ref.indexOf('rc') >= 0)
-										)}
-										getOptionLabel={(tag: Tag) => refToName(tag.ref)}
-										style={{ width: 300 }}
-										onChange={this.setSelectedTag}
-										disableClearable
-										autoSelect
-										defaultValue={this.state.selectedTag}
-										getOptionSelected={(a, b) => a.ref === b.ref}
-										renderInput={(params: any) => (
-											<TextField {...params} label="Tag" variant="standard" />
-										)}
-									/>
+									<FormGroup row>
+										<Autocomplete
+											id="tag"
+											options={this.state.tags.filter(
+												(tag: Tag) =>
+													tag.ref.indexOf('rc') < 0 ||
+													(this.state.includeRc && tag.ref.indexOf('rc') >= 0)
+											)}
+											getOptionLabel={(tag: Tag) => refToName(tag.ref)}
+											style={{ width: 300 }}
+											onChange={this.setSelectedTag}
+											disableClearable
+											autoSelect
+											defaultValue={this.state.selectedTag}
+											getOptionSelected={(a, b) => a.ref === b.ref}
+											renderInput={(params: any) => (
+												<TextField {...params} label="Tag" variant="standard" />
+											)}
+										/>
 
-									<FormControlLabel
-										style={{ color: 'white' }}
-										control={
-											<Switch
-												checked={this.state.includeRc}
-												onChange={handleRcChange}
-												name="includeRc"
-												inputProps={{ 'aria-label': 'secondary checkbox' }}
-											/>
-										}
-										label="Include RC"
-									/>
+										<FormControlLabel
+											value="RC"
+											label="RC ?"
+											labelPlacement="top"
+											style={{
+												color: 'rgba(255, 255, 255, 0.7)',
+												fontSize: '11px',
+											}}
+											className="MuiInputLabel-animated "
+											control={
+												<Switch
+													checked={this.state.includeRc}
+													onChange={handleRcChange}
+													name="includeRc"
+													inputProps={{ 'aria-label': 'secondary checkbox' }}
+													size="small"
+												/>
+											}
+										/>
 
-									<Autocomplete
-										id="package"
-										options={this.state.packages}
-										// getOptionLabel={(package: any) => refToName(tag.ref)}
-										style={{ width: 300 }}
-										onChange={this.setSelectedPackage}
-										disableClearable
-										autoSelect
-										defaultValue="polkadot-runtime"
-										renderInput={(params: any) => (
-											<TextField
-												{...params}
-												label="Package"
-												variant="standard"
-											/>
-										)}
-									/>
-
-									<Button
-										color="primary"
-										onClick={async () => {
-											// TODO: delete the output content on new runs
-											await this.run(output.addMessage)
-										}}
-										disabled={!this.state.selectedTag || this.state.running}
-									>
-										{!this.state.selectedTag
-											? 'Select a tag'
-											: `Run for ${refToName(this.state.selectedTag.ref)}`}
-									</Button>
-								</FormGroup>
+										<Autocomplete
+											id="package"
+											options={this.state.packages}
+											// getOptionLabel={(package: any) => refToName(tag.ref)}
+											style={{ width: 300 }}
+											onChange={this.setSelectedPackage}
+											disableClearable
+											autoSelect
+											defaultValue="polkadot-runtime"
+											renderInput={(params: any) => (
+												<TextField
+													{...params}
+													label="Package"
+													variant="standard"
+												/>
+											)}
+										/>
+									</FormGroup>
+									<FormGroup row>
+										<Button
+											className="btn-build"
+											onClick={async () => {
+												// TODO: delete the output content on new runs
+												await this.run(output.addMessage)
+											}}
+											disabled={!this.state.selectedTag || this.state.running}
+										>
+											{!this.state.selectedTag ? 'Select a tag' : `Build`}
+										</Button>
+									</FormGroup>
+								</form>
 							</Box>
 						)}
 					</OutputContext.Consumer>

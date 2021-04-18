@@ -5,10 +5,11 @@ import Repo from './repo'
 import Status from './status'
 import Stopwatch from './stopwatch'
 
-const Header = (): React.ReactNode => {
+const Header = () => {
 	return (
 		<Box
 			display="flex"
+			// height="100px"
 			style={{ margin: '0px', padding: '10px', backgroundColor: '#ff980020' }}
 		>
 			<Box flexGrow={1}>

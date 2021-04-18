@@ -19,7 +19,7 @@ class Troubleshoot extends React.Component<Props, never> {
 
 	render(): React.ReactNode {
 		return (
-			<Container>
+			<Container style={{ paddingBottom: '10px' }}>
 				<Box color="text.primary" style={styles.box}>
 					<Typography variant="body1">
 						The buttons below may help you troubleshoot some issues. Don't use
@@ -34,8 +34,6 @@ class Troubleshoot extends React.Component<Props, never> {
 						your next run will start from stratch.
 					</Typography>
 					<Button
-						style={styles.button}
-						color="primary"
 						onClick={async () => {
 							await this.#srtool.removeContainer()
 						}}
@@ -45,15 +43,11 @@ class Troubleshoot extends React.Component<Props, never> {
 				</Box>
 
 				<Box color="text.primary" style={styles.box} hidden={true}>
-					<Button style={styles.button} color="primary" onClick={() => {}}>
-						Reset Settings
-					</Button>
+					<Button onClick={() => {}}>Reset Settings</Button>
 				</Box>
 
 				<Box color="text.primary" style={styles.box} hidden={true}>
-					<Button style={styles.button} color="primary" onClick={() => {}}>
-						Reset Containers
-					</Button>
+					<Button onClick={() => {}}>Reset Containers</Button>
 				</Box>
 
 				<Box color="text.primary" style={styles.box} hidden={false}>
@@ -64,8 +58,6 @@ class Troubleshoot extends React.Component<Props, never> {
 						and only the latest srtool image will be downloaded.
 					</Typography>
 					<Button
-						style={styles.button}
-						color="primary"
 						onClick={async () => {
 							await this.#srtool.removeImages()
 						}}

@@ -10,9 +10,9 @@ function createWindow(): void {
 		width: devMode ? 1080 : 1200,
 		height: devMode ? 650 : 900,
 		backgroundColor: '#2222',
-		minimizable: false,
-		maximizable: false,
-		resizable: devMode,
+		minimizable: true,
+		maximizable: true,
+		resizable: true,
 		webPreferences: {
 			nodeIntegration: true,
 			webSecurity: false,

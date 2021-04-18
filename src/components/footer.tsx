@@ -3,10 +3,14 @@ import React from 'react'
 import Troubleshoot from './troubleshoot'
 import pkg from '../../package.json'
 
+const fixed: "fixed" = "fixed";
 const FooterStyle = {
-	marginTop: 'calc(5% + 60px)',
 	bottom: 0,
+	position: fixed,
+    width: '100%',
 	background: '#424242',
+	padding: '0px 10px 0px 10px',
+	marginBottom: '2px',
 }
 
 type State = {

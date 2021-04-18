@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDom from 'react-dom'
-import { deepOrange, orange } from '@material-ui/core/colors'
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+import { ThemeProvider } from '@material-ui/core/styles'
 import {
 	OutputContext,
 	OutputDataContextContent,
@@ -17,22 +16,11 @@ import Store from 'electron-store'
 import { defaultSettings, SettingsContextContent } from './lib/settings'
 import SettingsContext from './contexts/settingsContext'
 import pkg from '../package.json'
+import { darkTheme } from './theme'
 // import VersionChecker from './components/versionChecker'
 
 const mainElement = document.createElement('div')
 document.body.appendChild(mainElement)
-
-const darkTheme = createMuiTheme({
-	palette: {
-		type: 'dark',
-		primary: {
-			main: orange[500],
-		},
-		secondary: {
-			main: deepOrange[900],
-		},
-	},
-})
 
 export type State = {
 	theme: Theme

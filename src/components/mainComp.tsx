@@ -54,14 +54,14 @@ class MainComp extends React.Component<MainCompProps, any> {
 				{/* <SettingsComp /> */}
 
 				{/* {process.env.NODE_ENV === "development" && (
-           <HistoryViewer history={store.store.history} />
-        )} */}
+					<HistoryViewer history={store.store.history} />
+					)} */}
 
 				{/* <BottomNavigation showLabels>
-          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-          <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
-        </BottomNavigation> */}
+				<BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+				<BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+				<BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+				</BottomNavigation> */}
 
 				<Footer />
 			</div>
