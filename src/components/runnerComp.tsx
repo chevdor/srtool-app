@@ -63,7 +63,7 @@ class RunnerComp extends React.Component<any, State> {
 		super(props)
 		this.state = {
 			tags: [],
-			selectedTag: { ref: 'refs/tags/v0.8.29' },
+			selectedTag: { ref: 'refs/tags/v0.8.30' },
 			defaultTag: null,
 
 			packages: [],
@@ -148,7 +148,7 @@ class RunnerComp extends React.Component<any, State> {
 	async componentDidMount() {
 		const svc = new VersionControlSystem('github', 'paritytech', 'polkadot') // TODO LATER: fix hardcoded values
 		const tags = await svc.getTags()
-		const packages = ['polkadot-runtime', 'kusama-runtime', 'westend-runtime'] // TODO LATER: fetch the runtime packages from the repo
+		const packages = ['polkadot-runtime', 'kusama-runtime', 'westend-runtime', 'rococo-runtime'] // TODO LATER: fetch the runtime packages from the repo
 		this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf('rc') < 0)
 
 		this.setState({ tags, packages })

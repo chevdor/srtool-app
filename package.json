@@ -1,6 +1,6 @@
 {
 	"name": "srtool-app",
-	"version": "0.1.3",
+	"version": "0.9.0",
 	"description": "Srtool App",
 	"main": "./build/main.js",
 	"homepage": "https://gitlab.com/chevdor/srtool-app",

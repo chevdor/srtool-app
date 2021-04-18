@@ -3,6 +3,7 @@ import React from 'react'
 import DockerStatus from './dockerStatus'
 import Repo from './repo'
 import Status from './status'
+import Stopwatch from './stopwatch'
 
 const Header = (): React.ReactNode => {
 	return (
@@ -23,6 +24,7 @@ const Header = (): React.ReactNode => {
 
 			<Box width="250px">
 				<DockerStatus />
+				{/* <Stopwatch  /> */}
 			</Box>
 
 			<Box width="450px">

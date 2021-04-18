@@ -7,7 +7,6 @@ import {
 	OutputDataContextContent,
 } from './contexts/outputContext'
 import { Theme, themes } from './contexts/themeContext'
-import { Beta } from './components/beta'
 import { isResult, Message, SRToolResult } from './lib/message'
 import Init from './components/init'
 import Header from './components/header'
@@ -153,7 +152,6 @@ class App extends React.Component<any, any> {
 				<StatusContext.Provider value={this.state.status}>
 					<SettingsContext.Provider value={this.state.settings}>
 						<Header />
-						<Beta stage="beta" />
 						<OutputContext.Provider value={this.state.output}>
 							{/* <VersionChecker /> */}
 

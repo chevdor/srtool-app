@@ -15,6 +15,7 @@ export type KnownRuntime =
 	| 'westend-runtime'
 	| 'kusama-runtime'
 	| 'polkadot-runtime'
+	| 'rococo-runtime'
 /**
  * A Runtime Package, for instance `polkadot-runtime`.
  */
