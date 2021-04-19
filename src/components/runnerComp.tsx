@@ -20,9 +20,10 @@ import { RunnerConfig } from './runnerConfig'
 import { RuntimePackage } from '../types'
 import { SettingsContextContent } from '../lib/settings'
 import VersionControlSystem, { Service, Tag } from '../lib/vcs'
-import * as fs from 'fs'
 import * as Path from 'path'
 import mkdirp from 'mkdirp'
+import { promises as fsp } from 'fs'
+import { ContactSupportOutlined } from '@material-ui/icons'
 
 const styles = {
 	// box: { margin: '20px' },
@@ -98,25 +99,26 @@ class RunnerComp extends React.Component<any, State> {
 		await mkdirp(destFolder)
 
 		const wasm = Path.join(settings.local.projectPath, result.wasm.path)
-		// Copy the wasm in our export folder
-		fs.copyFile(
-			wasm,
-			Path.join(destFolder, `${this.state.selectedPackage}.wasm`),
-			err => {
-				if (err) console.error(err)
-				else console.log(`wasm copied to ${destFolder}`)
-			}
-		)
-
-		// copy the json as well
-		fs.writeFile(
-			Path.join(destFolder, 'digest.json'),
-			JSON.stringify(result, null, 2),
-			err => {
-				if (err) console.error(err)
-				else console.log(`digest saved to ${destFolder}`)
-			}
-		)
+		console.log(`Exporting artifacts to ${destFolder}`);
+		await Promise.all([
+			// Copy the wasm in our export folder
+			fsp.copyFile(
+				wasm,
+				Path.join(
+					destFolder,
+					`${this.state.selectedPackage}-${result.proposalHash.substr(
+						0,
+						8
+					)}.wasm`
+				)
+			),
+			// copy the json as well
+			fsp.writeFile(
+				Path.join(destFolder, 'digest.json'),
+				JSON.stringify(result, null, 2)
+			),
+		])
+		console.log('Done exporting artifacts')
 	}
 
 	run = async (addMessage: (_: Message) => void): Promise<void> => {
@@ -220,8 +222,6 @@ class RunnerComp extends React.Component<any, State> {
 	}
 
 	render(): React.ReactNode {
-		const { classes } = this.props
-
 		const handleRcChange = (
 			event: React.ChangeEvent<HTMLInputElement>
 		): void => {
