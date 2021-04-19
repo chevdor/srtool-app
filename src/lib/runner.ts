@@ -25,7 +25,7 @@ class Runner extends React.Component<any, any> {
 
 	constructor(settings: SettingsContextContent) {
 		super(null)
-		this.#onDataCb = (_data: string) => {}
+		this.#onDataCb = (_data: string) => { }
 		this.#docker = new DockerWrapper()
 		this.#settings = settings
 	}
@@ -57,6 +57,7 @@ class Runner extends React.Component<any, any> {
 	): Promise<string> {
 		const vcs = new VersionControlSystem(service, owner, repo)
 		assert(this.settings, 'no settings')
+
 		const destination = Path.join(
 			this.settings.local.workDir,
 			`${owner}-${repo}-${tag}.zip`
@@ -123,6 +124,7 @@ class Runner extends React.Component<any, any> {
 			tag.indexOf('refs') < 0,
 			`We need a tag here, not a ref, you passed ${tag}`
 		)
+
 		const zip = await this.fetchArchive(service, owner, repo, tag)
 		console.log('zip located at', zip)
 
@@ -133,7 +135,6 @@ class Runner extends React.Component<any, any> {
 		const folder = `${workdir}/${repo}-${tag.replace('v', '')}`
 		console.log('Unzipped in', folder)
 		await this.deleteZip(zip)
-
 		return folder
 	}
 
@@ -167,7 +168,7 @@ class Runner extends React.Component<any, any> {
 			// however, the user may start srtool manually...
 			try {
 				await container.remove()
-			} catch (_e) {}
+			} catch (_e) { }
 		}
 		console.log('Done preparing')
 	}

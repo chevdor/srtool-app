@@ -4,6 +4,7 @@ import Pre from './pre'
 import { Box, Button, Typography } from '@material-ui/core'
 import { SRToolResult } from '../lib/message'
 import { clipboard } from 'electron'
+import { resultToString } from '../lib/result'
 
 export type Props = {
 	result: SRToolResult
@@ -12,63 +13,13 @@ export type Props = {
 export type ExportFormat = 'text' | 'markdown' | 'json' | 'proposalHash'
 
 class SrtoolResultComp extends React.Component<Props, never> {
-	private resultToString(
-		r: SRToolResult,
-		format: ExportFormat = 'text'
-	): string {
-		let res = ''
-
-		switch (format) {
-			case 'json':
-				res = JSON.stringify(r, null, 2)
-				break
-			case 'proposalHash':
-				res = r.proposalHash
-				break
-			case 'markdown':
-				res +=
-					'I ran `srtool` to generate and verify a substrate runtime and there is my result:\n'
-				res += `- generator: \`${r.generator}\`\n`
-				res += '- git:\n'
-				res += `  - commit: \`${r.git.commit}\`\n`
-				res += `  - tag: \`${r.git.tag}\`\n`
-				res += `  - branch: \`${r.git.branch}\`\n`
-				res += `- package: \`${r.package}\`\n`
-				res += `- rustc: \`${r.rustc}\`\n`
-				// res += `- duration: \`${r.duration}\`\n`;
-				res += `- proposalHash: \`${r.proposalHash}\`\n`
-				res += `- sha256: \`${r.sha256}\`\n`
-				res += `- size: \`${r.size}\`\n`
-				res += `- time: \`${r.time}\`\n`
-				break
-			case 'text':
-				res +=
-					'I ran srtool to generate and verify a substrate runtime and there is my result:\n'
-				res += `- generator: ${r.generator}\n`
-				res += '- git:\n'
-				res += `  - commit: ${r.git.commit}\n`
-				res += `  - tag: ${r.git.tag}\n`
-				res += `  - branch: ${r.git.branch}\n`
-				res += `- package: ${r.package}\n`
-				res += `- rustc: ${r.rustc}\n`
-				// res += `- duration: ${r.duration}\n`;
-				res += `- proposalHash: ${r.proposalHash}\n`
-				res += `- sha256: ${r.sha256}\n`
-				res += `- size: ${r.size}\n`
-				res += `- time: ${r.time}\n`
-				break
-			default:
-				throw new Error(`Format ${format} is not supported`)
-		}
-		return res
-	}
 
 	private copyResultToClipboard(
 		result: SRToolResult,
 		format: ExportFormat = 'text'
 	): void {
 		console.log('Copying result to clipboard', result)
-		clipboard.writeText(this.resultToString(result, format))
+		clipboard.writeText(resultToString(result, format))
 		console.log('Result copied to clipboard')
 	}
 

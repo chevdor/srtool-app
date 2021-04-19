@@ -14,12 +14,15 @@ import {
 	OutputContext,
 } from '../contexts/outputContext'
 import SettingsContext from '../contexts/settingsContext'
-import { Message, MessageBuilder } from '../lib/message'
+import { Message, MessageBuilder, SRToolResult } from '../lib/message'
 import { Autocomplete, AutocompleteChangeReason } from '@material-ui/lab'
 import { RunnerConfig } from './runnerConfig'
 import { RuntimePackage } from '../types'
 import { SettingsContextContent } from '../lib/settings'
 import VersionControlSystem, { Service, Tag } from '../lib/vcs'
+import * as fs from 'fs'
+import * as Path from 'path'
+import mkdirp from 'mkdirp'
 
 const styles = {
 	// box: { margin: '20px' },
@@ -58,7 +61,6 @@ function refToName(ref: string): string {
 	return ref.replace('refs/tags/', '')
 }
 
-
 /**
  * This runner is actually doing the job when the user clicks the button
  */
@@ -79,6 +81,42 @@ class RunnerComp extends React.Component<any, State> {
 			finished: false,
 			includeRc: false,
 		}
+	}
+
+	/**
+	 * Exports whatever can be export to the local filesystem
+	 * @param result The srtool result
+	 */
+	async exportResult(result: SRToolResult): Promise<void> {
+		const settings: SettingsContextContent = this.context
+		const destFolder = Path.join(
+			settings.local.exportFolder,
+			this.state.selectedPackage,
+			refToName(this.state.selectedTag.ref)
+		)
+
+		await mkdirp(destFolder)
+
+		const wasm = Path.join(settings.local.projectPath, result.wasm.path)
+		// Copy the wasm in our export folder
+		fs.copyFile(
+			wasm,
+			Path.join(destFolder, `${this.state.selectedPackage}.wasm`),
+			err => {
+				if (err) console.error(err)
+				else console.log(`wasm copied to ${destFolder}`)
+			}
+		)
+
+		// copy the json as well
+		fs.writeFile(
+			Path.join(destFolder, 'digest.json'),
+			JSON.stringify(result, null, 2),
+			err => {
+				if (err) console.error(err)
+				else console.log(`digest saved to ${destFolder}`)
+			}
+		)
 	}
 
 	run = async (addMessage: (_: Message) => void): Promise<void> => {
@@ -114,6 +152,8 @@ class RunnerComp extends React.Component<any, State> {
 			}
 			const result = await runner.run(runnerConfig)
 			console.log('Final Result', result)
+
+			await this.exportResult(result)
 		} catch (err: any) {
 			console.error('We got an error', err)
 		}
@@ -122,7 +162,11 @@ class RunnerComp extends React.Component<any, State> {
 
 		// We do NOT delete if the user uses his own git repo folder
 		// If that's not the case, we check what the users wants from the settings.
-		if (settings.local.fetchMode === 'httpGet' && settings.local.autoCleanup) {
+		if (
+			settings.local.fetchMode === 'httpGet' &&
+			settings.local.autoCleanup &&
+			!(process.env.NODE_ENV === 'development')
+		) {
 			await runner.cleanup(folder)
 		} else {
 			console.log('Skipping cleanup')
@@ -176,7 +220,7 @@ class RunnerComp extends React.Component<any, State> {
 	}
 
 	render(): React.ReactNode {
-		const { classes } = this.props;
+		const { classes } = this.props
 
 		const handleRcChange = (
 			event: React.ChangeEvent<HTMLInputElement>
