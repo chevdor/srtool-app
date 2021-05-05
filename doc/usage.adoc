@@ -7,12 +7,12 @@ IMPORTANT: {prj} requires Docker to be installed and running. You do need to do 
 
 Once {prj} is ready, you will be able to select:
 
-- a version
-- a runtime
+- a version: This is the usually the version of the client, it comes with a runtime
+- a runtime: This is where you select the chain such as Kusama, Polkadot, etc...
 
 Pressing the button will then start building your runtime. 
 
-WARNING: Building a runtime from scratch does take a long time. While some machines will manage under 10 minutes, some older computers may need up to 2 hours. {prj} constantly shows the status so make sure you don't interrupt the process once it runs.
+WARNING: Building a runtime from scratch does take a long time. While some machines will manage under 10 minutes, most computers may need up to 1 to 2 hours. {prj} constantly shows the status so make sure you don't interrupt the process once it runs.
 
 == Windows users
 

@@ -2,19 +2,43 @@
 :toc: right
 :prj: Srtool App
 
-This application is a multi-platform frontend for the https://gitlab.com/chevdor/srtool[srtool] project.
+== Introduction
+This application is a multi-platform frontend for the https://gitlab.com/chevdor/srtool[srtool] project. In a nutshell, it remote controls your docker environment to allow building a Substrate based chain easily.
 
-image:resources/ss01.png[]
+IMPORTANT: Docker is a mandatory pre-requisite. It must be installed and running. You do not need any knowledge of Docker however and you will not need to do anything about it, once setup properly (Windows users need to go through a few extra steps)
 
-It takes care of fetching the latest docker image for you:
-image:resources/ss02.png[]
+Using {prj} and `srtool`, you do not need anything but Docker installed on your system.
 
-It builds your WASM runtime:
-image:resources/ss03.png[]
+You do NOT need the following
 
-It shows you the proposal hash and allows you to easily share your results:
-image:resources/ss04.png[]
+- the Rust programming language & compiler
+- git
+- the source
+
+== Screenshots
+
+[cols="1,1"]
+|===
+2+| At start, {prj} is performing a few version checks and will download the latest `srtool` docker image. This may take a few minutes and you need to be patient :)
+image:resources/ss01.png[title="{prj} takes care of fetching the latest docker image for you"]
+
+|
+image:resources/ss02.png[title="You can select the chain and version to build"]
+
+|
+image:resources/ss03.png[title="Selectzing the version"]
+
+|
+image:resources/ss04.png[title="You can also pick a Release Candidate"]
+
+|
+image:resources/ss05.png[title="Select the runtime to build"]
+|
+image:resources/ss06.png[title="The build starts"]
+|
+image:resources/ss07.png[title="You can see the progress during the build"]
+2+|
+image:resources/ss08.png[title="The build is finally ready, you can see and copy/paste easily some information about the runtime"]
+|===
 
 include::doc/usage.adoc[leveloffset=+1]
-
-include::TODO.adoc[leveloffset=+1]
