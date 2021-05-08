@@ -23,12 +23,6 @@ import VersionControlSystem, { Service, Tag } from '../lib/vcs'
 import * as Path from 'path'
 import mkdirp from 'mkdirp'
 import { promises as fsp } from 'fs'
-import { ContactSupportOutlined } from '@material-ui/icons'
-
-const styles = {
-	// box: { margin: '20px' },
-	// button: { border: '1px solid #ff9800', margin: '0px' },
-}
 
 function _showOS(): void {
 	if (is.windows()) console.log('Windows')
@@ -99,7 +93,7 @@ class RunnerComp extends React.Component<any, State> {
 		await mkdirp(destFolder)
 
 		const wasm = Path.join(settings.local.projectPath, result.wasm.path)
-		console.log(`Exporting artifacts to ${destFolder}`);
+		console.log(`Exporting artifacts to ${destFolder}`)
 		await Promise.all([
 			// Copy the wasm in our export folder
 			fsp.copyFile(
@@ -193,7 +187,6 @@ class RunnerComp extends React.Component<any, State> {
 	): void => {
 		if (newPackage) {
 			this.setState({ selectedPackage: newPackage })
-			// TODO NOW: update store
 		}
 	}
 
@@ -205,7 +198,7 @@ class RunnerComp extends React.Component<any, State> {
 			'kusama-runtime',
 			'westend-runtime',
 			'rococo-runtime',
-		] // TODO LATER: fetch the runtime packages from the repo
+		] // TODO LATER: fetch the runtime packages from the repo if possible
 		this.defaultTag = tags.find((tag: Tag) => tag.ref.indexOf('rc') < 0)
 
 		this.setState({ tags, packages })
@@ -325,12 +318,12 @@ class RunnerComp extends React.Component<any, State> {
 										<Button
 											className="btn-build"
 											onClick={async () => {
-												// TODO: delete the output content on new runs
+												// TODO LATER: delete the output content on new runs
 												await this.run(output.addMessage)
 											}}
 											disabled={!this.state.selectedTag || this.state.running}
 										>
-											{!this.state.selectedTag ? 'Select a tag' : `Build`}
+											{!this.state.selectedTag ? 'Select a tag' : 'Build'}
 										</Button>
 									</FormGroup>
 								</form>

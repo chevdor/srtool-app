@@ -13,7 +13,6 @@ export type Props = {
 export type ExportFormat = 'text' | 'markdown' | 'json' | 'proposalHash'
 
 class SrtoolResultComp extends React.Component<Props, never> {
-
 	private copyResultToClipboard(
 		result: SRToolResult,
 		format: ExportFormat = 'text'

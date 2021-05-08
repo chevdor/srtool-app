@@ -49,7 +49,6 @@ export default class RunHistory {
 	}
 
 	public clear(): void {
-		// TODO LATER:
 		this.show()
 		console.log('Clearing history')
 		this.store.reset('history')

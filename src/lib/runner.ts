@@ -25,7 +25,7 @@ class Runner extends React.Component<any, any> {
 
 	constructor(settings: SettingsContextContent) {
 		super(null)
-		this.#onDataCb = (_data: string) => { }
+		this.#onDataCb = (_data: string) => {}
 		this.#docker = new DockerWrapper()
 		this.#settings = settings
 	}
@@ -168,7 +168,7 @@ class Runner extends React.Component<any, any> {
 			// however, the user may start srtool manually...
 			try {
 				await container.remove()
-			} catch (_e) { }
+			} catch (_e) {}
 		}
 		console.log('Done preparing')
 	}

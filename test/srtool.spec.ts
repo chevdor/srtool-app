@@ -7,6 +7,6 @@ const srtool = new Srtool()
 describe('srtool', () => {
 	it('should get the latest version', async function () {
 		const version = await srtool.getSrtoolLatestVersion()
-		expect(version).to.equal('0.9.9')
+		expect(version).to.equal('0.9.10')
 	})
 })

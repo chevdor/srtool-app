@@ -3,9 +3,9 @@ import React from 'react'
 import DockerStatus from './dockerStatus'
 import Repo from './repo'
 import Status from './status'
-import Stopwatch from './stopwatch'
+// import Stopwatch from './stopwatch'
 
-const Header = () => {
+const Header = (): JSX.Element => {
 	return (
 		<Box
 			display="flex"

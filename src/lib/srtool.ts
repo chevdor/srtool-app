@@ -33,7 +33,7 @@ export default class Srtool {
 	/**
 	 * Fetch the latest known version of the Srtool APP from the repo.
 	 */
-	// TODO: we may consider using TAGs instead of the package.json
+	// TODO LATER: we may consider using TAGs instead of the package.json
 	async getSrtoolAppLatestVersion(): Promise<string> {
 		return new Promise(async (resolve, reject) => {
 			const repo = 'https://gitlab.com/chevdor/srtool-app'
@@ -141,7 +141,6 @@ export default class Srtool {
 						const info: SrtoolVersions = JSON.parse(output)
 						resolve(info)
 					} catch (e) {
-						// TODO SOON: Not a fan of the following, need to get out as soon as polkadot 0.8.30 is out.
 						console.warn(
 							`Failed parsing json output from 'docker run ${image} ${version_cmd.join(
 								' '

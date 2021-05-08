@@ -18,7 +18,7 @@ class Status extends React.Component {
 								Docker v{context.docker_version} (
 								{context.docker_running ? 'running' : 'not running'})
 							</Typography>
-						
+
 							<Typography variant="caption" display="block">
 								srtool v{context.srtool_version}
 								{context.srtool_latest_version != context.srtool_version

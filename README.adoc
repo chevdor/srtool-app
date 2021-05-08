@@ -42,3 +42,8 @@ image:resources/ss08.png[title="The build is finally ready, you can see and copy
 |===
 
 include::doc/usage.adoc[leveloffset=+1]
+
+== License
+----
+include::LICENSE[]
+----

@@ -3,7 +3,7 @@ import React from 'react'
 const { shell } = require('electron')
 import BugIcon from '@material-ui/icons/BugReport'
 
-const Repo = () => {
+const Repo = (): JSX.Element => {
 	return (
 		<IconButton
 			color="primary"
