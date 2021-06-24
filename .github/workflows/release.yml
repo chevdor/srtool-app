@@ -1,5 +1,8 @@
 name: Release
 on:
+  push:
+    branches:
+      - "*"
   workflow_dispatch:
 
 jobs:
@@ -19,6 +22,7 @@ jobs:
       - run: yarn build
 
   mac:
+    needs: build
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -28,10 +32,57 @@ jobs:
           node-version: 14.x
       - run: yarn install
       - run: yarn dist:mac
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac
+          path: |
+            dist/*.dmg
+            dist/*.mac.zip
+            dist/*.pkg
 
-      # artifacts:
-      #   paths:
-      #     - dist/*.dmg
-      #     - dist/*mac.zip
-      #     - dist/*.pkg
-      
+  linux:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn install
+      - run: yarn dist:linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: |
+            dist/*.AppImage
+            dist/*.tar.gz
+            dist/*.deb
+            dist/*.apk
+            dist/*.rpm
+
+  windows:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn install
+      - run: yarn dist:win
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: |
+            dist/*.exe
