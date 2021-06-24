@@ -1,0 +1,49 @@
+🧰 Substrate Runtime Toolbox - srtool v0.9.11 🧰
+              - by Chevdor -
+info: syncing channel updates for 'nightly-2021-02-24-x86_64-unknown-linux-gnu'
+info: latest update on 2021-02-24, rust version 1.52.0-nightly (fe1bf8e05 2021-02-23)
+info: downloading component 'cargo'
+info: downloading component 'clippy'
+info: downloading component 'rust-std' for 'wasm32-unknown-unknown'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: downloading component 'rustfmt'
+info: installing component 'cargo'
+info: using up to 500.0 MiB of RAM to unpack components
+info: installing component 'clippy'
+info: installing component 'rust-std' for 'wasm32-unknown-unknown'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+info: installing component 'rustfmt'
+🏗  Building moonriver-runtime as release using rustc 1.52.0-nightly (fe1bf8e05 2021-02-23)
+⏳ That can take a little while, be patient... subsequent builds will be faster.
+   Since you have to wait a little, you may want to learn more about Substrate runtimes:
+   https://substrate.dev/docs/en/#architecture
+   Compiling westend-runtime v0.9.4 (https://github.com/paritytech/polkadot?branch=release-v0.9.4#2f28561a)
+   Compiling kusama-runtime v0.9.4 (https://github.com/paritytech/polkadot?branch=release-v0.9.4#2f28561a)
+   Compiling rococo-runtime v0.9.4 (https://github.com/paritytech/polkadot?branch=release-v0.9.4#2f28561a)
+   Compiling polkadot-runtime v0.9.4 (https://github.com/paritytech/polkadot?branch=release-v0.9.4#2f28561a)
+   Compiling moonriver-runtime v0.8.0-dev (/build/runtime/moonriver)
+   Compiling polkadot-service v0.9.4 (https://github.com/paritytech/polkadot?branch=release-v0.9.4#2f28561a)
+   Compiling cumulus-primitives-parachain-inherent v0.1.0 (https://github.com/purestake/cumulus?branch=nimbus-polkadot-v0.9.4#51adcf4d)
+   Compiling cumulus-pallet-parachain-system v0.1.0 (https://github.com/purestake/cumulus?branch=nimbus-polkadot-v0.9.4#51adcf4d)
+   Compiling pallet-author-inherent v0.1.0 (https://github.com/purestake/cumulus?branch=nimbus-polkadot-v0.9.4#51adcf4d)
+   Compiling pallet-crowdloan-rewards v0.6.0 (https://github.com/purestake/crowdloan-rewards#eccfaaa5)
+   Compiling pallet-author-slot-filter v0.1.0 (https://github.com/purestake/cumulus?branch=nimbus-polkadot-v0.9.4#51adcf4d)
+    Finished release [optimized] target(s) in 6m 40s
+✨ Your Substrate WASM Runtime is ready! ✨
+Summary:
+  Generator  : srtool v0.9.11
+  Version    : null
+  GIT commit : 6d4bcb304ed0c984796e0defd1e30ce701873f2e
+  GIT tag    : moonriver-genesis
+  GIT branch : master
+  Time       : 2021-06-11T16:22:26Z
+  Rustc      : rustc 1.52.0-nightly (fe1bf8e05 2021-02-23)
+  Size       : 2117 KB (2168700 bytes)
+  Content    : 0x0061736d0100000001b5033b60037f7f...3865303520323032312d30322d323329
+  Package    : moonriver-runtime
+  Proposal   : 0xf695f93cd3da2cdd67dde1236e120e927606f14622d5cf8b6471debdde775471
+  IPFS       : QmWVRwecCkqQZm4GF9XoPpGLVroUkGo9qht3mPreFCFtiG
+  SHA256     : 0xb1b0af92914db403b9dcb493fb2a70a23aaa7b401853a6529a4d78263855d99d
+  Wasm       : runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.wasm

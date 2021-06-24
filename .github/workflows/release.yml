@@ -1,0 +1,79 @@
+name: Release
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node: [14.x, 15.x]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: yarn install
+      - run: yarn build
+
+  mac:
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn install
+      - run: yarn dist:mac
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mac
+          path: |
+            dist/*.dmg
+            dist/*.mac.zip
+            dist/*.pkg
+
+  linux:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn install
+      - run: yarn dist:linux
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: |
+            dist/*.AppImage
+            dist/*.tar.gz
+            dist/*.deb
+            dist/*.apk
+            dist/*.rpm
+
+  windows:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: yarn install
+      - run: yarn dist:win
+      - name: Store artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: |
+            dist/*.exe
