@@ -1305,7 +1305,15 @@
   dependencies:
     "@types/node" "*"
 
-"@types/glob@*", "@types/glob@^7.1.1":
+"@types/glob@*":
+  version "7.1.4"
+  resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.4.tgz#ea59e21d2ee5c517914cb4bc8e4153b99e566672"
+  integrity sha512-w+LsMxKyYQm347Otw+IfBXOv9UWVjpHpCDdbBMt8Kz/xbvCYNjP+0qPh91Km3iKfSRLBB0P7fAMf0KHrPu+MyA==
+  dependencies:
+    "@types/minimatch" "*"
+    "@types/node" "*"
+
+"@types/glob@^7.1.1":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.3.tgz"
   integrity sha512-SEYeGAIQIQX8NN6LDKprLjbrd5dARM5EXsd8GI/A5l0apYI1fGMWgPHSe4ZKL4eozlAyI+doUE9XbYS4xCkQ1w==
@@ -1324,14 +1332,14 @@
   integrity sha512-cxWFQVseBm6O9Gbw1IWb8r6OS4OhSt3hPZLkFApLjM8TEXROBuQGLAH2i2gZpcXdLBIrpXuTDhH7Vbm1iXmNGA==
 
 "@types/minimatch@*":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz"
-  integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
+  integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
 
 "@types/mkdirp@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-1.0.1.tgz#0930b948914a78587de35458b86c907b6e98bbf6"
-  integrity sha512-HkGSK7CGAXncr8Qn/0VqNtExEE+PHMWb+qlR1faHMao7ng6P3tAaoWWBMdva0gL5h4zprjIO89GJOLXsMcDm1Q==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/mkdirp/-/mkdirp-1.0.2.tgz#8d0bad7aa793abe551860be1f7ae7f3198c16666"
+  integrity sha512-o0K1tSO0Dx5X6xlU5F1D6625FawhC3dU3iqr25lluNv/+/QIVH8RLNEiVokgIZo+mz+87w/3Mkg/VvQS+J51fQ==
   dependencies:
     "@types/node" "*"
 
@@ -1341,9 +1349,9 @@
   integrity sha512-Lwh0lzzqT5Pqh6z61P3c3P5nm6fzQK/MMHl9UKeneAeInVflBSz1O2EkX6gM6xfJd7FBXBY5purtLx7fUiZ7Hw==
 
 "@types/node@*":
-  version "14.14.31"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.31.tgz"
-  integrity sha512-vFHy/ezP5qI0rFgJ7aQnjDXwAMrG0KqqIH7tQG5PPv3BWBayOPIQNBjVc/P6hhdZfMx51REc6tfDNXHUio893g==
+  version "16.7.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.10.tgz#7aa732cc47341c12a16b7d562f519c2383b6d4fc"
+  integrity sha512-S63Dlv4zIPb8x6MMTgDq5WWRJQe56iBEY0O3SOFA9JrRienkOVDXSXBjjJw6HTNQYSE2JI6GMCR6LVbIMHJVvA==
 
 "@types/node@14.14.37":
   version "14.14.37"
@@ -1401,9 +1409,9 @@
     csstype "^3.0.2"
 
 "@types/rimraf@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/@types/rimraf/-/rimraf-3.0.0.tgz"
-  integrity sha512-7WhJ0MdpFgYQPXlF4Dx+DhgvlPCfz/x5mHaeDQAKhcenvQP1KCpLQ18JklAqeGMYSAT2PxLpzd0g2/HE7fj7hQ==
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/rimraf/-/rimraf-3.0.2.tgz#a63d175b331748e5220ad48c901d7bbf1f44eef8"
+  integrity sha512-F3OznnSLAUxFrCEu/L5PY8+ny8DtcFRjx7fZZ9bycvXRi3KPTRS9HOitGZwvPg0juRhXFWIeKX58cnX5YqLohQ==
   dependencies:
     "@types/glob" "*"
     "@types/node" "*"
@@ -1414,14 +1422,14 @@
   integrity sha512-EaCxbanVeyxDRTQBkdLb3Bvl/HK7PBK6UJjsSixB0iHKoWxE5uu2Q/DgtpOhPIojN0Zl1whvOd7PoHs2P0s5eA==
 
 "@types/semver@^7.3.4":
-  version "7.3.4"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.4.tgz"
-  integrity sha512-+nVsLKlcUCeMzD2ufHEYuJ9a2ovstb6Dp52A5VsoKxDXgvE051XgHI/33I1EymwkRGQkwnA0LkhnUzituGs4EQ==
+  version "7.3.8"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.8.tgz#508a27995498d7586dcecd77c25e289bfaf90c59"
+  integrity sha512-D/2EJvAlCEtYFEYmmlGwbGXuK886HzyCc3nZX/tkFTQdEU8jZDAgiv08P162yB17y4ZXZoq7yFAnW4GDBb9Now==
 
 "@types/unzipper@^0.10.3":
-  version "0.10.3"
-  resolved "https://registry.npmjs.org/@types/unzipper/-/unzipper-0.10.3.tgz"
-  integrity sha512-01mQdTLp3/KuBVDhP82FNBf+enzVOjJ9dGsCWa5z8fcYAFVgA9bqIQ2NmsgNFzN/DhD0PUQj4n5p7k6I9mq80g==
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@types/unzipper/-/unzipper-0.10.4.tgz#db5be3e1f7d37fdfae290024ffe4f46bdcfa47f2"
+  integrity sha512-mryXpAwwQadmfjKWoR7NXnELZVlU90xTON1v3Pq2AcOmuAPFkPh09E0X8fpbx2zofoR5zmOIxGqmWOhD0qXE7g==
   dependencies:
     "@types/node" "*"
 
@@ -4156,14 +4164,14 @@ escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
 eslint-config-prettier@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.1.0.tgz#4ef1eaf97afe5176e6a75ddfb57c335121abc5a6"
-  integrity sha512-oKMhGv3ihGbCIimCAjqkdzx2Q+jthoqnXSP+d86M9tptwugycmTFdVR4IpLgq2c4SHifbwO90z2fQ8/Aio73yw==
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
+  integrity sha512-BgZuLUSeKzvlL/VUjx/Yb787VQ26RU3gGjA3iiFvdsp/2bMfVIWUVP7tjxtjS0e+HP409cPlPvNkQloz8C91ew==
 
 eslint-plugin-prettier@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.3.1.tgz#7079cfa2497078905011e6f82e8dd8453d1371b7"
-  integrity sha512-Rq3jkcFY8RYeQLgk2cCwuc0P7SEFwDravPhsJZOQ5N4YI4DSg50NyqJ/9gdZHzQlHf8MvafSesbNJCcP/FF6pQ==
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.1.tgz#e9ddb200efb6f3d05ffe83b1665a716af4a387e5"
+  integrity sha512-htg25EUYUeIhKHXjOinK4BgCcDwtLHjqaxCDsMy5nbnUMkKFvIhMVCp+5GFUXQ4Nr8lBsPqtGAqBenbpFqAA2g==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
@@ -6892,9 +6900,9 @@ prettier-linter-helpers@^1.0.0:
     fast-diff "^1.1.2"
 
 prettier@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
-  integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.3.2.tgz#ef280a05ec253712e486233db5c6f23441e7342d"
+  integrity sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==
 
 pretty-error@^2.1.1:
   version "2.1.2"
