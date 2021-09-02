@@ -66,7 +66,7 @@ class RunnerComp extends React.Component<any, State> {
 		super(props)
 		this.state = {
 			tags: [],
-			selectedTag: { ref: 'refs/tags/v0.8.30' },
+			selectedTag: { ref: 'refs/tags/v0.9.9-1' },
 			defaultTag: null,
 
 			packages: [],

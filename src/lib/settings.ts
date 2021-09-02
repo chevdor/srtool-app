@@ -101,7 +101,7 @@ export const defaultSettings: SettingsContextContent = {
 	},
 	srtool: {
 		autoUpgrade: true,
-		image: 'chevdor/srtool:nightly-2021-03-15',
+		image: 'paritytech/srtool:1.53.0',
 		useCache: false,
 	},
 	runner: {},

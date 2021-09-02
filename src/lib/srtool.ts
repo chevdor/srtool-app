@@ -78,7 +78,7 @@ export default class Srtool {
 	 * @param tag Expected version
 	 */
 	async getImage(tag: string): Promise<void> {
-		const image = `chevdor/srtool${tag ? ':' + tag : ''}`
+		const image = `paritytech/srtool${tag ? ':' + tag : ''}`
 		console.info(`Getting image: '${image}'`)
 
 		return new Promise(async (resolve, _reject) => {
@@ -186,8 +186,9 @@ export default class Srtool {
 	 * This is the docker image tag and this is also the rustc version.
 	 */
 	async getSrtoolRustcLatestVersion(): Promise<string> {
-		const repo = 'https://gitlab.com/chevdor/srtool'
-		const url = `${repo}/-/raw/master/RUSTC_VERSION`
+		const repo = 'https://raw.githubusercontent.com/paritytech/srtool'
+		const url = `${repo}/master/RUSTC_VERSION`
+
 		console.log(`Getting latest image tag from ${url}`)
 
 		const response = await fetch(url)

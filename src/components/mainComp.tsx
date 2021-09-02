@@ -27,8 +27,8 @@ class MainComp extends React.Component<MainCompProps, any> {
 			const history = new RunHistory()
 
 			const historyKey: HistoryKey = {
-				srtoolImage: 'chevdor/srtool:nightly-2021-03-15', // TODO IMAGE: fix that and use real value
-				srtoolVersion: '0.9.10', // TODO HISTORY: fix that and use real value => result.generator,
+				srtoolImage: 'paritytech/srtool:1.53.0', // TODO IMAGE: fix that and use real value
+				srtoolVersion: '0.9.14', // TODO HISTORY: fix that and use real value => result.generator,
 				gitCommit: result.git.commit,
 				date: result.time,
 				package: result.package,
