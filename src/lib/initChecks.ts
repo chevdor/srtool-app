@@ -120,7 +120,7 @@ export default class InitCheck {
 	 */
 	public async srtoolLatestImage(): AsyncCheckResult {
 		return new Promise(async (resolve, _reject) => {
-			const latestImage = await this.#srtool.getSrtoolRustcLatestVersion()
+			const latestImage = await (await this.#srtool.getSrtoolRustcLatestVersion()).trim()
 
 			if (latestImage) {
 				resolve({

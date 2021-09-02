@@ -79,7 +79,7 @@ export default class Srtool {
 	 */
 	async getImage(tag: string): Promise<void> {
 		const image = `chevdor/srtool${tag ? ':' + tag : ''}`
-		console.info(`Getting image: ${image}`)
+		console.info(`Getting image: '${image}'`)
 
 		return new Promise(async (resolve, _reject) => {
 			const docker = this.#docker.docker
