@@ -1,13 +1,14 @@
 productName: SRTOOL-App
 appId: com.chevdor.srtool-app
+extends: null
 
-files: 
+files:
   - build/**/*
 
 directories:
   output: dist
 
-mac: 
+mac:
   category: public.app-category.developer-tools
   target:
     - dmg
